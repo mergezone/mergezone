@@ -234,6 +234,12 @@
             margin-top: $spacing-4;
         }
 
+        #context-pane-diffs {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-4;
+        }
+
         .task + .task {
             margin-top: $spacing-1;
         }

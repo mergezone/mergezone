@@ -15,7 +15,6 @@ let zoomInstance = null;
 let zoomLibPromise = null;
 
 async function ensureZoom() {
-  if (zoomInstance) return zoomInstance;
   if (zoomLibPromise) return zoomLibPromise;
   zoomLibPromise = import('https://esm.sh/medium-zoom@1.1.0').then(lib => {
     return lib.default;
@@ -24,8 +23,13 @@ async function ensureZoom() {
 }
 
 async function attachZoom(selector) {
+  // Detach any existing instance before resolving the factory, otherwise
+  // ensureZoom() returns the stale instance instead of the factory function.
+  if (zoomInstance) {
+    zoomInstance.detach();
+    zoomInstance = null;
+  }
   const mediumZoom = await ensureZoom();
-  if (zoomInstance) zoomInstance.detach();
   zoomInstance = mediumZoom(selector, {
     background: 'rgba(0,0,0,0.8)',
     margin: 48,
@@ -42,7 +46,9 @@ function getDiffTheme() {
   return 'pierre-light';
 }
 
-async function loadPRDiffs(container, owner, repo, prNumber, signal) {
+const DIFF_WRAPPER_ID = 'context-pane-diffs';
+
+async function loadPRDiffs(body, owner, repo, prNumber, signal) {
   const lib = await ensureDiffsLib();
 
   const resp = await fetch(`/${owner}/${repo}/pull/${prNumber}/diff`, { signal });
@@ -51,24 +57,47 @@ async function loadPRDiffs(container, owner, repo, prNumber, signal) {
   const diffText = await resp.text();
   const patches = lib.parsePatchFiles(diffText);
 
+  // The virtualizer renders against a scroll root (the context pane body) and
+  // measures a dedicated content wrapper that holds every rendered file diff.
+  const wrapper = document.createElement('div');
+  wrapper.id = DIFF_WRAPPER_ID;
+  body.appendChild(wrapper);
+
+  const virtualizer = new lib.Virtualizer({
+    // Extra viewport size in pixels rendered above and below the viewport.
+    overscrollSize: 1000,
+    // IntersectionObserver root margin in pixels for visibility tracking.
+    intersectionObserverMargin: 4000,
+    // Keep disabled in production; it logs size changes for metric tuning.
+    resizeDebugging: false,
+  });
+  virtualizer.setup(body, wrapper);
+
   const instances = [];
 
-  for (const patch of patches) {
-    for (const fileDiffMeta of patch.files) {
-      const fileDiff = new lib.FileDiff({
-        theme: getDiffTheme(),
-        diffStyle: 'unified',
-        overflow: 'scroll',
-        disableLineNumbers: false,
-        diffIndicators: 'bars',
-      });
+  try {
+    for (const patch of patches) {
+      for (const fileDiffMeta of patch.files) {
+        const fileDiff = new lib.VirtualizedFileDiff({
+          theme: getDiffTheme(),
+          diffStyle: 'unified',
+          overflow: 'scroll',
+          disableLineNumbers: false,
+          diffIndicators: 'bars',
+        }, virtualizer);
 
-      fileDiff.render({ fileDiff: fileDiffMeta, containerWrapper: container });
-      instances.push(fileDiff);
+        fileDiff.render({ fileDiff: fileDiffMeta, containerWrapper: wrapper });
+        instances.push(fileDiff);
+      }
     }
+  } catch (err) {
+    cleanupDiffs(instances);
+    try { virtualizer.cleanUp(); } catch (e) {}
+    wrapper.remove();
+    throw err;
   }
 
-  return instances;
+  return { instances, virtualizer, wrapper };
 }
 
 function cleanupDiffs(instances) {
@@ -152,11 +181,14 @@ document.addEventListener('alpine:init', () => {
     bodyHtml: '',
     loadingBody: false,
     diffInstances: [],
+    diffVirtualizer: null,
+    diffWrapper: null,
     loadingDiffs: false,
     _abortController: null,
     _owner: '',
     _repo: '',
-    _stashedDiffs: [],
+    _stashedDiffs: null,
+    _stashedDiffsTheme: null,
 
     async openPane(prNumber, dataset = {}) {
       if (prNumber === this.prNumber) {
@@ -212,12 +244,21 @@ document.addEventListener('alpine:init', () => {
     },
 
     closePane() {
+      // Keep the diff session (wrapper + virtualizer + instances) alive so
+      // reopening the same pull request is instant. The session is fully torn
+      // down in _cleanup() when a different pull request is opened.
       this._stashDiffs();
-      this._cleanup();
+      if (this._abortController) {
+        this._abortController.abort();
+        this._abortController = null;
+      }
       if (zoomInstance) {
         zoomInstance.detach();
         zoomInstance = null;
       }
+
+      const selected = document.querySelector('.pull-request.selected');
+      if (selected) selected.classList.remove('selected');
 
       this.open = false;
     },
@@ -272,22 +313,47 @@ document.addEventListener('alpine:init', () => {
       const body = container?.querySelector('.context-pane-body');
       if (!body) return;
 
-      body.querySelectorAll('diffs-container').forEach(el => {
-        el.remove();
-        this._stashedDiffs.push(el);
-      });
+      const wrapper = body.querySelector('#' + DIFF_WRAPPER_ID);
+      if (!wrapper) return;
+
+      wrapper.remove();
+      this._stashedDiffs = wrapper;
+      this._stashedDiffsTheme = getDiffTheme();
     },
 
     _unstashDiffs() {
-      if (this._stashedDiffs.length === 0) return false;
+      if (!this._stashedDiffs) return false;
 
       const container = document.getElementById('context-pane-content');
       const body = container?.querySelector('.context-pane-body');
       if (!body) return false;
 
-      this._stashedDiffs.forEach(el => body.appendChild(el));
-      this._stashedDiffs = [];
+      body.appendChild(this._stashedDiffs);
+      this._stashedDiffs = null;
+      this._stashedDiffsTheme = null;
       return true;
+    },
+
+    _teardownDiffSession() {
+      if (this.diffInstances.length) {
+        cleanupDiffs(this.diffInstances);
+        this.diffInstances = [];
+      }
+
+      if (this.diffVirtualizer) {
+        try { this.diffVirtualizer.cleanUp(); } catch (e) {}
+        this.diffVirtualizer = null;
+      }
+
+      this.diffWrapper = null;
+      this._stashedDiffs = null;
+      this._stashedDiffsTheme = null;
+
+      const container = document.getElementById('context-pane-content');
+      if (container) {
+        container.querySelectorAll('#' + DIFF_WRAPPER_ID).forEach(el => el.remove());
+        container.querySelectorAll('diffs-container').forEach(el => el.remove());
+      }
     },
 
     _cleanup() {
@@ -296,17 +362,7 @@ document.addEventListener('alpine:init', () => {
         this._abortController = null;
       }
 
-      if (this.diffInstances.length) {
-        cleanupDiffs(this.diffInstances);
-        this.diffInstances = [];
-      }
-
-      this._stashedDiffs = [];
-
-      const container = document.getElementById('context-pane-content');
-      if (container) {
-        container.querySelectorAll('diffs-container').forEach(el => el.remove());
-      }
+      this._teardownDiffSession();
 
       const selected = document.querySelector('.pull-request.selected');
       if (selected) selected.classList.remove('selected');
@@ -320,19 +376,20 @@ document.addEventListener('alpine:init', () => {
       const body = container?.querySelector('.context-pane-body');
       if (!body) return;
 
-      cleanupDiffs(this.diffInstances);
-      this.diffInstances = [];
-      body.querySelectorAll('diffs-container').forEach(el => el.remove());
-
+      this._teardownDiffSession();
       this._showDiffSkeleton(body);
 
-      const tempDiffContainer = document.createElement('div');
-      try {
-        const instances = await loadPRDiffs(tempDiffContainer, this._owner, this._repo, this.prNumber);
+      await this._loadDiffsIntoBody(body);
+    },
 
+    async _loadDiffsIntoBody(body) {
+      if (!body) return;
+      try {
+        const session = await loadPRDiffs(body, this._owner, this._repo, this.prNumber);
         body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
-        Array.from(tempDiffContainer.children).forEach(el => body.appendChild(el));
-        this.diffInstances = instances;
+        this.diffInstances = session.instances;
+        this.diffVirtualizer = session.virtualizer;
+        this.diffWrapper = session.wrapper;
       } catch (e) {
         body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
       }
@@ -346,28 +403,31 @@ document.addEventListener('alpine:init', () => {
       const target = container?.querySelector('.context-pane-body') || container;
 
       if (target) {
+        target.querySelectorAll('#' + DIFF_WRAPPER_ID).forEach(el => el.remove());
         target.querySelectorAll('diffs-container').forEach(el => el.remove());
+        target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         this._showDiffSkeleton(target);
       }
 
-      const tempDiffContainer = document.createElement('div');
-
       const bodyPromise = this._fetchBodyRaw(prNumber, signal);
-      const diffsPromise = this._fetchDiffsRaw(prNumber, signal, tempDiffContainer);
+      const diffsPromise = this._fetchDiffsRaw(prNumber, signal);
 
       try {
-        const [bodyHtml, diffInstances] = await Promise.all([bodyPromise, diffsPromise]);
+        const [bodyHtml, session] = await Promise.all([bodyPromise, diffsPromise]);
 
         if (signal.aborted) return;
 
         if (target) {
-          target.querySelectorAll('.diff-skeleton, diffs-container').forEach(el => el.remove());
-          Array.from(tempDiffContainer.children).forEach(el => target.appendChild(el));
+          target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         }
 
         // Swap in body at the same time
         this.bodyHtml = bodyHtml;
-        this.diffInstances = diffInstances;
+        if (session) {
+          this.diffInstances = session.instances;
+          this.diffVirtualizer = session.virtualizer;
+          this.diffWrapper = session.wrapper;
+        }
         this.loadingBody = false;
         this.loadingDiffs = false;
 
@@ -384,6 +444,7 @@ document.addEventListener('alpine:init', () => {
         this.loadingDiffs = false;
         if (target) {
           target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+          target.querySelectorAll('#' + DIFF_WRAPPER_ID).forEach(el => el.remove());
         }
       }
     },
@@ -413,10 +474,12 @@ document.addEventListener('alpine:init', () => {
       return html;
     },
 
-    async _fetchDiffsRaw(prNumber, signal, target) {
-      if (!this._owner || !this._repo) return [];
-      const instances = await loadPRDiffs(target, this._owner, this._repo, prNumber, signal);
-      return instances;
+    async _fetchDiffsRaw(prNumber, signal) {
+      if (!this._owner || !this._repo) return null;
+      const container = document.getElementById('context-pane-content');
+      const body = container?.querySelector('.context-pane-body');
+      if (!body) return null;
+      return await loadPRDiffs(body, this._owner, this._repo, prNumber, signal);
     },
 
     _openWithDeferredDiffs() {
@@ -424,19 +487,34 @@ document.addEventListener('alpine:init', () => {
       const body = container?.querySelector('.context-pane-body');
       const pane = document.getElementById('context-pane');
 
+      const canRestore = this._stashedDiffs != null && this._stashedDiffsTheme === getDiffTheme();
+
+      const card = document.querySelector(`.pull-request[data-pr-number="${this.prNumber}"]`);
+
+      if (!canRestore) {
+        // No stashed session (e.g. closed mid-load) or the theme changed while
+        // closed, so fall back to a fresh load of body + diffs.
+        this._cleanup();
+        this.bodyHtml = this._bodySkeletonHtml();
+        this.loadingBody = true;
+        this.loadingDiffs = true;
+        this.open = true;
+        card?.classList.add('selected');
+        this._fetchBodyAndDiffs(this.prNumber);
+        return;
+      }
+
       this._showDiffSkeleton(body);
 
       this.open = true;
+      card?.classList.add('selected');
 
-      const hasStashed = this._stashedDiffs.length > 0;
       const replaceSkeleton = () => {
         if (body && this.open) {
           const skeleton = body.querySelector('.diff-skeleton');
           if (skeleton) skeleton.remove();
 
-          if (hasStashed) {
-            this._unstashDiffs();
-          }
+          this._unstashDiffs();
         }
         setTimeout(() => {
           Alpine.store('app')._loadContextPaneImages();
