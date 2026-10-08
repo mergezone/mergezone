@@ -8,7 +8,7 @@ import (
 	"merge/internal/model"
 )
 
-templ Contributors(contributors []model.ContributorInfo, activeSort string, filters model.FilterSet) {
+templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) {
     <section class="contributors">
         <div class="section-heading">
             <span>Contributors</span>
@@ -16,20 +16,20 @@ templ Contributors(contributors []model.ContributorInfo, activeSort string, filt
                 <i id="contributors-sort-indicator" class="fa-solid fa-spinner fa-spin htmx-indicator" aria-hidden="true"></i>
                 <span class="sort-label">SORT:</span>
                 <button
-                    if activeSort == "recent" {
+                    if activeSortOrder == "recent" {
                         data-active-sort="true"
                     }
-                    hx-get={ fmt.Sprintf("?part=contributors&sort=recent") }
+                    hx-get={ fmt.Sprintf("?fragment=contributors&sort=recent") }
                     hx-target="#contributors-section"
                     hx-indicator="#contributors-sort-indicator"
                 >
                     Recent
                 </button>
                 <button
-                    if activeSort == "top" {
+                    if activeSortOrder == "top" {
                         data-active-sort="true"
                     }
-                    hx-get={ fmt.Sprintf("?part=contributors&sort=top") }
+                    hx-get={ fmt.Sprintf("?fragment=contributors&sort=top") }
                     hx-target="#contributors-section"
                     hx-indicator="#contributors-sort-indicator"
                 >
@@ -37,10 +37,10 @@ templ Contributors(contributors []model.ContributorInfo, activeSort string, filt
                 </button>
             </span>
         </div>
-        if len(contributors) > 0 {
+        if len(contributorSummaries) > 0 {
             <div class="contributors-container">
-                for _, info := range contributors {
-                    @Contributor(info, filters)
+                for _, contributor := range contributorSummaries {
+                    @ContributorCard(contributor, filters)
                 }
             </div>
         }

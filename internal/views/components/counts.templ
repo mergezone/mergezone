@@ -6,14 +6,14 @@ import (
 	"merge/internal/model"
 )
 
-func statusURL(filters model.FilterSet, targetStatus string) string {
+func repositoryStatusURL(filters model.RepositoryFilters, targetStatus string) string {
 	if filters.Status == targetStatus {
 		return filters.WithStatus("").URL()
 	}
 	return filters.WithStatus(targetStatus).URL()
 }
 
-func buildFilterLabel(filters model.FilterSet) string {
+func repositoryFilterLabel(filters model.RepositoryFilters) string {
 	parts := []string{}
 	if filters.Scope != "" {
 		parts = append(parts, strings.ToUpper(filters.Scope))
@@ -27,13 +27,14 @@ func buildFilterLabel(filters model.FilterSet) string {
 	return "Filter: " + strings.Join(parts, ", ")
 }
 
-templ Counts(counts model.ExpiryCounts, hasMore bool, filters model.FilterSet, nextPage int) {
+// PullRequestCounts renders the repository's status summaries and filter controls.
+templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool, filters model.RepositoryFilters, nextPullRequestPage int) {
 	<div class="stats">
 		<div class="section-heading">
             <span>Overview</span>
 			<div class="buttons">
 				if filters.Scope != "" || filters.Contributor != "" || filters.Status != "" {
-					<button class="filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">{ buildFilterLabel(filters) }</button>
+					<button class="filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">{ repositoryFilterLabel(filters) }</button>
 					<a class="link-button" id="filter-clear"
 						href={ templ.SafeURL(filters.URL()) }
 						hx-get={ templ.SafeURL(filters.URL()) }
@@ -45,10 +46,10 @@ templ Counts(counts model.ExpiryCounts, hasMore bool, filters model.FilterSet, n
 			</div>
         </div>
 		<div class="stats-tiles">
-			@Count("fa-seedling ok", counts.FreshCount, "fresh", statusURL(filters, "fresh"), filters.Status == "fresh")
-			@Count("fa-leaf warn", counts.StaleCount, "stale", statusURL(filters, "stale"), filters.Status == "stale")
-			@Count("fa-skull error", counts.ExpiredCount, "expired", statusURL(filters, "expired"), filters.Status == "expired")
-			@Count("fa-code-merge special", counts.MergedCount, "merged", statusURL(filters, "merged"), filters.Status == "merged")
+			@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")
+			@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")
+			@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")
+			@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")
 		</div>
 	</div>
 }

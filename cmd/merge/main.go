@@ -21,7 +21,7 @@ func main() {
 		},
 	}
 
-	if err := s.Start(); err != nil {
+	if err := s.ListenAndServe(); err != nil {
 		s.Logger.Error(err.Error())
 	}
 }

@@ -13,11 +13,11 @@ import (
 	"strings"
 
 	"merge/internal/model"
-	"merge/internal/views/components"
 	"merge/internal/views/layout"
 )
 
-func RepoPage(props model.RepoPageProps, currentPath string) templ.Component {
+// RepositoryDocument renders the complete repository HTML document, including its layout.
+func RepositoryDocument(viewData model.RepositoryViewData, currentPath string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -38,7 +38,6 @@ func RepoPage(props model.RepoPageProps, currentPath string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		filters := model.FilterSet{Owner: props.Owner, Repo: props.Repo, Scope: props.Scope, Contributor: props.Contributor, Status: props.Status}
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -51,51 +50,19 @@ func RepoPage(props model.RepoPageProps, currentPath string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Sidebar(filters, props.ScopeCounts, props.ScopeSort, props.ContributorCounts, props.ContributorSort).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " <section class=\"scroll\"><div class=\"overview\" id=\"overview-stats\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Counts(props.OverallCounts, props.HasMore, filters, props.CurrentPage+1).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.PRScrollSection(props.PRs, filters, props.CurrentPage, props.HasMore).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.FilterPanel().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.ContextPane().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = RepositoryMainView(viewData).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = layout.Base(
-			fmt.Sprintf("%s/%s", props.Owner, props.Repo),
-			fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", props.OverallCounts.Count(), props.OverallCounts.FreshCount, props.OverallCounts.StaleCount, props.OverallCounts.ExpiredCount),
-			props.BaseURL,
-			props.Owner,
-			props.Repo,
-			strings.Trim(strings.TrimPrefix(currentPath, fmt.Sprintf("/%s/%s", props.Owner, props.Repo)), "/"),
+		templ_7745c5c3_Err = layout.BaseDocument(
+			fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository),
+			fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", viewData.OverallCounts.TotalPullRequests(), viewData.OverallCounts.FreshCount, viewData.OverallCounts.StaleCount, viewData.OverallCounts.ExpiredCount),
+			viewData.BaseURL,
+			viewData.Owner,
+			viewData.Repository,
+			strings.Trim(strings.TrimPrefix(currentPath, fmt.Sprintf("/%s/%s", viewData.Owner, viewData.Repository)), "/"),
 		).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

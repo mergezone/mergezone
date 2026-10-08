@@ -8,12 +8,13 @@ import (
 	"merge/internal/views/helpers"
 )
 
-templ PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) {
+// PullRequestDetail renders the detail fragment for a single pull request.
+templ PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, currentPath string) {
 	<div class="context-pane-header">
-		<a class="context-pane-title" href={ pr.URL }>
-			<i class={ "status-icon fa-solid " + helpers.GetStatusClass(pr) }></i>
-			if pr.Title != "" {
-				@Markdown(pr.Title)
+		<a class="context-pane-title" href={ pullRequest.URL }>
+			<i class={ "status-icon fa-solid " + helpers.GetStatusClass(pullRequest) }></i>
+			if pullRequest.Title != "" {
+				@Markdown(pullRequest.Title)
 			} else {
 				Pull Request
 			}
@@ -30,21 +31,21 @@ templ PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) 
 					<i class="fa-solid fa-hashtag"></i>
 					Number
 				</span>
-				<span class="meta-value">{ fmt.Sprintf("#%d", pr.Number) }</span>
+				<span class="meta-value">{ fmt.Sprintf("#%d", pullRequest.Number) }</span>
 			</div>
 			<div class="meta-row">
 				<span class="meta-label">
 					<i class="fa-solid fa-code-pull-request"></i>
 					Status
 				</span>
-				<span class="meta-value">{ pr.State }</span>
+				<span class="meta-value">{ pullRequest.State }</span>
 			</div>
 			<div class="meta-row">
 				<span class="meta-label">
 					<i class="fa-solid fa-clock"></i>
 					Age
 				</span>
-				<span class="meta-value">@Age(pr.TimeOpen, pr.DaysOpen)</span>
+				<span class="meta-value">@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)</span>
 			</div>
 			<div class="meta-row">
 				<span class="meta-label">
@@ -53,7 +54,7 @@ templ PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) 
 				</span>
 				{{ authorPath := helpers.StripQueryParam(currentPath, "contributor")
 				currentStatus := helpers.GetQueryParam(currentPath, "status")
-				q := []string{"contributor=" + pr.Author.Name}
+				q := []string{"contributor=" + pullRequest.Author.Name}
 				if currentStatus != "" {
 					q = append(q, "status="+currentStatus)
 				}
@@ -64,15 +65,15 @@ templ PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) 
 					href={ templ.SafeURL(authorURL) }
 					hx-get={ templ.SafeURL(authorURL) }
 					hx-target="section.scroll"
-				>{ pr.Author.Name }</a>
+				>{ pullRequest.Author.Name }</a>
 			</div>
-			if len(pr.Scopes) > 0 {
+			if len(pullRequest.Scopes) > 0 {
 				<div class="meta-row">
 					<span class="meta-label">
 						<i class="fa-solid fa-tag"></i>
 						Scope
 					</span>
-					{{ scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repo, pr.Scopes[0])
+					{{ scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
 					currentStatus := helpers.GetQueryParam(currentPath, "status")
 					currentContributor := helpers.GetQueryParam(currentPath, "contributor")
 					q := []string{}
@@ -91,10 +92,10 @@ templ PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) 
 						href={ templ.SafeURL(scopeURL) }
 						hx-get={ templ.SafeURL(scopeURL) }
 						hx-target="section.scroll"
-					>{ pr.Scopes[0] }</a>
+					>{ pullRequest.Scopes[0] }</a>
 				</div>
 			}
 		</div>
-		@Markdown(pr.Body)
+		@Markdown(pullRequest.Body)
 	</div>
 }

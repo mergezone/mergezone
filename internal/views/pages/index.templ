@@ -5,10 +5,10 @@ import (
 	"merge/internal/views/layout"
 )
 
-templ IndexPage(baseURL, owner, repo string) {
-	@layout.Base("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repo, "") {
+templ HomePage(baseURL, owner, repository string) {
+	@layout.BaseDocument("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repository, "") {
 		<aside class="aside-column">
-				@components.Nav(owner, repo, "")
+				@components.RepositoryNavigation(owner, repository, "")
 				<footer>
 					<span>Made by <a class="bold" href="https://www.haydenheroux.com">Hayden Heroux</a></span>
 					<span>View on <a class="bold" href="https://www.github.com/mergezone/mergezone">GitHub</a></span>
@@ -19,7 +19,7 @@ templ IndexPage(baseURL, owner, repo string) {
 				<div class="home-heading-group">
 					<h1>What's the state of your<br/>pull requests?</h1>
 					<p class="text-secondary home-subtitle">
-					Enter a repository to see PR freshness, merge activity,<br/>
+					Enter a repository to see pull request freshness, merge activity,<br/>
 					and contributor patterns at a glance.
 				</p>
 				</div>
@@ -28,10 +28,10 @@ templ IndexPage(baseURL, owner, repo string) {
 						<span>Finding a repository</span>
 					</div>
 					<div class="static-search-demo">
-						@components.SearchInput("", "", "", "owner", "repo", "scope", false, false)
+						@components.RepositorySearchInput("", "", "", "owner", "repository", "scope", false, false)
 					</div>
 					<p class="text-secondary home-explainer">
-						<strong>owner</strong> / <strong>repo</strong> points to any public GitHub repository.
+						<strong>owner</strong> / <strong>repository</strong> points to any public GitHub repository.
 						The <strong>scope</strong> narrows results to a specific area of the codebase.
 					</p>
 				</div>
@@ -40,27 +40,27 @@ templ IndexPage(baseURL, owner, repo string) {
 						<span>Features</span>
 					</div>
 					<div class="scroll-content features-grid">
-						@components.IconRow("fa-solid fa-seedling", "ok", "Fresh, stale, and expired", "Each PR is tagged by how long it's been open so you know what to triage")
+						@components.IconRow("fa-solid fa-seedling", "ok", "Fresh, stale, and expired", "Each pull request is tagged by how long it's been open so you know what to triage")
 						@components.IconRow("fa-solid fa-code-merge", "special", "Merge rates per contributor", "See who's consistently getting their changes merged")
 						@components.IconRow("fa-solid fa-folder-tree", "warn", "Scope hotspots", "Which parts of the codebase attract the most activity")
-						@components.IconRow("fa-solid fa-users", "error", "Contributor histories", "Each contributor's PR history, success rate, and areas of focus")
+						@components.IconRow("fa-solid fa-users", "error", "Contributor histories", "Each contributor's pull request history, success rate, and areas of focus")
 					</div>
 				</div>
 				<div>
 					<div class="section-heading">
-						<span>Example repos</span>
+						<span>Example repositories</span>
 					</div>
 					<div class="scroll-content item-group home-repos">
-						@components.RepoLink("mergezone", "mergezone", "fa-solid fa-code-merge")
-						@components.RepoLink("ghostty-org", "ghostty", "fa-solid fa-terminal")
-						@components.RepoLink("kubernetes", "kubernetes", "fa-solid fa-dharmachakra")
-						@components.RepoLink("home-assistant", "core", "fa-solid fa-house")
-						@components.RepoLink("huggingface", "transformers", "fa-solid fa-brain")
-						@components.RepoLink("flutter", "flutter", "fa-solid fa-wand-magic-sparkles")
-						@components.RepoLink("nixos", "nixpkgs", "fa-solid fa-snowflake")
-						@components.RepoLink("microsoft", "vscode", "fa-solid fa-code")
-						@components.RepoLink("hashicorp", "terraform", "fa-solid fa-cubes")
-						@components.RepoLink("denoland", "deno", "fa-solid fa-diamond")
+						@components.RepositoryLink("mergezone", "mergezone", "fa-solid fa-code-merge")
+						@components.RepositoryLink("ghostty-org", "ghostty", "fa-solid fa-terminal")
+						@components.RepositoryLink("kubernetes", "kubernetes", "fa-solid fa-dharmachakra")
+						@components.RepositoryLink("home-assistant", "core", "fa-solid fa-house")
+						@components.RepositoryLink("huggingface", "transformers", "fa-solid fa-brain")
+						@components.RepositoryLink("flutter", "flutter", "fa-solid fa-wand-magic-sparkles")
+						@components.RepositoryLink("nixos", "nixpkgs", "fa-solid fa-snowflake")
+						@components.RepositoryLink("microsoft", "vscode", "fa-solid fa-code")
+						@components.RepositoryLink("hashicorp", "terraform", "fa-solid fa-cubes")
+						@components.RepositoryLink("denoland", "deno", "fa-solid fa-diamond")
 					</div>
 				</div>
 			</section>

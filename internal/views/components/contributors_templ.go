@@ -18,7 +18,7 @@ import (
 	"merge/internal/model"
 )
 
-func Contributors(contributors []model.ContributorInfo, activeSort string, filters model.FilterSet) templ.Component {
+func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,7 +43,7 @@ func Contributors(contributors []model.ContributorInfo, activeSort string, filte
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if activeSort == "recent" {
+		if activeSortOrder == "recent" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " data-active-sort=\"true\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -54,9 +54,9 @@ func Contributors(contributors []model.ContributorInfo, activeSort string, filte
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?part=contributors&sort=recent"))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=contributors&sort=recent"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 22, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 22, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -66,7 +66,7 @@ func Contributors(contributors []model.ContributorInfo, activeSort string, filte
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if activeSort == "top" {
+		if activeSortOrder == "top" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " data-active-sort=\"true\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -77,9 +77,9 @@ func Contributors(contributors []model.ContributorInfo, activeSort string, filte
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?part=contributors&sort=top"))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=contributors&sort=top"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 32, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 32, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -89,13 +89,13 @@ func Contributors(contributors []model.ContributorInfo, activeSort string, filte
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(contributors) > 0 {
+		if len(contributorSummaries) > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"contributors-container\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, info := range contributors {
-				templ_7745c5c3_Err = Contributor(info, filters).Render(ctx, templ_7745c5c3_Buffer)
+			for _, contributor := range contributorSummaries {
+				templ_7745c5c3_Err = ContributorCard(contributor, filters).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

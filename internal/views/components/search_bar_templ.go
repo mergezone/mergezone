@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlaceholder, scopePlaceholder string, interactive bool, showIcon bool) templ.Component {
+func RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceholder, repositoryPlaceholder, scopePlaceholder string, interactive bool, showIcon bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -90,7 +90,7 @@ func SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlaceh
 			return templ_7745c5c3_Err
 		}
 		if interactive {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " data-part=\"repo\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " data-part=\"repository\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -100,9 +100,9 @@ func SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlaceh
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(repoValue)
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(repositoryValue)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 26, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 26, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -113,9 +113,9 @@ func SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlaceh
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(repoPlaceholder)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(repositoryPlaceholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 27, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 27, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {

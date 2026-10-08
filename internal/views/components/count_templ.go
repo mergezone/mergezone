@@ -12,7 +12,7 @@ import (
 	"fmt"
 )
 
-func Count(iconClass string, count int, label string, url string, active bool) templ.Component {
+func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel string, destinationURL string, isActive bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -33,8 +33,8 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if url != "" {
-			var templ_7745c5c3_Var2 = []any{"item stat", templ.KV("active", active)}
+		if destinationURL != "" {
+			var templ_7745c5c3_Var2 = []any{"item stat", templ.KV("active", isActive)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -57,22 +57,22 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(url))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(destinationURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 10, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 10, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"main\" hx-push-url=\"true\"><p class=\"bold\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"main\" hx-push-destinationURL=\"true\"><p class=\"bold\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(statusLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 13, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 13, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -105,9 +105,9 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", count))
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", pullRequestCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 15, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 15, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +118,7 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var9 = []any{"item stat", templ.KV("active", active)}
+			var templ_7745c5c3_Var9 = []any{"item stat", templ.KV("active", isActive)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -141,9 +141,9 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(statusLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 19, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 19, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -176,9 +176,9 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", count))
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", pullRequestCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 21, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 21, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -193,7 +193,7 @@ func Count(iconClass string, count int, label string, url string, active bool) t
 	})
 }
 
-func InlineCount(iconClass string, count int) templ.Component {
+func InlinePullRequestCount(iconClass string, pullRequestCount int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -241,9 +241,9 @@ func InlineCount(iconClass string, count int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", count))
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", pullRequestCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 29, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 29, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {

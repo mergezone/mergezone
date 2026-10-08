@@ -5,15 +5,15 @@ import (
 	"merge/internal/views/components"
 )
 
-templ RepoContent(props model.RepoPageProps, currentPath string) {
-	{{ filters := model.FilterSet{Owner: props.Owner, Repo: props.Repo, Scope: props.Scope, Contributor: props.Contributor, Status: props.Status} }}
-	@components.Sidebar(filters, props.ScopeCounts, props.ScopeSort, props.ContributorCounts, props.ContributorSort)
+templ RepositoryMainView(viewData model.RepositoryViewData) {
+	{{ filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status} }}
+	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort)
 	<section class="scroll">
 		<div class="overview" id="overview-stats">
-			@components.Counts(props.OverallCounts, props.HasMore, filters, props.CurrentPage + 1)
+			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage + 1)
 		</div>
-		@components.PRScrollSection(props.PRs, filters, props.CurrentPage, props.HasMore)
+		@components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore)
 	</section>
-	@components.FilterPanel()
+	@components.RepositoryFilterPanel()
 	@components.ContextPane()
 }

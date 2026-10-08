@@ -1,13 +1,13 @@
 package components
 
-templ RepoLink(owner string, repo string, iconClass string) {
-	{{ repoPath := "/" + owner + "/" + repo }}
-	<a href={ templ.SafeURL(repoPath) } hx-get={ templ.SafeURL(repoPath) } hx-target="main" hx-push-url="true" class="item icon-card">
+templ RepositoryLink(owner string, repository string, iconClass string) {
+	{{ repositoryPath := "/" + owner + "/" + repository }}
+	<a href={ templ.SafeURL(repositoryPath) } hx-get={ templ.SafeURL(repositoryPath) } hx-target="main" hx-push-url="true" class="item icon-card">
 		<div class="icon-container">
 			<i class={ iconClass }></i>
 		</div>
 		<div class="title-row">
-			<p><span>{ owner } / </span><span>{ repo }</span></p>
+			<p><span>{ owner } / </span><span>{ repository }</span></p>
 			<i class="fa-solid fa-spinner fa-spin htmx-indicator"></i>
 		</div>
 	</a>

@@ -76,7 +76,7 @@ func linkPRRefs(html string) string {
 		}
 		if c == '#' && !inAnchor && i+1 < len(html) && html[i+1] >= '0' && html[i+1] <= '9' {
 			if loc := prRefRe.FindStringSubmatch(html[i:]); loc != nil {
-				buf.WriteString(`<a class="pr-ref" data-pr-number="`)
+				buf.WriteString(`<a class="pull-request-reference" data-pull-request-number="`)
 				buf.WriteString(loc[1])
 				buf.WriteString(`">`)
 				buf.WriteString(loc[0])

@@ -13,7 +13,7 @@ import (
 	"merge/internal/views/layout"
 )
 
-func IndexPage(baseURL, owner, repo string) templ.Component {
+func HomePage(baseURL, owner, repository string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -50,23 +50,23 @@ func IndexPage(baseURL, owner, repo string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Nav(owner, repo, "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryNavigation(owner, repository, "").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<footer><span>Made by <a class=\"bold\" href=\"https://www.haydenheroux.com\">Hayden Heroux</a></span> <span>View on <a class=\"bold\" href=\"https://www.github.com/mergezone/mergezone\">GitHub</a></span> <span>View on <a class=\"bold\" href=\"https://www.merge.zone/mergezone/mergezone\">Merge Zone</a></span></footer></aside><section class=\"scroll home-scroll\"><div class=\"home-heading-group\"><h1>What's the state of your<br>pull requests?</h1><p class=\"text-secondary home-subtitle\">Enter a repository to see PR freshness, merge activity,<br>and contributor patterns at a glance.</p></div><div><div class=\"section-heading\"><span>Finding a repository</span></div><div class=\"static-search-demo\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<footer><span>Made by <a class=\"bold\" href=\"https://www.haydenheroux.com\">Hayden Heroux</a></span> <span>View on <a class=\"bold\" href=\"https://www.github.com/mergezone/mergezone\">GitHub</a></span> <span>View on <a class=\"bold\" href=\"https://www.merge.zone/mergezone/mergezone\">Merge Zone</a></span></footer></aside><section class=\"scroll home-scroll\"><div class=\"home-heading-group\"><h1>What's the state of your<br>pull requests?</h1><p class=\"text-secondary home-subtitle\">Enter a repository to see pull request freshness, merge activity,<br>and contributor patterns at a glance.</p></div><div><div class=\"section-heading\"><span>Finding a repository</span></div><div class=\"static-search-demo\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SearchInput("", "", "", "owner", "repo", "scope", false, false).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositorySearchInput("", "", "", "owner", "repository", "scope", false, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><p class=\"text-secondary home-explainer\"><strong>owner</strong> / <strong>repo</strong> points to any public GitHub repository. The <strong>scope</strong> narrows results to a specific area of the codebase.</p></div><div><div class=\"section-heading\"><span>Features</span></div><div class=\"scroll-content features-grid\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><p class=\"text-secondary home-explainer\"><strong>owner</strong> / <strong>repository</strong> points to any public GitHub repository. The <strong>scope</strong> narrows results to a specific area of the codebase.</p></div><div><div class=\"section-heading\"><span>Features</span></div><div class=\"scroll-content features-grid\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.IconRow("fa-solid fa-seedling", "ok", "Fresh, stale, and expired", "Each PR is tagged by how long it's been open so you know what to triage").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.IconRow("fa-solid fa-seedling", "ok", "Fresh, stale, and expired", "Each pull request is tagged by how long it's been open so you know what to triage").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -78,51 +78,51 @@ func IndexPage(baseURL, owner, repo string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.IconRow("fa-solid fa-users", "error", "Contributor histories", "Each contributor's PR history, success rate, and areas of focus").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.IconRow("fa-solid fa-users", "error", "Contributor histories", "Each contributor's pull request history, success rate, and areas of focus").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div><div class=\"section-heading\"><span>Example repos</span></div><div class=\"scroll-content item-group home-repos\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div><div class=\"section-heading\"><span>Example repositories</span></div><div class=\"scroll-content item-group home-repos\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("mergezone", "mergezone", "fa-solid fa-code-merge").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("mergezone", "mergezone", "fa-solid fa-code-merge").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("ghostty-org", "ghostty", "fa-solid fa-terminal").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("ghostty-org", "ghostty", "fa-solid fa-terminal").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("kubernetes", "kubernetes", "fa-solid fa-dharmachakra").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("kubernetes", "kubernetes", "fa-solid fa-dharmachakra").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("home-assistant", "core", "fa-solid fa-house").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("home-assistant", "core", "fa-solid fa-house").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("huggingface", "transformers", "fa-solid fa-brain").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("huggingface", "transformers", "fa-solid fa-brain").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("flutter", "flutter", "fa-solid fa-wand-magic-sparkles").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("flutter", "flutter", "fa-solid fa-wand-magic-sparkles").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("nixos", "nixpkgs", "fa-solid fa-snowflake").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("nixos", "nixpkgs", "fa-solid fa-snowflake").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("microsoft", "vscode", "fa-solid fa-code").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("microsoft", "vscode", "fa-solid fa-code").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("hashicorp", "terraform", "fa-solid fa-cubes").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("hashicorp", "terraform", "fa-solid fa-cubes").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepoLink("denoland", "deno", "fa-solid fa-diamond").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositoryLink("denoland", "deno", "fa-solid fa-diamond").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -132,7 +132,7 @@ func IndexPage(baseURL, owner, repo string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = layout.Base("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repo, "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.BaseDocument("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repository, "").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

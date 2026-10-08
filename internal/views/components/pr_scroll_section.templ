@@ -4,16 +4,16 @@ import (
 	"merge/internal/model"
 )
 
-templ PRScrollItems(prs []model.StampedPullRequest, owner string, repo string) {
-	for _, pr := range prs {
-		@PRCard(pr, owner, repo)
+templ PullRequestScrollItems(pullRequests []model.StampedPullRequest, owner string, repository string) {
+	for _, pullRequest := range pullRequests {
+		@PullRequestCard(pullRequest, owner, repository)
 	}
 }
 
-templ LoadMoreCard(prs []model.StampedPullRequest, filters model.FilterSet, nextPage int, hasMore bool, oob bool) {
-	<div id="load-more-card" if oob { hx-swap-oob="true" }>
+templ PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequestPage int, hasMorePullRequests bool, replaceOutOfBandContent bool) {
+	<div id="load-more-card" if replaceOutOfBandContent { hx-swap-oob="true" }>
 		<div class="item load-more"
-			hx-get={ filters.PageURL(nextPage) }
+			hx-get={ filters.PageURL(nextPullRequestPage) }
 			hx-target="#scroll-content"
 			hx-swap="beforeend">
 			<i class="fa-solid fa-plus"></i>
@@ -23,12 +23,12 @@ templ LoadMoreCard(prs []model.StampedPullRequest, filters model.FilterSet, next
 	</div>
 }
 
-templ PRScrollSection(prs []model.StampedPullRequest, filters model.FilterSet, currentPage int, hasMore bool) {
+templ PullRequestScrollSection(pullRequests []model.StampedPullRequest, filters model.RepositoryFilters, currentPage int, hasMorePullRequests bool) {
 	<div class="section-heading">
 		<span>Pull Requests</span>
 	</div>
 	<div class="scroll-content" id="scroll-content">
-		@PRScrollItems(prs, filters.Owner, filters.Repo)
+		@PullRequestScrollItems(pullRequests, filters.Owner, filters.Repository)
 	</div>
-	@LoadMoreCard(prs, filters, currentPage+1, hasMore, false)
+	@PullRequestLoadMoreControl(filters, currentPage+1, hasMorePullRequests, false)
 }

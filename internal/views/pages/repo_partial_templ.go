@@ -13,7 +13,7 @@ import (
 	"merge/internal/views/components"
 )
 
-func RepoContent(props model.RepoPageProps, currentPath string) templ.Component {
+func RepositoryMainView(viewData model.RepositoryViewData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,8 +34,8 @@ func RepoContent(props model.RepoPageProps, currentPath string) templ.Component 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		filters := model.FilterSet{Owner: props.Owner, Repo: props.Repo, Scope: props.Scope, Contributor: props.Contributor, Status: props.Status}
-		templ_7745c5c3_Err = components.Sidebar(filters, props.ScopeCounts, props.ScopeSort, props.ContributorCounts, props.ContributorSort).Render(ctx, templ_7745c5c3_Buffer)
+		filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status}
+		templ_7745c5c3_Err = components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func RepoContent(props model.RepoPageProps, currentPath string) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Counts(props.OverallCounts, props.HasMore, filters, props.CurrentPage+1).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage+1).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -51,7 +51,7 @@ func RepoContent(props model.RepoPageProps, currentPath string) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.PRScrollSection(props.PRs, filters, props.CurrentPage, props.HasMore).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -59,7 +59,7 @@ func RepoContent(props model.RepoPageProps, currentPath string) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.FilterPanel().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.RepositoryFilterPanel().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

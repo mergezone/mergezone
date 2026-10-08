@@ -1,6 +1,6 @@
 package layout
 
-templ Base(title, description, baseURL, owner, repo, scope string) {
+templ BaseDocument(title, description, baseURL, owner, repository, scope string) {
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -23,7 +23,7 @@ templ Base(title, description, baseURL, owner, repo, scope string) {
 		<meta property="og:url" content={ baseURL }/>
 		<meta property="og:description" content={ description }/>
 	</head>
-	<body class="repo-page" x-data x-init="$store.app.init()">
+	<body class="repository-page" x-data x-init="$store.app.init()">
         <main>
             { children... }
         </main>
