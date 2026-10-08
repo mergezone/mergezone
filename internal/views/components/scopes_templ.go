@@ -39,7 +39,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes filter-section\"><div class=\"panel-heading section-heading filter-section-heading\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-diagram-project section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes filter-section\"><div class=\"panel-heading section-heading filter-section-heading\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-folder-tree section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,7 +90,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"#scopes-section\" hx-indicator=\"#scopes-sort-indicator\"><i class=\"fa-solid fa-arrow-up\" aria-hidden=\"true\"></i></button></span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"#scopes-section\" hx-indicator=\"#scopes-sort-indicator\"><i class=\"fa-solid fa-arrow-down-wide-short\" aria-hidden=\"true\"></i></button></span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

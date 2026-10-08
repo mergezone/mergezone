@@ -166,6 +166,10 @@ footer {
         background-color: var(--color-cutout);
     }
 
+    .aside-column .scroll {
+      padding-block: $spacing-2;
+    }
+
     .sidebar-resize-handle {
         display: block;
         top: 0;

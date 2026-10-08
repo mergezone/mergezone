@@ -8,14 +8,14 @@ nav, section {
 
 .section-heading {
     margin-inline: $spacing-1;
-    margin-block: $spacing-1 $spacing-3;
+    margin-block: $spacing-2 $spacing-3;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: $spacing-2;
     color: var(--color-text-heading);
     font-family: $heading-family;
-    font-size: $text-sm;
+    font-size: $text-md;
     font-weight: $font-weight-semibold;
     line-height: $line-height-subheading;
     letter-spacing: normal;
@@ -26,6 +26,7 @@ nav, section {
         align-items: center;
         gap: $spacing-2;
         min-width: 0;
+        font-size: $text-sm;
     }
 
     .section-heading-control {

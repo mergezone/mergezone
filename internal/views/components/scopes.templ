@@ -13,7 +13,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 		<div class="panel-heading section-heading filter-section-heading">
 			<span class="section-heading-label">
 				<span class="section-heading-control">
-					<i class="fa-solid fa-diagram-project section-heading-icon" aria-hidden="true"></i>
+					<i class="fa-solid fa-folder-tree section-heading-icon" aria-hidden="true"></i>
 					<button class="link-button collapse-section-button" type="button"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand scopes' : 'Collapse scopes'"
@@ -47,7 +47,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						hx-get={ fmt.Sprintf("?fragment=scopes&sort=top") }
 						hx-target="#scopes-section"
 						hx-indicator="#scopes-sort-indicator">
-						<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+						<i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>
 					</button>
 				</span>
 			}

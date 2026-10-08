@@ -88,7 +88,7 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<i class=\"fa-solid fa-up-right-from-square\"></i></a> <button class=\"icon-close-button\" aria-label=\"Close\" onclick=\"Alpine.store('contextPane').closePane()\"><i class=\"fa-solid fa-circle-xmark\" aria-hidden=\"true\"></i></button></div><div class=\"context-pane-body scroll\"><table class=\"table is-fullwidth is-striped context-pane-meta\"><tbody><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-hashtag\" aria-hidden=\"true\"></i> Number</th><td class=\"meta-value\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<i class=\"fa-solid fa-up-right-from-square\"></i></a> <button class=\"icon-close-button\" aria-label=\"Close\" onclick=\"Alpine.store('contextPane').closePane()\"><i class=\"fa-solid fa-circle-xmark\" aria-hidden=\"true\"></i></button></div><div class=\"context-pane-body scroll\"><table class=\"table is-fullwidth context-pane-meta\"><tbody><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-hashtag\" aria-hidden=\"true\"></i> Number</th><td class=\"meta-value\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
