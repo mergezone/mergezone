@@ -13,11 +13,10 @@ templ ContextPane() {
 				<a class="context-pane-title" :href="$store.contextPane.pullRequestUrl" x-show="$store.contextPane.open">
 					<i class="status-icon fa-solid" :class="$store.contextPane.pullRequestStatusClass"></i>
 					<span x-html="$store.contextPane.pullRequestTitle"></span>
-					<i class="fa-solid fa-up-right-from-square"></i>
+                    <button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
+                        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                    </button>
 				</a>
-				<button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
-					<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-				</button>
 			</div>
 			<div class="context-pane-body scroll" @click="$store.contextPane.openPrRef($event)">
 				<table class="table is-fullwidth context-pane-meta" x-show="$store.contextPane.open">
