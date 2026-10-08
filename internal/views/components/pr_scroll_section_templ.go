@@ -74,7 +74,7 @@ func PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequest
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "><div class=\"item load-more\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "><div class=\"item load-more box\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +87,7 @@ func PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequest
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#scroll-content\" hx-swap=\"beforeend\"><i class=\"fa-solid fa-plus\"></i> <span>Load more</span> <i class=\"fa-solid fa-spinner fa-spin htmx-indicator\"></i></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#scroll-content\" hx-swap=\"beforeend\"><i class=\"fa-solid fa-plus\"></i> <span>Load more</span> <i class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\"></i></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

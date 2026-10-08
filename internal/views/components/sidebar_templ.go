@@ -39,7 +39,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"scroll\"><div id=\"scopes-section\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"scroll\"><div id=\"scopes-section\" x-data=\"{ collapsed: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,7 +47,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div id=\"contributors-section\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div id=\"contributors-section\" x-data=\"{ collapsed: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><footer><span>Built by <a class=\"bold\" href=\"https://www.haydenheroux.com\">Hayden Heroux</a></span> <span>View on <a class=\"bold\" href=\"https://www.github.com/mergezone/mergezone\">GitHub</a></span> <span>View on <a class=\"bold\" href=\"https://www.merge.zone/mergezone/mergezone\">Merge Zone</a></span></footer></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><footer><span>Built by <a class=\"bold\" href=\"https://www.haydenheroux.com\">Hayden Heroux</a></span> <span>View on <a class=\"bold\" href=\"https://www.github.com/mergezone/mergezone\">GitHub</a></span> <span>View on <a class=\"bold\" href=\"https://www.merge.zone/mergezone/mergezone\">Merge Zone</a></span></footer><div class=\"pane-resize-handle sidebar-resize-handle\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize filters sidebar\" :aria-valuemin=\"$store.app.filterSidebarMinWidth\" :aria-valuemax=\"$store.app.filterSidebarMaxWidth\" :aria-valuenow=\"$store.app.filterSidebarWidth\" tabindex=\"0\" @pointerdown=\"$store.app.startPaneResize('filter', $event)\" @keydown.left.prevent=\"$store.app.adjustPaneWidth('filter', -16)\" @keydown.right.prevent=\"$store.app.adjustPaneWidth('filter', 16)\"></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -6,10 +6,10 @@ templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.
 	<aside class="aside-column">
 		@RepositoryNavigation(filters.Owner, filters.Repository, filters.Scope)
 		<div class="scroll">
-			<div id="scopes-section">
+			<div id="scopes-section" x-data="{ collapsed: false }">
 				@ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
 			</div>
-			<div id="contributors-section">
+			<div id="contributors-section" x-data="{ collapsed: false }">
 				@ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
 			</div>
 		</div>
@@ -18,5 +18,6 @@ templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.
 			<span>View on <a class="bold" href="https://www.github.com/mergezone/mergezone">GitHub</a></span>
 			<span>View on <a class="bold" href="https://www.merge.zone/mergezone/mergezone">Merge Zone</a></span>
 		</footer>
+		<div class="pane-resize-handle sidebar-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize filters sidebar" :aria-valuemin="$store.app.filterSidebarMinWidth" :aria-valuemax="$store.app.filterSidebarMaxWidth" :aria-valuenow="$store.app.filterSidebarWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('filter', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('filter', -16)" @keydown.right.prevent="$store.app.adjustPaneWidth('filter', 16)"></div>
 	</aside>
 }

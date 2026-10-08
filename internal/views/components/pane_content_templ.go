@@ -88,33 +88,33 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<i class=\"fa-solid fa-up-right-from-square\"></i></a> <button class=\"button-toggle\" aria-label=\"Close\" onclick=\"Alpine.store('contextPane').closePane()\"><i class=\"fa-solid fa-xmark\" aria-hidden=\"true\"></i></button></div><div class=\"context-pane-body scroll\"><div class=\"context-pane-meta\"><div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-hashtag\"></i> Number</span> <span class=\"meta-value\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<i class=\"fa-solid fa-up-right-from-square\"></i></a> <button class=\"icon-close-button\" aria-label=\"Close\" onclick=\"Alpine.store('contextPane').closePane()\"><i class=\"fa-solid fa-circle-xmark\" aria-hidden=\"true\"></i></button></div><div class=\"context-pane-body scroll\"><table class=\"table is-fullwidth is-striped context-pane-meta\"><tbody><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-hashtag\" aria-hidden=\"true\"></i> Number</th><td class=\"meta-value\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#%d", pullRequest.Number))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 34, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 32, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-code-pull-request\"></i> Status</span> <span class=\"meta-value\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</td></tr><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-code-pull-request\" aria-hidden=\"true\"></i> Status</th><td class=\"meta-value\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.State)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 41, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 36, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span></div><div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-clock\"></i> Age</span> <span class=\"meta-value\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</td></tr><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i> Age</th><td class=\"meta-value\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,7 +122,7 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></div><div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-user\"></i> Author</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</td></tr><tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-user\" aria-hidden=\"true\"></i> Author</th>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -133,14 +133,14 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 			q = append(q, "status="+currentStatus)
 		}
 		authorURL := authorPath + "?" + strings.Join(q, "&")
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a class=\"meta-value meta-link\" href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<td class=\"meta-value\"><a class=\"meta-link\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(authorURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 65, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 53, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -153,7 +153,7 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(authorURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 66, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 53, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -166,18 +166,18 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.Author.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 68, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 53, Col: 149}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></td></tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(pullRequest.Scopes) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-tag\"></i> Scope</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<tr class=\"meta-row\"><th class=\"meta-label\" scope=\"row\"><i class=\"fa-solid fa-tag\" aria-hidden=\"true\"></i> Scope</th>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -194,14 +194,14 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 			if len(q) > 0 {
 				scopeURL += "?" + strings.Join(q, "&")
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a class=\"meta-value meta-link\" href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<td class=\"meta-value\"><a class=\"meta-link\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 templ.SafeURL
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 92, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 74, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -214,7 +214,7 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 93, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 74, Col: 93}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {
@@ -227,18 +227,18 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.Scopes[0])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 95, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 74, Col: 146}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</a></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</tbody></table><div class=\"content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -246,7 +246,7 @@ func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

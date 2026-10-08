@@ -1,13 +1,7 @@
 @use 'variables' as *;
-@use 'separator';
 
-.age-suffix,
-.sidebar-card .meta .count-label {
-    color: var(--color-text-muted);
-    margin-left: $spacing-1;
-}
-
-section.scopes, section.contributors {
+section.filter-section {
+    padding: 0 $spacing-2;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -15,109 +9,164 @@ section.scopes, section.contributors {
     overflow: hidden;
 }
 
-.scopes-container, .contributors-container {
-    display: grid;
-    grid-template-columns: auto;
-    gap: $spacing-2;
-    border-radius: $card-border-radius;
-    min-height: 0;
-}
-
-.scope-notice {
-    font-size: $text-xs;
-    color: var(--color-text-muted);
-    text-align: center;
+.filter-section-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: $spacing-2;
+    gap: $spacing-1;
+}
 
-    a {
-        color: inherit;
+.sidebar-panel-item {
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-4 $spacing-3 $spacing-8;
+    border-radius: $sidebar-card-radius;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    &:hover,
+    &:focus-visible,
+    &:focus-within {
+        background-color: var(--color-cutout-strong);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+        color: var(--color-text-primary);
+        text-decoration: none;
+    }
+
+    &.is-current,
+    &.is-current:hover,
+    &.is-current:focus-visible,
+    &.is-current:focus-within {
+        background-color: var(--color-cutout-strong);
+        color: var(--color-text-primary);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: -2px;
     }
 }
 
-.sidebar-card {
-    display: flex;
+.panel .panel-block.sidebar-panel-item:hover,
+.panel .panel-block.sidebar-panel-item:focus-visible,
+.panel .panel-block.sidebar-panel-item:focus-within {
+    background-color: var(--color-cutout-strong);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.panel .panel-block.sidebar-panel-item.is-current,
+.panel .panel-block.sidebar-panel-item.is-current:hover,
+.panel .panel-block.sidebar-panel-item.is-current:focus-visible,
+.panel .panel-block.sidebar-panel-item.is-current:focus-within {
+    background-color: var(--color-cutout-strong);
+    border-left-color: transparent;
+}
+
+.sidebar-panel-icon {
+    display: inline-flex;
     align-items: center;
-    gap: $spacing-2;
-    height: min-content;
-    cursor: pointer;
-    padding: $sidebar-card-padding-y $sidebar-card-padding-x;
-    border-radius: $sidebar-card-radius;
-    transition: background-color $transition-fast;
+    justify-content: center;
+    width: $spacing-6;
+    height: $spacing-6;
+    flex: 0 0 $spacing-6;
+    margin: 0 $spacing-1 0 0;
+    color: var(--color-text-muted);
 
-    &:hover {
-        background-color: $color-500;
+    > i {
+        font-size: $text-sm;
     }
 
-    .text {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: row;
-        column-gap: $spacing-1;
-        align-items: baseline;
-    }
-
-    .title {
-        color: $color-950;
-        font-family: $heading-family;
-        font-weight: 500;
-        letter-spacing: -0.01em;
-        font-size: $text-small-class;
-        margin-block: 0;
+    &.avatar-wrapper {
+        position: relative;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        border-radius: 0.5rem;
     }
 
     .avatar {
-        width: $spacing-6;
-        height: $spacing-6;
-        border-radius: $border-radius-circle;
-        flex-shrink: 0;
-    }
-
-    .meta {
-        display: flex;
-        align-items: center;
-        color: $color-900;
-        font-size: $pr-card-desc-font-size;
-        white-space: nowrap;
-
-        @include separator.dot-separator;
-
-        .age, .count {
-            font-size: $pr-card-desc-font-size;
-        }
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 0.5rem;
+        object-fit: cover;
     }
 }
 
-.scope .age {
-    font-size: $text-xxs;
+.sidebar-panel-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: $spacing-2;
+    min-width: 0;
 }
 
-.contributor .title {
+.sidebar-panel-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-text-primary);
+    font-family: $heading-family;
+    font-size: $text-small-class;
+    font-weight: $font-weight-semibold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-panel-trailing {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    min-width: 0;
+}
+
+.sidebar-panel-meta {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    width: 0;
+    gap: $spacing-1;
+    margin-left: 0;
+    overflow: hidden;
+    color: var(--color-text-secondary);
+    font-size: $pr-card-desc-font-size;
+    opacity: 0;
+    transition: width $transition-fast, opacity $transition-fast, margin-left $transition-fast;
+    white-space: nowrap;
+
+    i {
+        color: var(--color-text-muted);
+        font-size: $text-xxs;
+        margin-right: $spacing-1;
+    }
+}
+
+.sidebar-panel-item:hover .sidebar-panel-meta,
+.sidebar-panel-item:focus-visible .sidebar-panel-meta,
+.sidebar-panel-item:focus-within .sidebar-panel-meta {
+    width: min(var(--sidebar-meta-width, 0px), 12rem);
+    margin-left: $spacing-2;
+    opacity: 1;
+}
+
+.sidebar-panel-clear-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    height: 1.5rem;
+    overflow: hidden;
+    color: var(--color-text-muted);
     font-size: $text-sm;
+    opacity: 0;
+    transition: width $transition-fast, opacity $transition-fast, margin-left $transition-fast, color $transition-fast;
 }
 
-.contributor .age {
-    font-size: $text-xxs;
-}
-
-@media (min-width: $breakpoint-mobile) {
-    .scopes-container, .contributors-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: $breakpoint-desktop) {
-    .scopes-container, .contributors-container {
-        grid-template-columns: 1fr;
-    }
-
-    #contributors-section {
-        border-bottom: none;
-    }
+.sidebar-panel-item.is-current:hover .sidebar-panel-clear-icon,
+.sidebar-panel-item.is-current:focus-visible .sidebar-panel-clear-icon,
+.sidebar-panel-item.is-current:focus-within .sidebar-panel-clear-icon {
+    width: 1.5rem;
+    margin-left: $spacing-2;
+    color: var(--color-text-muted);
+    opacity: 1;
 }

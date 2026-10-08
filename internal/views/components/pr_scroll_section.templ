@@ -12,13 +12,13 @@ templ PullRequestScrollItems(pullRequests []model.StampedPullRequest, owner stri
 
 templ PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequestPage int, hasMorePullRequests bool, replaceOutOfBandContent bool) {
 	<div id="load-more-card" if replaceOutOfBandContent { hx-swap-oob="true" }>
-		<div class="item load-more"
+		<div class="item load-more box"
 			hx-get={ filters.PageURL(nextPullRequestPage) }
 			hx-target="#scroll-content"
 			hx-swap="beforeend">
 			<i class="fa-solid fa-plus"></i>
 			<span>Load more</span>
-			<i class="fa-solid fa-spinner fa-spin htmx-indicator"></i>
+			<i class="fa-solid fa-circle-notch fa-spin htmx-indicator"></i>
 		</div>
 	</div>
 }

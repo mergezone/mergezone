@@ -1,6 +1,46 @@
 @use 'variables' as *;
 @use 'base';
 
+.pane-resize-handle {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    width: 0.5rem;
+    cursor: col-resize;
+    touch-action: none;
+    user-select: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        background: transparent;
+        transform: translateX(-50%);
+        transition: background-color $transition-fast, width $transition-fast;
+    }
+
+    &:hover::after,
+    &:focus-visible::after {
+        width: 2px;
+        background: var(--color-primary);
+    }
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+body.pane-resizing,
+body.pane-resizing * {
+    cursor: col-resize !important;
+    user-select: none !important;
+}
+
 main {
     display: flex;
     flex-direction: column;
@@ -73,7 +113,7 @@ footer {
 .avatar-wrapper {
     width: $spacing-6;
     height: $spacing-6;
-    border-radius: $border-radius-circle;
+    border-radius: 0.5rem;
 }
 
 .repository-page main {
@@ -118,15 +158,23 @@ footer {
     .aside-column {
         display: flex;
         flex-direction: column;
-        width: $aside-width;
+        width: var(--filter-sidebar-width, #{$aside-width});
         flex-shrink: 0;
         min-height: 0;
+        position: relative;
         border-right: $border-width-normal solid $color-700;
         background-color: var(--color-cutout);
     }
 
-    #scopes-section {
-        border-bottom: $border-width-normal solid $color-700;
+    .sidebar-resize-handle {
+        display: block;
+        top: 0;
+        right: -0.25rem;
+    }
+
+    .context-pane.open .context-pane-resize-handle {
+        display: block;
+        left: 0;
     }
 
     main {
@@ -135,6 +183,7 @@ footer {
 
     main > .scroll {
         @include base.scrollable-flex-child;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         gap: $spacing-2;

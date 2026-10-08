@@ -1,11 +1,12 @@
 @use 'variables' as *;
 @use 'base';
 
+// `.item` layers Merge Zone's flat bordered treatment onto Bulma's `.box`
+// surface. Bulma owns background, radius and padding; this file only adds the
+// border and interaction states that give the project its look.
 .item {
     box-sizing: border-box;
     border: $border-width-normal solid $color-700;
-    border-radius: $card-border-radius;
-    padding: $spacing-3;
     transition: background-color $transition-fast, border-color $transition-fast;
 }
 
@@ -13,9 +14,16 @@
     background-color: $color-500;
 }
 
-.item.active {
+.item.active,
+.item.selected {
     background-color: $color-600;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
     font-weight: $font-weight-semibold;
+}
+
+.item.active:hover,
+.item.selected:hover {
+    background-color: $color-600;
 }
 
 .icon-card {

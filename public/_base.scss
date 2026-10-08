@@ -45,8 +45,8 @@
     font-family: inherit;
     font-size: $text-xxs;
     color: $color;
-    text-transform: uppercase;
-    letter-spacing: $letter-spacing-label;
+    text-transform: none;
+    letter-spacing: normal;
     font-weight: $font-weight-semibold;
 }
 
@@ -94,16 +94,18 @@
     &.ok, i.ok { color: $color-green-500; }
     &.warn, i.warn { color: $color-amber-500; }
     &.error, i.error { color: $color-red-500; }
-    &.special, i.special { color: $color-purple-500; }
+    &.special, i.special { color: $color-special-500; }
 }
 
+// Page shell. Bulma owns the element resets and base typography; Merge Zone
+// only pins the full-height application layout and theme background.
 html {
     background-color: var(--color-page);
     transition: background-color $transition-normal, color $transition-normal;
     @include custom-scrollbar;
 }
 
-html.purple, html.midnight {
+html.dark {
     color-scheme: dark;
 }
 
@@ -114,17 +116,48 @@ body {
     color: $color-950;
 }
 
-input {
-    outline: none;
-    border: none;
-    color: $color-950;
+input::placeholder {
+    color: var(--color-text-muted);
+}
 
-    &::placeholder {
+// Close controls share one solid, rounded X icon across the context and filter panes.
+.icon-close-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: $inline-border-radius;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    line-height: 1;
+    transition: color $transition-fast, background-color $transition-fast, transform $transition-fast;
+
+    i { font-size: $text-sm; }
+
+    &:hover {
+        background: var(--color-section);
         color: var(--color-text-muted);
+    }
+
+    &:active {
+        background: var(--color-cutout-strong);
+        transform: scale($scale-active);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
     }
 }
 
-button, .link-button {
+// Merge Zone renders some controls as anchors carrying `.link-button`; keep
+// them visually identical to the reset Bulma applies to <button>.
+.link-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -135,7 +168,7 @@ button, .link-button {
     }
 }
 
-button, .link-button, .status-icon {
+.status-icon {
     transition: transform $transition-normal $easing-spring, color $transition-fast;
 }
 
@@ -152,7 +185,7 @@ button, .link-button, .status-icon {
 }
 
 .special {
-    color: $color-purple-500;
+    color: $color-special-500;
 }
 
 .scroll {

@@ -100,6 +100,11 @@ nav > div {
     line-height: 1;
     transition: transform $transition-fast $easing-spring;
     color: $theme-toggle-color;
+    border: none;
+    padding: 0;
+    height: auto;
+    min-height: 0;
+    background: transparent;
 
     &:hover {
         transform: scale($scale-hover-large);
@@ -121,7 +126,7 @@ nav > div {
 .site-brand {
     font-size: $text-lg;
     font-weight: $font-weight-bold;
-    letter-spacing: -0.03em;
+    letter-spacing: normal;
     color: $color-950;
     text-decoration: none;
 

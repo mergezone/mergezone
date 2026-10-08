@@ -39,7 +39,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"contributors\"><div class=\"section-heading\"><span>Contributors</span> <span class=\"buttons\"><i id=\"contributors-sort-indicator\" class=\"fa-solid fa-spinner fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <span class=\"sort-label\">SORT:</span> <button")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel contributors filter-section\"><div class=\"panel-heading section-heading filter-section-heading\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-users section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" :title=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Contributors</span></span> <span class=\"section-actions\"><i id=\"contributors-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by recency\" title=\"Sort by recency\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -56,13 +56,13 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=contributors&sort=recent"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 22, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 35, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#contributors-section\" hx-indicator=\"#contributors-sort-indicator\">Recent</button> <button")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" hx-target=\"#contributors-section\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i></button> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by pull request count\" title=\"Sort by pull request count\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,66 +79,25 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=contributors&sort=top"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 32, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 46, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-target=\"#contributors-section\" hx-indicator=\"#contributors-sort-indicator\">Top</button></span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-target=\"#contributors-section\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-arrow-up\" aria-hidden=\"true\"></i></button></span></div><div class=\"filter-section-content\" x-show=\"!$data.collapsed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(contributorSummaries) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"contributors-container\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			for _, contributor := range contributorSummaries {
 				templ_7745c5c3_Err = ContributorCard(contributor, filters).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		}
-		if filters.Contributor != "" {
-			clearPath := filters.WithContributor("").URL()
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"scope-notice\"><span><a href=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var4 templ.SafeURL
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(clearPath))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 50, Col: 56}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" hx-get=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(clearPath))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 50, Col: 92}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" hx-target=\"main\" hx-push-url=\"true\">Clear filter</a></span></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

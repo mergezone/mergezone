@@ -1,0 +1,14 @@
+{
+  "name": "mergezone",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Pull request analytics for public GitHub repositories.",
+  "scripts": {
+    "build:css": "sass --no-source-map --style=compressed --quiet-deps --load-path=node_modules public/main.scss public/main.css",
+    "watch:css": "sass --watch --no-source-map --style=compressed --quiet-deps --load-path=node_modules public/main.scss public/main.css"
+  },
+  "devDependencies": {
+    "bulma": "1.0.4",
+    "sass": "1.105.1"
+  }
+}

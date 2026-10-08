@@ -34,7 +34,7 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 		}
 		ctx = templ.ClearChildren(ctx)
 		if destinationURL != "" {
-			var templ_7745c5c3_Var2 = []any{"item stat", templ.KV("active", isActive)}
+			var templ_7745c5c3_Var2 = []any{"item stat box", templ.KV("active", isActive)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -118,7 +118,7 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 				return templ_7745c5c3_Err
 			}
 		} else {
-			var templ_7745c5c3_Var9 = []any{"item stat", templ.KV("active", isActive)}
+			var templ_7745c5c3_Var9 = []any{"item stat box", templ.KV("active", isActive)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

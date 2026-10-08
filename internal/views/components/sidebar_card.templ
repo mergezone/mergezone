@@ -4,42 +4,78 @@ import (
 	"fmt"
 
 	"merge/internal/model"
-	"merge/internal/views/helpers"
 )
 
 templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
-    {{ scopeURL := filters.WithScope(scope.Name).URL() }}
-    <div class={ "item scope sidebar-card", templ.KV("active", scope.Name == filters.Scope) } href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="main" hx-push-url="true">
-        <div class="text">
-            <span class="title">{ scope.Name }</span>
-        </div>
-        <div class="meta">
-            <span class="age">
-                @AgeStr(scope.NewestPRAge)
-            </span>
-            <span class="count">
-                { fmt.Sprintf("%d", scope.TotalPullRequests()) }<span class="count-label">{ helpers.PrLabel(scope.TotalPullRequests()) }</span>
-            </span>
-        </div>
-    </div>
+	{{ targetFilters := filters.WithScope(scope.Name)
+	if scope.Name == filters.Scope {
+		targetFilters = filters.WithScope("")
+	}
+	scopeURL := targetFilters.URL()
+	ariaLabel := fmt.Sprintf("Filter pull requests by scope %s", scope.Name)
+	if scope.Name == filters.Scope {
+		ariaLabel = fmt.Sprintf("Clear scope filter %s", scope.Name)
+	}
+	}}
+	<a class={ "panel-block sidebar-panel-item scope", templ.KV("is-current", scope.Name == filters.Scope) }
+		aria-label={ ariaLabel }
+		@mouseenter="$store.app.measureSidebarMeta($el)"
+		@focusin="$store.app.measureSidebarMeta($el)"
+		href={ templ.SafeURL(scopeURL) }
+		hx-get={ templ.SafeURL(scopeURL) }
+		hx-target="main"
+		hx-push-url="true">
+		<span class="panel-icon sidebar-panel-icon" aria-hidden="true"><i class="fa-solid fa-diagram-project"></i></span>
+		<span class="sidebar-panel-content">
+			<span class="sidebar-panel-title">{ scope.Name }</span>
+		</span>
+		<span class="sidebar-panel-trailing">
+			if scope.Name == filters.Scope {
+				<span class="sidebar-panel-clear-icon" title="Clear scope filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
+			} else {
+				<span class="sidebar-panel-meta">
+					<span class="age"><i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)</span>
+					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", scope.TotalPullRequests()) }</span>
+				</span>
+			}
+		</span>
+	</a>
 }
 
 templ ContributorCard(contributor model.ContributorInfo, filters model.RepositoryFilters) {
-    {{ contributorURL := filters.WithContributor(contributor.Name).URL() }}
-    <div class={ "item contributor sidebar-card", templ.KV("active", contributor.Name == filters.Contributor) } hx-get={ templ.SafeURL(contributorURL) } hx-target="main" hx-push-url="true">
-        <div class="img-skeleton-wrapper avatar-wrapper">
-            <img class="avatar" data-src={ contributor.AvatarURL } alt={ contributor.Name + "'s avatar" } loading="lazy"/>
-        </div>
-        <div class="text">
-            <span class="title">{ contributor.Name }</span>
-        </div>
-        <div class="meta">
-            <span class="age">
-                @AgeStr(contributor.NewestPRAge)
-            </span>
-            <span class="count">
-                { fmt.Sprintf("%d", contributor.TotalPullRequests()) }<span class="count-label">{ helpers.PrLabel(contributor.TotalPullRequests()) }</span>
-            </span>
-        </div>
-    </div>
+	{{ targetFilters := filters.WithContributor(contributor.Name)
+	if contributor.Name == filters.Contributor {
+		targetFilters = filters.WithContributor("")
+	}
+	contributorURL := targetFilters.URL()
+	ariaLabel := fmt.Sprintf("Filter pull requests by contributor %s", contributor.Name)
+	if contributor.Name == filters.Contributor {
+		ariaLabel = fmt.Sprintf("Clear contributor filter %s", contributor.Name)
+	}
+	}}
+	<a class={ "panel-block sidebar-panel-item contributor", templ.KV("is-current", contributor.Name == filters.Contributor) }
+		aria-label={ ariaLabel }
+		@mouseenter="$store.app.measureSidebarMeta($el)"
+		@focusin="$store.app.measureSidebarMeta($el)"
+		href={ templ.SafeURL(contributorURL) }
+		hx-get={ templ.SafeURL(contributorURL) }
+		hx-target="main"
+		hx-push-url="true">
+		<span class="panel-icon sidebar-panel-icon img-skeleton-wrapper avatar-wrapper">
+			<img class="avatar" data-src={ contributor.AvatarURL } alt={ contributor.Name + "'s avatar" } loading="lazy"/>
+		</span>
+		<span class="sidebar-panel-content">
+			<span class="sidebar-panel-title">{ contributor.Name }</span>
+		</span>
+		<span class="sidebar-panel-trailing">
+			if contributor.Name == filters.Contributor {
+				<span class="sidebar-panel-clear-icon" title="Clear contributor filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
+			} else {
+				<span class="sidebar-panel-meta">
+					<span class="age"><i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)</span>
+					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", contributor.TotalPullRequests()) }</span>
+				</span>
+			}
+		</span>
+	</a>
 }

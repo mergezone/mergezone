@@ -12,34 +12,65 @@ async function ensureDiffsLib() {
 }
 
 let zoomInstance = null;
+let zoomFactory = null;
 let zoomLibPromise = null;
 
 async function ensureZoom() {
-  if (zoomInstance) return zoomInstance;
-  if (zoomLibPromise) return zoomLibPromise;
-  zoomLibPromise = import('https://esm.sh/medium-zoom@1.1.0').then(lib => {
-    return lib.default;
-  });
+  if (zoomFactory) return zoomFactory;
+  if (!zoomLibPromise) {
+    zoomLibPromise = import('https://esm.sh/medium-zoom@1.1.0').then(lib => {
+      const factory = lib.default ?? lib.mediumZoom;
+      if (typeof factory !== 'function') {
+        throw new TypeError('medium-zoom did not export a factory function');
+      }
+      zoomFactory = factory;
+      return zoomFactory;
+    }).catch(error => {
+      zoomLibPromise = null;
+      throw error;
+    });
+  }
   return zoomLibPromise;
 }
 
 async function attachZoom(selector) {
-  const mediumZoom = await ensureZoom();
-  if (zoomInstance) zoomInstance.detach();
-  zoomInstance = mediumZoom(selector, {
-    background: 'rgba(0,0,0,0.8)',
-    margin: 48,
-    zIndex: 99999,
-  });
-  return zoomInstance;
+  try {
+    const mediumZoom = await ensureZoom();
+    if (zoomInstance) {
+      try { zoomInstance.detach(); } catch (e) {}
+      zoomInstance = null;
+    }
+    zoomInstance = mediumZoom(selector, {
+      background: 'rgba(0,0,0,0.8)',
+      margin: 48,
+      zIndex: 99999,
+    });
+    return zoomInstance;
+  } catch (error) {
+    zoomInstance = null;
+    console.warn('[context-pane] image zoom unavailable', error);
+    return null;
+  }
+}
+
+function contextPaneErrorHtml() {
+  return '<p class="context-pane-error">Pull request details could not be loaded. Please try again.</p>';
+}
+
+function enhanceContextPaneImages() {
+  try {
+    Alpine.store('app')._loadContextPaneImages();
+  } catch (error) {
+    console.warn('[context-pane] image loading unavailable', error);
+  }
+  const body = document.querySelector('.context-pane-body');
+  if (body) attachZoom(body.querySelectorAll('img'));
 }
 
 function getDiffTheme() {
-  const cls = document.documentElement.classList;
-  if (cls.contains('midnight')) return 'pierre-dark';
-  if (cls.contains('purple')) return 'pierre-dark';
-  if (cls.contains('parchment')) return 'pierre-light';
-  return 'pierre-light';
+  return document.documentElement.classList.contains('dark')
+    ? 'pierre-dark'
+    : 'pierre-light';
 }
 
 async function loadPullRequestDiffs(container, owner, repository, pullRequestNumber, signal) {
@@ -79,31 +110,138 @@ function cleanupDiffs(instances) {
 
 document.addEventListener('alpine:init', () => {
   Alpine.store('app', {
-    themes: ['white', 'parchment', 'purple', 'midnight'],
-    theme: 'midnight',
+    themes: ['light', 'dark'],
+    theme: 'dark',
+    filterSidebarWidth: 384,
+    contextPaneWidth: 384,
+    filterSidebarMinWidth: 256,
+    filterSidebarMaxWidth: 640,
+    contextPaneMinWidth: 320,
+    contextPaneMaxWidth: 640,
+    _paneResize: null,
 
     init() {
       const saved = localStorage.getItem('theme');
-      if (saved && this.themes.includes(saved)) {
-        this.theme = saved;
+      if (saved === 'light' || saved === 'white' || saved === 'parchment') {
+        this.theme = 'light';
+      } else if (saved === 'dark' || saved === 'purple' || saved === 'midnight') {
+        this.theme = 'dark';
       } else {
         this.theme = window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'midnight' : 'parchment';
+          ? 'dark' : 'light';
       }
       document.documentElement.className = this.theme;
+      localStorage.setItem('theme', this.theme);
+
+      const rootStyle = getComputedStyle(document.documentElement);
+      const remSize = parseFloat(rootStyle.fontSize) || 16;
+      const cssLength = (name, fallback) => {
+        const value = rootStyle.getPropertyValue(name).trim();
+        const amount = parseFloat(value);
+        if (!Number.isFinite(amount)) return fallback;
+        return value.endsWith('rem') ? amount * remSize : amount;
+      };
+      this.filterSidebarMinWidth = cssLength('--filter-sidebar-min-width', 256);
+      this.filterSidebarMaxWidth = cssLength('--filter-sidebar-max-width', 640);
+      this.contextPaneMinWidth = cssLength('--context-pane-min-width', 320);
+      this.contextPaneMaxWidth = cssLength('--context-pane-max-width', 640);
+      const savedFilterWidth = parseFloat(localStorage.getItem('filter-sidebar-width'));
+      const savedContextWidth = parseFloat(localStorage.getItem('context-pane-width'));
+      this.setPaneWidth('filter', Number.isFinite(savedFilterWidth)
+        ? savedFilterWidth : cssLength('--filter-sidebar-width', 384));
+      this.setPaneWidth('context', Number.isFinite(savedContextWidth)
+        ? savedContextWidth : cssLength('--context-pane-width', 384));
     },
 
     cycleTheme() {
-      const wasDark = ['purple', 'midnight'].includes(this.theme);
-      const idx = this.themes.indexOf(this.theme);
-      this.theme = this.themes[(idx + 1) % this.themes.length];
-      const isDark = ['purple', 'midnight'].includes(this.theme);
+      const wasDark = this.theme === 'dark';
+      this.theme = wasDark ? 'light' : 'dark';
+      const isDark = this.theme === 'dark';
       document.documentElement.className = this.theme;
       localStorage.setItem('theme', this.theme);
 
       if (wasDark !== isDark) {
         Alpine.store('contextPane').rerenderDiffs();
       }
+    },
+
+    setPaneWidth(kind, requestedWidth, persist = false) {
+      const minimum = kind === 'filter' ? this.filterSidebarMinWidth : this.contextPaneMinWidth;
+      const maximum = Math.max(minimum, kind === 'filter' ? this.filterSidebarMaxWidth : this.contextPaneMaxWidth);
+      const width = Math.round(Math.min(maximum, Math.max(minimum, requestedWidth)));
+      const property = kind === 'filter' ? '--filter-sidebar-width' : '--context-pane-width';
+      const storageKey = kind === 'filter' ? 'filter-sidebar-width' : 'context-pane-width';
+
+      if (kind === 'filter') this.filterSidebarWidth = width;
+      else this.contextPaneWidth = width;
+
+      document.documentElement.style.setProperty(property, `${width}px`);
+      if (persist) localStorage.setItem(storageKey, String(width));
+      return width;
+    },
+
+    startPaneResize(kind, event) {
+      if (event.button !== 0 || window.innerWidth < 1024) return;
+      event.preventDefault();
+      this.endPaneResize();
+
+      const selector = kind === 'filter' ? '.aside-column' : '#context-pane';
+      const element = document.querySelector(selector);
+      if (!element || (kind === 'context' && !Alpine.store('contextPane').open)) return;
+
+      const state = {
+        kind,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startWidth: element.getBoundingClientRect().width,
+      };
+      this._paneResize = state;
+      document.body.classList.add('pane-resizing');
+
+      try { event.currentTarget.setPointerCapture(event.pointerId); } catch (e) {}
+
+      state.move = (moveEvent) => {
+        if (moveEvent.pointerId !== state.pointerId) return;
+        const delta = moveEvent.clientX - state.startX;
+        const width = kind === 'filter'
+          ? state.startWidth + delta
+          : state.startWidth - delta;
+        this.setPaneWidth(kind, width);
+      };
+      state.end = (endEvent) => {
+        if (endEvent.pointerId !== state.pointerId) return;
+        this.endPaneResize(true);
+      };
+
+      window.addEventListener('pointermove', state.move);
+      window.addEventListener('pointerup', state.end);
+      window.addEventListener('pointercancel', state.end);
+    },
+
+    adjustPaneWidth(kind, delta) {
+      const current = kind === 'filter' ? this.filterSidebarWidth : this.contextPaneWidth;
+      this.setPaneWidth(kind, current + delta, true);
+    },
+
+    endPaneResize(persist = false) {
+      const state = this._paneResize;
+      if (!state) return;
+      window.removeEventListener('pointermove', state.move);
+      window.removeEventListener('pointerup', state.end);
+      window.removeEventListener('pointercancel', state.end);
+      document.body.classList.remove('pane-resizing');
+      if (persist) {
+        const width = state.kind === 'filter' ? this.filterSidebarWidth : this.contextPaneWidth;
+        const key = state.kind === 'filter' ? 'filter-sidebar-width' : 'context-pane-width';
+        localStorage.setItem(key, String(width));
+      }
+      this._paneResize = null;
+    },
+
+    measureSidebarMeta(row) {
+      const meta = row?.querySelector('.sidebar-panel-meta');
+      if (!meta) return;
+      row.style.setProperty('--sidebar-meta-width', `${meta.scrollWidth}px`);
     },
 
     _loadAvatars() {
@@ -183,6 +321,8 @@ document.addEventListener('alpine:init', () => {
       this.pullRequestScope = dataset.pullRequestScope || '';
       this.pullRequestScopeURL = dataset.pullRequestScopeURL || '#';
 
+      this._owner = '';
+      this._repository = '';
       const card = document.querySelector(`.pull-request[data-pull-request-number="${pullRequestNumber}"]`);
       const owner = card?.closest('[data-owner]')?.dataset.owner;
       const repository = card?.closest('[data-repository]')?.dataset.repository;
@@ -214,11 +354,6 @@ document.addEventListener('alpine:init', () => {
     closePane() {
       this._stashDiffs();
       this._cleanup();
-      if (zoomInstance) {
-        zoomInstance.detach();
-        zoomInstance = null;
-      }
-
       this.open = false;
     },
 
@@ -241,29 +376,43 @@ document.addEventListener('alpine:init', () => {
       const repository = pathParts[1] || this._repository;
       if (!owner || !repository) return;
 
+      this._cleanup();
+      this.pullRequestNumber = pullRequestNumber;
+      this.pullRequestTitle = 'Pull Request #' + pullRequestNumber;
+      this.pullRequestStatusClass = '';
+      this.pullRequestURL = `https://github.com/${owner}/${repository}/pull/${pullRequestNumber}`;
+      this.pullRequestState = '';
+      this.pullRequestAge = '';
+      this.pullRequestAuthorName = '';
+      this.pullRequestAuthorURL = '#';
+      this.pullRequestScope = '';
+      this.pullRequestScopeURL = '#';
+      this._owner = owner;
+      this._repository = repository;
+      this.bodyHtml = this._bodySkeletonHtml();
+      this.loadingBody = true;
+      this.loadingDiffs = false;
+      this.open = true;
+
+      const controller = new AbortController();
+      this._abortController = controller;
       link.classList.add('loading');
 
-      this._fetchBodyRaw(pullRequestNumber).then(html => {
-        link.classList.remove('loading');
-
-        this._cleanup();
-        this.pullRequestNumber = pullRequestNumber;
-        this.pullRequestTitle = 'Pull Request #' + pullRequestNumber;
-        this.pullRequestStatusClass = '';
-        this.pullRequestURL = `https://github.com/${owner}/${repository}/pull/${pullRequestNumber}`;
-        this.pullRequestState = '';
-        this.pullRequestAge = '';
-        this.pullRequestAuthorName = '';
-        this.pullRequestAuthorURL = '#';
-        this.pullRequestScope = '';
-        this.pullRequestScopeURL = '#';
-        this._owner = owner;
-        this._repository = repository;
-
+      this._fetchBodyRaw(pullRequestNumber, controller.signal).then(html => {
+        if (controller.signal.aborted || this.pullRequestNumber !== pullRequestNumber) return;
         this.bodyHtml = html;
-        this.open = true;
-      }).catch(() => {
+        this.loadingBody = false;
+        setTimeout(enhanceContextPaneImages, 0);
+      }).catch(error => {
+        if (controller.signal.aborted || error.name === 'AbortError') return;
+        console.warn('[context-pane] could not load referenced pull request', error);
+        if (this.pullRequestNumber === pullRequestNumber) {
+          this.bodyHtml = contextPaneErrorHtml();
+          this.loadingBody = false;
+        }
+      }).finally(() => {
         link.classList.remove('loading');
+        if (this._abortController === controller) this._abortController = null;
       });
     },
 
@@ -301,6 +450,13 @@ document.addEventListener('alpine:init', () => {
         this.diffInstances = [];
       }
 
+      if (zoomInstance) {
+        try { zoomInstance.detach(); } catch (error) {
+          console.warn('[context-pane] image zoom cleanup failed', error);
+        }
+        zoomInstance = null;
+      }
+
       this._stashedDiffs = [];
 
       const container = document.getElementById('context-pane-content');
@@ -333,58 +489,72 @@ document.addEventListener('alpine:init', () => {
         body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         Array.from(tempDiffContainer.children).forEach(el => body.appendChild(el));
         this.diffInstances = instances;
-      } catch (e) {
+        this.loadingDiffs = false;
+      } catch (error) {
+        console.warn('[context-pane] could not refresh diff', error);
         body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+        this.loadingDiffs = false;
       }
     },
 
     async _fetchBodyAndDiffs(pullRequestNumber) {
-      this._abortController = new AbortController();
-      const signal = this._abortController.signal;
+      const controller = new AbortController();
+      const signal = controller.signal;
+      this._abortController = controller;
 
       const container = document.getElementById('context-pane-content');
       const target = container?.querySelector('.context-pane-body') || container;
+      const tempDiffContainer = document.createElement('div');
 
       if (target) {
         target.querySelectorAll('diffs-container').forEach(el => el.remove());
         this._showDiffSkeleton(target);
       }
 
-      const tempDiffContainer = document.createElement('div');
-
-      const bodyPromise = this._fetchBodyRaw(pullRequestNumber, signal);
-      const diffsPromise = this._fetchDiffsRaw(pullRequestNumber, signal, tempDiffContainer);
+      // Diff rendering is optional: let the description appear as soon as its
+      // request completes, and treat any diff failure as an empty diff result.
+      const diffsPromise = this._fetchDiffsRaw(pullRequestNumber, signal, tempDiffContainer)
+        .catch(error => {
+          if (!signal.aborted) console.warn('[context-pane] diff unavailable', error);
+          return [];
+        });
 
       try {
-        const [bodyHtml, diffInstances] = await Promise.all([bodyPromise, diffsPromise]);
+        const bodyHtml = await this._fetchBodyRaw(pullRequestNumber, signal);
+        if (signal.aborted || this.pullRequestNumber !== pullRequestNumber) return;
 
-        if (signal.aborted) return;
+        this.bodyHtml = bodyHtml;
+        this.loadingBody = false;
+        setTimeout(enhanceContextPaneImages, 0);
+
+        const diffInstances = await diffsPromise;
+        if (signal.aborted || this.pullRequestNumber !== pullRequestNumber || !this.open) {
+          cleanupDiffs(diffInstances);
+          return;
+        }
 
         if (target) {
           target.querySelectorAll('.diff-skeleton, diffs-container').forEach(el => el.remove());
-          Array.from(tempDiffContainer.children).forEach(el => target.appendChild(el));
+          if (diffInstances.length) {
+            Array.from(tempDiffContainer.children).forEach(el => target.appendChild(el));
+          }
         }
 
-        // Swap in body at the same time
-        this.bodyHtml = bodyHtml;
         this.diffInstances = diffInstances;
-        this.loadingBody = false;
         this.loadingDiffs = false;
-
-        setTimeout(() => {
-          Alpine.store('app')._loadContextPaneImages();
-          const body = document.querySelector('.context-pane-body');
-          if (body) attachZoom(body.querySelectorAll('img'));
-        }, 0);
-      } catch (err) {
-        if (err.name === 'AbortError') return;
-        console.error('[fetch]', err);
-        this.bodyHtml = '<div style="color: var(--color-text-muted); font-size: 0.875rem; text-align: center;">Failed to load content</div>';
-        this.loadingBody = false;
-        this.loadingDiffs = false;
-        if (target) {
-          target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+      } catch (error) {
+        if (signal.aborted || error.name === 'AbortError') return;
+        console.warn('[context-pane] could not load pull request details', error);
+        controller.abort();
+        if (this.pullRequestNumber === pullRequestNumber) {
+          this.bodyHtml = contextPaneErrorHtml();
+          this.loadingBody = false;
+          this.loadingDiffs = false;
+          if (target) target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         }
+        diffsPromise.then(cleanupDiffs);
+      } finally {
+        if (this._abortController === controller) this._abortController = null;
       }
     },
 
@@ -438,11 +608,7 @@ document.addEventListener('alpine:init', () => {
             this._unstashDiffs();
           }
         }
-        setTimeout(() => {
-          Alpine.store('app')._loadContextPaneImages();
-          const body = document.querySelector('.context-pane-body');
-          if (body) attachZoom(body.querySelectorAll('img'));
-        }, 0);
+        setTimeout(enhanceContextPaneImages, 0);
       };
 
       this._onTransitionComplete(pane, replaceSkeleton);
@@ -480,12 +646,10 @@ document.addEventListener('alpine:init', () => {
       const heights = [100, 140, 80, 120, 160];
       for (const h of heights) {
         const block = document.createElement('div');
-        block.className = 'skeleton-line';
+        block.className = 'skeleton-line is-skeleton';
         block.style.cssText = `
           width: 100%;
           height: ${h}px;
-          background-color: var(--color-decorative);
-          border-radius: 4px;
         `;
         skeleton.appendChild(block);
       }
@@ -496,22 +660,22 @@ document.addEventListener('alpine:init', () => {
       return `
         <div class="body-skeleton skeleton">
           <div class="skeleton-paragraph">
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line short"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line short is-skeleton"></div>
           </div>
           <div class="skeleton-paragraph">
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line medium is-skeleton"></div>
           </div>
           <div class="skeleton-paragraph">
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line short"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line is-skeleton"></div>
+            <div class="skeleton-line short is-skeleton"></div>
           </div>
         </div>
       `;

@@ -20,82 +20,65 @@ templ PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository,
 			}
 			<i class="fa-solid fa-up-right-from-square"></i>
 		</a>
-		<button class="button-toggle" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
-			<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+		<button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
+			<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
 		</button>
 	</div>
 	<div class="context-pane-body scroll">
-		<div class="context-pane-meta">
-			<div class="meta-row">
-				<span class="meta-label">
-					<i class="fa-solid fa-hashtag"></i>
-					Number
-				</span>
-				<span class="meta-value">{ fmt.Sprintf("#%d", pullRequest.Number) }</span>
-			</div>
-			<div class="meta-row">
-				<span class="meta-label">
-					<i class="fa-solid fa-code-pull-request"></i>
-					Status
-				</span>
-				<span class="meta-value">{ pullRequest.State }</span>
-			</div>
-			<div class="meta-row">
-				<span class="meta-label">
-					<i class="fa-solid fa-clock"></i>
-					Age
-				</span>
-				<span class="meta-value">@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)</span>
-			</div>
-			<div class="meta-row">
-				<span class="meta-label">
-					<i class="fa-solid fa-user"></i>
-					Author
-				</span>
-				{{ authorPath := helpers.StripQueryParam(currentPath, "contributor")
-				currentStatus := helpers.GetQueryParam(currentPath, "status")
-				q := []string{"contributor=" + pullRequest.Author.Name}
-				if currentStatus != "" {
-					q = append(q, "status="+currentStatus)
-				}
-				authorURL := authorPath + "?" + strings.Join(q, "&")
-				}}
-				<a
-					class="meta-value meta-link"
-					href={ templ.SafeURL(authorURL) }
-					hx-get={ templ.SafeURL(authorURL) }
-					hx-target="section.scroll"
-				>{ pullRequest.Author.Name }</a>
-			</div>
-			if len(pullRequest.Scopes) > 0 {
-				<div class="meta-row">
-					<span class="meta-label">
-						<i class="fa-solid fa-tag"></i>
-						Scope
-					</span>
-					{{ scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
+		<table class="table is-fullwidth is-striped context-pane-meta">
+			<tbody>
+				<tr class="meta-row">
+					<th class="meta-label" scope="row"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Number</th>
+					<td class="meta-value">{ fmt.Sprintf("#%d", pullRequest.Number) }</td>
+				</tr>
+				<tr class="meta-row">
+					<th class="meta-label" scope="row"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> Status</th>
+					<td class="meta-value">{ pullRequest.State }</td>
+				</tr>
+				<tr class="meta-row">
+					<th class="meta-label" scope="row"><i class="fa-solid fa-clock" aria-hidden="true"></i> Age</th>
+					<td class="meta-value">@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)</td>
+				</tr>
+				<tr class="meta-row">
+					<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
+					{{ authorPath := helpers.StripQueryParam(currentPath, "contributor")
 					currentStatus := helpers.GetQueryParam(currentPath, "status")
-					currentContributor := helpers.GetQueryParam(currentPath, "contributor")
-					q := []string{}
-					if currentContributor != "" {
-						q = append(q, "contributor="+currentContributor)
-					}
+					q := []string{"contributor=" + pullRequest.Author.Name}
 					if currentStatus != "" {
 						q = append(q, "status="+currentStatus)
 					}
-					if len(q) > 0 {
-						scopeURL += "?" + strings.Join(q, "&")
-					}
+					authorURL := authorPath + "?" + strings.Join(q, "&")
 					}}
-					<a
-						class="meta-value meta-link"
-						href={ templ.SafeURL(scopeURL) }
-						hx-get={ templ.SafeURL(scopeURL) }
-						hx-target="section.scroll"
-					>{ pullRequest.Scopes[0] }</a>
-				</div>
-			}
+					<td class="meta-value">
+						<a class="meta-link" href={ templ.SafeURL(authorURL) } hx-get={ templ.SafeURL(authorURL) } hx-target="section.scroll">{ pullRequest.Author.Name }</a>
+					</td>
+				</tr>
+				if len(pullRequest.Scopes) > 0 {
+					<tr class="meta-row">
+						<th class="meta-label" scope="row"><i class="fa-solid fa-tag" aria-hidden="true"></i> Scope</th>
+						{{ scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
+						currentStatus := helpers.GetQueryParam(currentPath, "status")
+						currentContributor := helpers.GetQueryParam(currentPath, "contributor")
+						q := []string{}
+						if currentContributor != "" {
+							q = append(q, "contributor="+currentContributor)
+						}
+						if currentStatus != "" {
+							q = append(q, "status="+currentStatus)
+						}
+						if len(q) > 0 {
+							scopeURL += "?" + strings.Join(q, "&")
+						}
+						}}
+						<td class="meta-value">
+							<a class="meta-link" href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="section.scroll">{ pullRequest.Scopes[0] }</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<div class="content">
+			@Markdown(pullRequest.Body)
 		</div>
-		@Markdown(pullRequest.Body)
 	</div>
 }

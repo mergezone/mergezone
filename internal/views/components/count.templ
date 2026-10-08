@@ -6,7 +6,7 @@ import (
 
 templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel string, destinationURL string, isActive bool) {
 	if destinationURL != "" {
-		<div class={ "item stat", templ.KV("active", isActive) }
+		<div class={ "item stat box", templ.KV("active", isActive) }
 			hx-get={ templ.SafeURL(destinationURL) }
 			hx-target="main"
 			hx-push-destinationURL="true">
@@ -15,7 +15,7 @@ templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel
 			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	} else {
-		<div class={ "item stat", templ.KV("active", isActive) }>
+		<div class={ "item stat box", templ.KV("active", isActive) }>
 			<p class="bold">{ statusLabel }</p>
 			<i class={ "status-icon fa-solid " + iconClass }></i>
 			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>

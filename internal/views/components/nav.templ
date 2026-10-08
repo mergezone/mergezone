@@ -6,12 +6,10 @@ templ RepositoryNavigation(owner, repository, scope string) {
             <h4 class="bold site-brand">
                 <a href="/">Merge Zone</a>
             </h4>
-            <button id="theme-toggle" class="link-button" @click="$store.app.cycleTheme()" aria-label="Cycle theme">
+            <button id="theme-toggle" class="button is-ghost link-button" @click="$store.app.cycleTheme()" aria-label="Toggle light and dark theme">
                 <i class="fa-solid" :class="{
-                    'fa-sun': $store.app.theme === 'white',
-                    'fa-feather-pointed': $store.app.theme === 'parchment',
-                    'fa-cloud-moon': $store.app.theme === 'purple',
-                    'fa-moon': $store.app.theme === 'midnight'
+                    'fa-sun': $store.app.theme === 'light',
+                    'fa-moon': $store.app.theme === 'dark'
                 }" aria-hidden="true"></i>
             </button>
         </div>

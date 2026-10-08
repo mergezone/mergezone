@@ -9,48 +9,55 @@ import (
 )
 
 templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters) {
-	<section class="scopes">
-		<div class="section-heading">
-			<span>Scopes</span>
+	<section class="panel scopes filter-section">
+		<div class="panel-heading section-heading filter-section-heading">
+			<span class="section-heading-label">
+				<span class="section-heading-control">
+					<i class="fa-solid fa-diagram-project section-heading-icon" aria-hidden="true"></i>
+					<button class="link-button collapse-section-button" type="button"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand scopes' : 'Collapse scopes'"
+						:title="$data.collapsed ? 'Expand scopes' : 'Collapse scopes'"
+						@click.stop="$data.collapsed = !$data.collapsed">
+						<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+					</button>
+				</span>
+				<span>Scopes</span>
+			</span>
 			if len(scopeSummaries) > 0 || filters.Scope != "" {
-				<span class="buttons">
-					<i id="scopes-sort-indicator" class="fa-solid fa-spinner fa-spin htmx-indicator" aria-hidden="true"></i>
-					<span class="sort-label">SORT:</span>
-				<button
-					if activeSortOrder == "recent" {
+				<span class="section-actions">
+					<i id="scopes-sort-indicator" class="fa-solid fa-circle-notch fa-spin htmx-indicator" aria-hidden="true"></i>
+					<button class="link-button sort-control"
+						aria-label="Sort scopes by recency"
+						title="Sort by recency"
+						if activeSortOrder == "recent" {
 						data-active-sort="true"
 					}
-					hx-get={ fmt.Sprintf("?fragment=scopes&sort=recent") }
-					hx-target="#scopes-section"
-					hx-indicator="#scopes-sort-indicator"
-				>
-					Recent
-				</button>
-				<button
-					if activeSortOrder == "top" {
+						hx-get={ fmt.Sprintf("?fragment=scopes&sort=recent") }
+						hx-target="#scopes-section"
+						hx-indicator="#scopes-sort-indicator">
+						<i class="fa-solid fa-clock" aria-hidden="true"></i>
+					</button>
+					<button class="link-button sort-control"
+						aria-label="Sort scopes by pull request count"
+						title="Sort by pull request count"
+						if activeSortOrder == "top" {
 						data-active-sort="true"
 					}
-					hx-get={ fmt.Sprintf("?fragment=scopes&sort=top") }
-					hx-target="#scopes-section"
-					hx-indicator="#scopes-sort-indicator"
-				>
-					Top
-				</button>
+						hx-get={ fmt.Sprintf("?fragment=scopes&sort=top") }
+						hx-target="#scopes-section"
+						hx-indicator="#scopes-sort-indicator">
+						<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+					</button>
 				</span>
 			}
 		</div>
-		if len(scopeSummaries) > 0 {
-			<div class="scopes-container">
-			for _, scope := range scopeSummaries {
-				@ScopeCard(scope, filters)
+		<div class="filter-section-content" x-show="!$data.collapsed">
+			if len(scopeSummaries) > 0 {
+				for _, scope := range scopeSummaries {
+					@ScopeCard(scope, filters)
+				}
 			}
-			</div>
-		}
-		if filters.Scope != "" {
-			{{ clearPath := filters.WithScope("").URL() }}
-			<div class="scope-notice">
-				<span><a href={ templ.SafeURL(clearPath) } hx-get={ templ.SafeURL(clearPath) } hx-target="main" hx-push-url="true">Clear filter</a></span>
-			</div>
-		}
+		</div>
 	</section>
 }

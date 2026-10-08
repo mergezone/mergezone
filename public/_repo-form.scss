@@ -21,6 +21,11 @@
         font-size: $text-lg;
         margin-left: $spacing-1;
         line-height: 1;
+        height: auto;
+        min-height: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
 
         i {
             display: inline-block;
