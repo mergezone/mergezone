@@ -13,16 +13,18 @@ import (
 	"merge/internal/views/components"
 )
 
-func LoadMorePRs(
-	prs []model.StampedPullRequest,
-	filters model.FilterSet,
-	nextPage int,
-	hasMore bool,
+// AppendPullRequestsResponse returns new pull request cards plus out-of-band
+// updates for the repository summary regions.
+func AppendPullRequestsResponse(
+	pullRequests []model.StampedPullRequest,
+	filters model.RepositoryFilters,
+	nextPullRequestPage int,
+	hasMorePullRequests bool,
 	overallCounts model.ExpiryCounts,
-	scopeCounts []model.ScopeInfo,
-	scopeSort string,
-	contributorCounts []model.ContributorInfo,
-	contributorSort string,
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -44,11 +46,11 @@ func LoadMorePRs(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = components.PRScrollItems(prs, filters.Owner, filters.Repo).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.PullRequestScrollItems(pullRequests, filters.Owner, filters.Repository).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.LoadMoreCard(prs, filters, nextPage, hasMore, true).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.PullRequestLoadMoreControl(filters, nextPullRequestPage, hasMorePullRequests, true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -56,7 +58,7 @@ func LoadMorePRs(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Counts(overallCounts, hasMore, filters, nextPage).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +66,7 @@ func LoadMorePRs(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Scopes(scopeCounts, scopeSort, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.ScopeSummaries(scopeSummaries, scopeSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -72,7 +74,7 @@ func LoadMorePRs(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Contributors(contributorCounts, contributorSort, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.ContributorSummaries(contributorSummaries, contributorSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -6,27 +6,18 @@ import (
 
 	"merge/internal/model"
 	"merge/internal/views/layout"
-	"merge/internal/views/components"
 )
 
-templ RepoPage(props model.RepoPageProps, currentPath string) {
-	{{ filters := model.FilterSet{Owner: props.Owner, Repo: props.Repo, Scope: props.Scope, Contributor: props.Contributor, Status: props.Status} }}
-	@layout.Base(
-		fmt.Sprintf("%s/%s", props.Owner, props.Repo),
-		fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", props.OverallCounts.Count(), props.OverallCounts.FreshCount, props.OverallCounts.StaleCount, props.OverallCounts.ExpiredCount),
-		props.BaseURL,
-		props.Owner,
-		props.Repo,
-		strings.Trim(strings.TrimPrefix(currentPath, fmt.Sprintf("/%s/%s", props.Owner, props.Repo)), "/"),
+// RepositoryDocument renders the complete repository HTML document, including its layout.
+templ RepositoryDocument(viewData model.RepositoryViewData, currentPath string) {
+	@layout.BaseDocument(
+		fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository),
+		fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", viewData.OverallCounts.TotalPullRequests(), viewData.OverallCounts.FreshCount, viewData.OverallCounts.StaleCount, viewData.OverallCounts.ExpiredCount),
+		viewData.BaseURL,
+		viewData.Owner,
+		viewData.Repository,
+		strings.Trim(strings.TrimPrefix(currentPath, fmt.Sprintf("/%s/%s", viewData.Owner, viewData.Repository)), "/"),
 	) {
-		@components.Sidebar(filters, props.ScopeCounts, props.ScopeSort, props.ContributorCounts, props.ContributorSort)
-		<section class="scroll">
-			<div class="overview" id="overview-stats">
-				@components.Counts(props.OverallCounts, props.HasMore, filters, props.CurrentPage + 1)
-			</div>
-			@components.PRScrollSection(props.PRs, filters, props.CurrentPage, props.HasMore)
-		</section>
-		@components.FilterPanel()
-		@components.ContextPane()
+		@RepositoryMainView(viewData)
 	}
 }

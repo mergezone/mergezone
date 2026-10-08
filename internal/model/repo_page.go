@@ -5,15 +5,16 @@ import (
 	"strconv"
 )
 
-type FilterSet struct {
+// RepositoryFilters contains the URL-addressable filters for a repository view.
+type RepositoryFilters struct {
 	Owner       string
-	Repo        string
+	Repository  string
 	Scope       string
 	Contributor string
 	Status      string
 }
 
-func (f FilterSet) URL() string {
+func (f RepositoryFilters) URL() string {
 	u := url.URL{Path: f.basePath()}
 	if q := f.queryValues(); len(q) > 0 {
 		u.RawQuery = q.Encode()
@@ -21,7 +22,7 @@ func (f FilterSet) URL() string {
 	return u.String()
 }
 
-func (f FilterSet) PageURL(page int) string {
+func (f RepositoryFilters) PageURL(page int) string {
 	if page <= 1 {
 		return f.URL()
 	}
@@ -32,15 +33,15 @@ func (f FilterSet) PageURL(page int) string {
 	return u.String()
 }
 
-func (f FilterSet) basePath() string {
-	p := "/" + f.Owner + "/" + f.Repo
+func (f RepositoryFilters) basePath() string {
+	p := "/" + f.Owner + "/" + f.Repository
 	if f.Scope != "" {
 		p += "/" + f.Scope
 	}
 	return p
 }
 
-func (f FilterSet) queryValues() url.Values {
+func (f RepositoryFilters) queryValues() url.Values {
 	q := url.Values{}
 	if f.Contributor != "" {
 		q.Set("contributor", f.Contributor)
@@ -51,29 +52,31 @@ func (f FilterSet) queryValues() url.Values {
 	return q
 }
 
-func (f FilterSet) WithScope(scope string) FilterSet {
+func (f RepositoryFilters) WithScope(scope string) RepositoryFilters {
 	f.Scope = scope
 	return f
 }
 
-func (f FilterSet) WithContributor(contributor string) FilterSet {
+func (f RepositoryFilters) WithContributor(contributor string) RepositoryFilters {
 	f.Contributor = contributor
 	return f
 }
 
-func (f FilterSet) WithStatus(status string) FilterSet {
+func (f RepositoryFilters) WithStatus(status string) RepositoryFilters {
 	f.Status = status
 	return f
 }
 
-type RepoPageProps struct {
+// RepositoryViewData is the shared data model used to render the full document,
+// main-view response, and repository fragments.
+type RepositoryViewData struct {
 	BaseURL           string
 	Owner             string
-	Repo              string
+	Repository        string
 	Scope             string
 	Contributor       string
 	Status            string
-	PRs               []StampedPullRequest
+	PullRequests      []StampedPullRequest
 	OverallCounts     ExpiryCounts
 	ScopeCounts       []ScopeInfo
 	ScopeSort         string

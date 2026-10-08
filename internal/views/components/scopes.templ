@@ -8,29 +8,29 @@ import (
 	"merge/internal/model"
 )
 
-templ Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet) {
+templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters) {
 	<section class="scopes">
 		<div class="section-heading">
 			<span>Scopes</span>
-			if len(scopes) > 0 || filters.Scope != "" {
+			if len(scopeSummaries) > 0 || filters.Scope != "" {
 				<span class="buttons">
 					<i id="scopes-sort-indicator" class="fa-solid fa-spinner fa-spin htmx-indicator" aria-hidden="true"></i>
 					<span class="sort-label">SORT:</span>
 				<button
-					if activeSort == "recent" {
+					if activeSortOrder == "recent" {
 						data-active-sort="true"
 					}
-					hx-get={ fmt.Sprintf("?part=scopes&sort=recent") }
+					hx-get={ fmt.Sprintf("?fragment=scopes&sort=recent") }
 					hx-target="#scopes-section"
 					hx-indicator="#scopes-sort-indicator"
 				>
 					Recent
 				</button>
 				<button
-					if activeSort == "top" {
+					if activeSortOrder == "top" {
 						data-active-sort="true"
 					}
-					hx-get={ fmt.Sprintf("?part=scopes&sort=top") }
+					hx-get={ fmt.Sprintf("?fragment=scopes&sort=top") }
 					hx-target="#scopes-section"
 					hx-indicator="#scopes-sort-indicator"
 				>
@@ -39,10 +39,10 @@ templ Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSe
 				</span>
 			}
 		</div>
-		if len(scopes) > 0 {
+		if len(scopeSummaries) > 0 {
 			<div class="scopes-container">
-			for _, info := range scopes {
-				@Scope(info, filters)
+			for _, scope := range scopeSummaries {
+				@ScopeCard(scope, filters)
 			}
 			</div>
 		}

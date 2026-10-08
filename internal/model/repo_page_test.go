@@ -79,50 +79,50 @@ func urlsEqual(a, b string) bool {
 	return true
 }
 
-func TestFilterSet_URL(t *testing.T) {
+func TestRepositoryFilters_URL(t *testing.T) {
 	tests := []struct {
 		name    string
-		filters FilterSet
+		filters RepositoryFilters
 		want    string
 	}{
 		{
 			name:    "owner and repo only",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world"},
 			want:    "/octocat/hello-world",
 		},
 		{
 			name:    "with scope",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend"},
 			want:    "/octocat/hello-world/backend",
 		},
 		{
 			name:    "with contributor",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Contributor: "alice"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: "alice"},
 			want:    "/octocat/hello-world?contributor=alice",
 		},
 		{
 			name:    "with status",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Status: "fresh"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Status: "fresh"},
 			want:    "/octocat/hello-world?status=fresh",
 		},
 		{
 			name:    "with scope and contributor",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice"},
 			want:    "/octocat/hello-world/backend?contributor=alice",
 		},
 		{
 			name:    "with scope and status",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Status: "stale"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Status: "stale"},
 			want:    "/octocat/hello-world/backend?status=stale",
 		},
 		{
 			name:    "with contributor and status",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Contributor: "alice", Status: "fresh"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: "alice", Status: "fresh"},
 			want:    "/octocat/hello-world?contributor=alice&status=fresh",
 		},
 		{
 			name:    "with all filters",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"},
 			want:    "/octocat/hello-world/backend?contributor=alice&status=fresh",
 		},
 	}
@@ -131,52 +131,52 @@ func TestFilterSet_URL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.filters.URL()
 			if !urlsEqual(got, tt.want) {
-				t.Errorf("FilterSet.URL() = %q, want %q", got, tt.want)
+				t.Errorf("RepositoryFilters.URL() = %q, want %q", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestFilterSet_PageURL(t *testing.T) {
+func TestRepositoryFilters_PageURL(t *testing.T) {
 	tests := []struct {
 		name    string
-		filters FilterSet
+		filters RepositoryFilters
 		page    int
 		want    string
 	}{
 		{
 			name:    "page 1 omits page param",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world"},
 			page:    1,
 			want:    "/octocat/hello-world",
 		},
 		{
 			name:    "page 0 omits page param",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world"},
 			page:    0,
 			want:    "/octocat/hello-world",
 		},
 		{
 			name:    "page 2 without other filters",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world"},
 			page:    2,
 			want:    "/octocat/hello-world?page=2",
 		},
 		{
 			name:    "page 5 with scope",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend"},
 			page:    5,
 			want:    "/octocat/hello-world/backend?page=5",
 		},
 		{
 			name:    "page 3 with contributor and status",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Contributor: "alice", Status: "fresh"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: "alice", Status: "fresh"},
 			page:    3,
 			want:    "/octocat/hello-world?contributor=alice&status=fresh&page=3",
 		},
 		{
 			name:    "page 10 with all filters",
-			filters: FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale"},
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale"},
 			page:    10,
 			want:    "/octocat/hello-world/backend?contributor=alice&status=stale&page=10",
 		},
@@ -186,28 +186,28 @@ func TestFilterSet_PageURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.filters.PageURL(tt.page)
 			if !urlsEqual(got, tt.want) {
-				t.Errorf("FilterSet.PageURL(%d) = %q, want %q", tt.page, got, tt.want)
+				t.Errorf("RepositoryFilters.PageURL(%d) = %q, want %q", tt.page, got, tt.want)
 			}
 		})
 	}
 }
 
-func TestFilterSet_PageURL_MatchesOldBuildLoadMoreURL(t *testing.T) {
-	filters := []FilterSet{
-		{Owner: "octocat", Repo: "hello-world"},
-		{Owner: "octocat", Repo: "hello-world", Scope: "backend"},
-		{Owner: "octocat", Repo: "hello-world", Contributor: "alice"},
-		{Owner: "octocat", Repo: "hello-world", Status: "fresh"},
-		{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale"},
+func TestRepositoryFilters_PageURL_MatchesOldBuildLoadMoreURL(t *testing.T) {
+	filters := []RepositoryFilters{
+		{Owner: "octocat", Repository: "hello-world"},
+		{Owner: "octocat", Repository: "hello-world", Scope: "backend"},
+		{Owner: "octocat", Repository: "hello-world", Contributor: "alice"},
+		{Owner: "octocat", Repository: "hello-world", Status: "fresh"},
+		{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale"},
 	}
 	pages := []int{1, 2, 5, 100}
 
 	for _, f := range filters {
 		for _, p := range pages {
 			name := fmt.Sprintf("owner=%s/repo=%s/scope=%s/contrib=%s/status=%s/page=%d",
-				f.Owner, f.Repo, f.Scope, f.Contributor, f.Status, p)
+				f.Owner, f.Repository, f.Scope, f.Contributor, f.Status, p)
 			t.Run(name, func(t *testing.T) {
-				want := oldBuildLoadMoreURL(f.Owner, f.Repo, f.Scope, f.Contributor, f.Status, p)
+				want := oldBuildLoadMoreURL(f.Owner, f.Repository, f.Scope, f.Contributor, f.Status, p)
 				got := f.PageURL(p)
 				if !urlsEqual(got, want) {
 					t.Errorf("PageURL(%d) = %q, old = %q", p, got, want)
@@ -217,8 +217,8 @@ func TestFilterSet_PageURL_MatchesOldBuildLoadMoreURL(t *testing.T) {
 	}
 }
 
-func TestFilterSet_WithStatus(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_WithStatus(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	t.Run("set different status", func(t *testing.T) {
 		got := filters.WithStatus("stale")
@@ -248,9 +248,9 @@ func TestFilterSet_WithStatus(t *testing.T) {
 	})
 }
 
-func TestFilterSet_StatusToggle_MatchesOldBuildStatusURL(t *testing.T) {
+func TestRepositoryFilters_StatusToggle_MatchesOldBuildStatusURL(t *testing.T) {
 	statuses := []string{"", "fresh", "stale", "expired", "merged"}
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	for _, target := range statuses {
 		name := fmt.Sprintf("target=%q", target)
@@ -278,7 +278,7 @@ func TestFilterSet_StatusToggle_MatchesOldBuildStatusURL(t *testing.T) {
 				return
 			}
 
-			want := oldBuildStatusURL(filters.Owner, filters.Repo, filters.Scope, filters.Contributor, filters.Status, target)
+			want := oldBuildStatusURL(filters.Owner, filters.Repository, filters.Scope, filters.Contributor, filters.Status, target)
 			if !urlsEqual(got, want) {
 				t.Errorf("WithStatus(%q).URL() = %q, old buildStatusURL = %q", target, got, want)
 			}
@@ -286,8 +286,8 @@ func TestFilterSet_StatusToggle_MatchesOldBuildStatusURL(t *testing.T) {
 	}
 }
 
-func TestFilterSet_WithScope(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_WithScope(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	t.Run("clear scope", func(t *testing.T) {
 		got := filters.WithScope("")
@@ -317,8 +317,8 @@ func TestFilterSet_WithScope(t *testing.T) {
 	})
 }
 
-func TestFilterSet_WithContributor(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_WithContributor(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	t.Run("clear contributor", func(t *testing.T) {
 		got := filters.WithContributor("")
@@ -348,8 +348,8 @@ func TestFilterSet_WithContributor(t *testing.T) {
 	})
 }
 
-func TestFilterSet_ClearScope_MatchesOldScopesClearFilter(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_ClearScope_MatchesOldScopesClearFilter(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithScope("").URL()
 	want := "/octocat/hello-world?contributor=alice&status=fresh"
@@ -358,8 +358,8 @@ func TestFilterSet_ClearScope_MatchesOldScopesClearFilter(t *testing.T) {
 	}
 }
 
-func TestFilterSet_ClearContributor_MatchesOldContributorsClearFilter(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_ClearContributor_MatchesOldContributorsClearFilter(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithContributor("").URL()
 	want := "/octocat/hello-world/backend?status=fresh"
@@ -368,8 +368,8 @@ func TestFilterSet_ClearContributor_MatchesOldContributorsClearFilter(t *testing
 	}
 }
 
-func TestFilterSet_ScopeLink_MatchesOldSidebarCard(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "old-scope", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_ScopeLink_MatchesOldSidebarCard(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "old-scope", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithScope("new-scope").URL()
 	want := "/octocat/hello-world/new-scope?contributor=alice&status=fresh"
@@ -378,8 +378,8 @@ func TestFilterSet_ScopeLink_MatchesOldSidebarCard(t *testing.T) {
 	}
 }
 
-func TestFilterSet_ContributorLink_MatchesOldSidebarCard(t *testing.T) {
-	filters := FilterSet{Owner: "octocat", Repo: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
+func TestRepositoryFilters_ContributorLink_MatchesOldSidebarCard(t *testing.T) {
+	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithContributor("bob").URL()
 	want := "/octocat/hello-world/backend?contributor=bob&status=fresh"

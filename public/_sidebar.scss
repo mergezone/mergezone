@@ -76,7 +76,7 @@ footer {
     border-radius: $border-radius-circle;
 }
 
-.repo-page main {
+.repository-page main {
     display: flex;
     flex-direction: column;
 }
@@ -101,14 +101,14 @@ footer {
         max-height: none;
     }
 
-    .repo-page {
+    .repository-page {
         display: flex;
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
     }
 
-    .repo-page main {
+    .repository-page main {
         flex: 1;
         min-height: 0;
         overflow: hidden;

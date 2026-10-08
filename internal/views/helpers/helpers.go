@@ -63,7 +63,7 @@ func PrLabel(count int) string {
 	if count == 1 {
 		return "pr"
 	}
-	return "prs"
+	return "pull requests"
 }
 
 func SplitAge(age string) (string, string) {

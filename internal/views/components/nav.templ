@@ -1,6 +1,6 @@
 package components
 
-templ Nav(owner, repo, scope string) {
+templ RepositoryNavigation(owner, repository, scope string) {
 	<nav id="nav" x-data="nav">
         <div>
             <h4 class="bold site-brand">
@@ -16,7 +16,7 @@ templ Nav(owner, repo, scope string) {
             </button>
         </div>
         <div>
-            @SearchInput(owner, repo, scope, "…", "…", "…", true, true)
+            @RepositorySearchInput(owner, repository, scope, "…", "…", "…", true, true)
         </div>
 	</nav>
 }

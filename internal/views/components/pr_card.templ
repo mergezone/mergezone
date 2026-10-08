@@ -7,47 +7,47 @@ import (
 	"merge/internal/views/helpers"
 )
 
-templ PRCard(pr model.StampedPullRequest, owner, repo string) {
+templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) {
 	<div
 		class="item pull-request"
-		data-draft={ fmt.Sprintf("%t", pr.IsDraft) }
-		data-pr-number={ fmt.Sprintf("%d", pr.Number) }
-		data-pr-title={ pr.Title }
-		data-pr-status-class={ helpers.GetStatusClass(pr) }
-		data-pr-url={ pr.URL }
-		data-pr-state={ pr.State }
-		data-pr-age={ model.TimeAgoLong(pr.TimeOpen, pr.DaysOpen) }
-		data-pr-author-name={ pr.Author.Name }
-		data-pr-author-url={ pr.Author.URL }
-		if len(pr.Scopes) > 0 {
-			data-pr-scope={ pr.Scopes[0] }
-			data-pr-scope-url={ fmt.Sprintf("/%s/%s/%s", owner, repo, pr.Scopes[0]) }
+		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
+		data-pull-request-number={ fmt.Sprintf("%d", pullRequest.Number) }
+		data-pull-request-title={ pullRequest.Title }
+		data-pull-request-status-class={ helpers.GetStatusClass(pullRequest) }
+		data-pull-request-url={ pullRequest.URL }
+		data-pull-request-state={ pullRequest.State }
+		data-pull-request-age={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }
+		data-pull-request-author-name={ pullRequest.Author.Name }
+		data-pull-request-author-url={ pullRequest.Author.URL }
+		if len(pullRequest.Scopes) > 0 {
+			data-pull-request-scope={ pullRequest.Scopes[0] }
+			data-pull-request-scope-url={ fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0]) }
 		}
-		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.prNumber), this.dataset)"
+		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.pullRequestNumber), this.dataset)"
 	>
         <div class="pull-request-header">
             <div class="icon-container">
-                <i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pr)) }></i>
+                <i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
             </div>
             <div class="title-row">
-                <b class="title">@Markdown(pr.Title)</b>
+                <b class="title">@Markdown(pullRequest.Title)</b>
             </div>
             <div class="description-row">
                 <span>
-                    #{ pr.Number }
+                    #{ pullRequest.Number }
                 </span>
                 <span>
-                    { pr.State }
+                    { pullRequest.State }
                 </span>
-                <span title={ model.TimeAgoLong(pr.TimeOpen, pr.DaysOpen) }>
-                    @Age(pr.TimeOpen, pr.DaysOpen)
+                <span title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
+                    @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
                 </span>
                 <span>
-                    <a href={ pr.Author.URL }>{ pr.Author.Name }</a>
+                    <a href={ pullRequest.Author.URL }>{ pullRequest.Author.Name }</a>
                 </span>
-				for _, scope := range pr.Scopes {
+				for _, scope := range pullRequest.Scopes {
 					<span>
-                        <a href={ fmt.Sprintf("/%s/%s/%s", owner, repo, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repo, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
+                        <a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
                     </span>
 				}
             </div>

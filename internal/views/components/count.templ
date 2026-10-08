@@ -4,28 +4,28 @@ import (
 	"fmt"
 )
 
-templ Count(iconClass string, count int, label string, url string, active bool) {
-	if url != "" {
-		<div class={ "item stat", templ.KV("active", active) }
-			hx-get={ templ.SafeURL(url) }
+templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel string, destinationURL string, isActive bool) {
+	if destinationURL != "" {
+		<div class={ "item stat", templ.KV("active", isActive) }
+			hx-get={ templ.SafeURL(destinationURL) }
 			hx-target="main"
-			hx-push-url="true">
-			<p class="bold">{ label }</p>
+			hx-push-destinationURL="true">
+			<p class="bold">{ statusLabel }</p>
 			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", count) }</b>
+			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	} else {
-		<div class={ "item stat", templ.KV("active", active) }>
-			<p class="bold">{ label }</p>
+		<div class={ "item stat", templ.KV("active", isActive) }>
+			<p class="bold">{ statusLabel }</p>
 			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", count) }</b>
+			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	}
 }
 
-templ InlineCount(iconClass string, count int) {
+templ InlinePullRequestCount(iconClass string, pullRequestCount int) {
 	<div class="stat">
 		<i class={ "status-icon fa-solid " + iconClass }></i>
-		<span class="bold small">{ fmt.Sprintf("%d", count) }</span>
+		<span class="bold small">{ fmt.Sprintf("%d", pullRequestCount) }</span>
 	</div>
 }

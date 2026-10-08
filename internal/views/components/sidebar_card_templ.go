@@ -15,7 +15,7 @@ import (
 	"merge/internal/views/helpers"
 )
 
-func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
+func ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -36,8 +36,8 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		scopeURL := filters.WithScope(info.Name).URL()
-		var templ_7745c5c3_Var2 = []any{"item scope sidebar-card", templ.KV("active", info.Name == filters.Scope)}
+		scopeURL := filters.WithScope(scope.Name).URL()
+		var templ_7745c5c3_Var2 = []any{"item scope sidebar-card", templ.KV("active", scope.Name == filters.Scope)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -62,7 +62,7 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(scopeURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 12, Col: 123}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 12, Col: 124}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(scopeURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 12, Col: 158}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 12, Col: 159}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -86,9 +86,9 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(info.Name)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(scope.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 14, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 14, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = AgeStr(info.NewestPRAge).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = AgeStr(scope.NewestPRAge).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,9 +107,9 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", info.Count()))
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", scope.TotalPullRequests()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 21, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 21, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -120,9 +120,9 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.PrLabel(info.Count()))
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.PrLabel(scope.TotalPullRequests()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 21, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 21, Col: 134}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -136,7 +136,7 @@ func Scope(info model.ScopeInfo, filters model.FilterSet) templ.Component {
 	})
 }
 
-func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Component {
+func ContributorCard(contributor model.ContributorInfo, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -157,8 +157,8 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		contributorURL := filters.WithContributor(info.Name).URL()
-		var templ_7745c5c3_Var10 = []any{"item contributor sidebar-card", templ.KV("active", info.Name == filters.Contributor)}
+		contributorURL := filters.WithContributor(contributor.Name).URL()
+		var templ_7745c5c3_Var10 = []any{"item contributor sidebar-card", templ.KV("active", contributor.Name == filters.Contributor)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -183,7 +183,7 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(contributorURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 29, Col: 143}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 29, Col: 150}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -194,9 +194,9 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(info.AvatarURL)
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(contributor.AvatarURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -207,9 +207,9 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(info.Name + "'s avatar")
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(contributor.Name + "'s avatar")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -220,9 +220,9 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(info.Name)
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(contributor.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 34, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 34, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -232,7 +232,7 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = AgeStr(info.NewestPRAge).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = AgeStr(contributor.NewestPRAge).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -241,9 +241,9 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", info.Count()))
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", contributor.TotalPullRequests()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 41, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 41, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -254,9 +254,9 @@ func Contributor(info model.ContributorInfo, filters model.FilterSet) templ.Comp
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.PrLabel(info.Count()))
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(helpers.PrLabel(contributor.TotalPullRequests()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 41, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 41, Col: 146}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {

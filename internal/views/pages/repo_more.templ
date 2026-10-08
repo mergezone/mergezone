@@ -5,26 +5,28 @@ import (
 	"merge/internal/views/components"
 )
 
-templ LoadMorePRs(
-	prs []model.StampedPullRequest,
-	filters model.FilterSet,
-	nextPage int,
-	hasMore bool,
+// AppendPullRequestsResponse returns new pull request cards plus out-of-band
+// updates for the repository summary regions.
+templ AppendPullRequestsResponse(
+	pullRequests []model.StampedPullRequest,
+	filters model.RepositoryFilters,
+	nextPullRequestPage int,
+	hasMorePullRequests bool,
 	overallCounts model.ExpiryCounts,
-	scopeCounts []model.ScopeInfo,
-	scopeSort string,
-	contributorCounts []model.ContributorInfo,
-	contributorSort string,
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
 ) {
-	@components.PRScrollItems(prs, filters.Owner, filters.Repo)
-	@components.LoadMoreCard(prs, filters, nextPage, hasMore, true)
+	@components.PullRequestScrollItems(pullRequests, filters.Owner, filters.Repository)
+	@components.PullRequestLoadMoreControl(filters, nextPullRequestPage, hasMorePullRequests, true)
 	<div id="overview-stats" hx-swap-oob="true">
-		@components.Counts(overallCounts, hasMore, filters, nextPage)
+		@components.PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
 	</div>
 	<div id="scopes-section" hx-swap-oob="true">
-		@components.Scopes(scopeCounts, scopeSort, filters)
+		@components.ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
 	</div>
 	<div id="contributors-section" hx-swap-oob="true">
-		@components.Contributors(contributorCounts, contributorSort, filters)
+		@components.ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
 	</div>
 }

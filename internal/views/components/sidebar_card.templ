@@ -7,38 +7,38 @@ import (
 	"merge/internal/views/helpers"
 )
 
-templ Scope(info model.ScopeInfo, filters model.FilterSet) {
-    {{ scopeURL := filters.WithScope(info.Name).URL() }}
-    <div class={ "item scope sidebar-card", templ.KV("active", info.Name == filters.Scope) } href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="main" hx-push-url="true">
+templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
+    {{ scopeURL := filters.WithScope(scope.Name).URL() }}
+    <div class={ "item scope sidebar-card", templ.KV("active", scope.Name == filters.Scope) } href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="main" hx-push-url="true">
         <div class="text">
-            <span class="title">{ info.Name }</span>
+            <span class="title">{ scope.Name }</span>
         </div>
         <div class="meta">
             <span class="age">
-                @AgeStr(info.NewestPRAge)
+                @AgeStr(scope.NewestPRAge)
             </span>
             <span class="count">
-                { fmt.Sprintf("%d", info.Count()) }<span class="count-label">{ helpers.PrLabel(info.Count()) }</span>
+                { fmt.Sprintf("%d", scope.TotalPullRequests()) }<span class="count-label">{ helpers.PrLabel(scope.TotalPullRequests()) }</span>
             </span>
         </div>
     </div>
 }
 
-templ Contributor(info model.ContributorInfo, filters model.FilterSet) {
-    {{ contributorURL := filters.WithContributor(info.Name).URL() }}
-    <div class={ "item contributor sidebar-card", templ.KV("active", info.Name == filters.Contributor) } hx-get={ templ.SafeURL(contributorURL) } hx-target="main" hx-push-url="true">
+templ ContributorCard(contributor model.ContributorInfo, filters model.RepositoryFilters) {
+    {{ contributorURL := filters.WithContributor(contributor.Name).URL() }}
+    <div class={ "item contributor sidebar-card", templ.KV("active", contributor.Name == filters.Contributor) } hx-get={ templ.SafeURL(contributorURL) } hx-target="main" hx-push-url="true">
         <div class="img-skeleton-wrapper avatar-wrapper">
-            <img class="avatar" data-src={ info.AvatarURL } alt={ info.Name + "'s avatar" } loading="lazy"/>
+            <img class="avatar" data-src={ contributor.AvatarURL } alt={ contributor.Name + "'s avatar" } loading="lazy"/>
         </div>
         <div class="text">
-            <span class="title">{ info.Name }</span>
+            <span class="title">{ contributor.Name }</span>
         </div>
         <div class="meta">
             <span class="age">
-                @AgeStr(info.NewestPRAge)
+                @AgeStr(contributor.NewestPRAge)
             </span>
             <span class="count">
-                { fmt.Sprintf("%d", info.Count()) }<span class="count-label">{ helpers.PrLabel(info.Count()) }</span>
+                { fmt.Sprintf("%d", contributor.TotalPullRequests()) }<span class="count-label">{ helpers.PrLabel(contributor.TotalPullRequests()) }</span>
             </span>
         </div>
     </div>

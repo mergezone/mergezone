@@ -1,6 +1,6 @@
 package components
 
-templ SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlaceholder, scopePlaceholder string, interactive bool, showIcon bool) {
+templ RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceholder, repositoryPlaceholder, scopePlaceholder string, interactive bool, showIcon bool) {
 	<span class="bold search-input-row">
 		if showIcon {
 			<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -21,10 +21,10 @@ templ SearchInput(ownerValue, repoValue, scopeValue, ownerPlaceholder, repoPlace
 		<span class="input-pill">
 			<input class="title-input" type="text"
 				if interactive {
-					data-part="repo"
+					data-part="repository"
 				}
-				value={ repoValue }
-				placeholder={ repoPlaceholder }
+				value={ repositoryValue }
+				placeholder={ repositoryPlaceholder }
 				if !interactive {
 					readonly
 				}

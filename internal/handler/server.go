@@ -24,209 +24,231 @@ type Server struct {
 	Provider provider.Provider
 }
 
-func (s *Server) HandleIndex(w http.ResponseWriter, r *http.Request) {
+func (s *Server) HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err := pages.IndexPage(s.BaseURL, "", "").Render(r.Context(), w)
+	err := pages.HomePage(s.BaseURL, "", "").Render(r.Context(), w)
 	if err != nil {
 		s.Logger.Error(err.Error())
 	}
 }
 
-type ProviderRoute struct {
+type RepositoryRequest struct {
 	*Server
-	Params  provider.Params
-	Options provider.Options
+	Query       provider.RepositoryQuery
+	ListOptions provider.PullRequestListOptions
 }
 
-func (s *Server) HandleGitHubRoute(f func(*ProviderRoute, http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		s.Logger.Info(fmt.Sprintf("Handling request for %s", r.URL.Path))
+type RepositoryHandler func(*RepositoryRequest, http.ResponseWriter, *http.Request)
 
-		params, options := provider.ParseMux(mux.Vars(r), r.URL.Query())
-		rt := &ProviderRoute{
-			Server:  s,
-			Params:  params,
-			Options: options,
+func (s *Server) WithParsedRepositoryRequest(next RepositoryHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.Logger.Info("handling HTTP request", "path", r.URL.Path)
+
+		repositoryQuery, listOptions := provider.ParseRepositoryQuery(mux.Vars(r), r.URL.Query())
+		request := &RepositoryRequest{
+			Server:      s,
+			Query:       repositoryQuery,
+			ListOptions: listOptions,
 		}
 
-		f(rt, w, r)
+		next(request, w, r)
 	}
 }
 
-func Json(rt *ProviderRoute, w http.ResponseWriter, r *http.Request) {
-	prs, _, err := rt.Provider.GetPullRequests(rt.Params, rt.Options)
+func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter, r *http.Request) {
+	pullRequests, _, err := request.Provider.GetPullRequests(request.Query, request.ListOptions)
 	if err != nil {
-		rt.Logger.Warn(err.Error())
+		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	json, err := json.Marshal(prs)
+	encodedPullRequests, err := json.Marshal(pullRequests)
 	if err != nil {
-		rt.Logger.Error(err.Error())
+		request.Logger.Error(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(json)
+	w.Write(encodedPullRequests)
 }
 
-func fetchAllPages(rt *ProviderRoute, upToPage int) (all, currentPRs []model.StampedPullRequest, hasNext bool, err error) {
-	for p := 1; p <= upToPage; p++ {
-		// TODO(hayden): Respect provided options, e.g. min/max
-		options := rt.Options.WithPage(p)
-		prs, next, e := rt.Provider.GetPullRequests(rt.Params, options)
-		if e != nil {
-			return nil, nil, false, e
+func fetchPullRequestPages(request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, err error) {
+	for page := 1; page <= upToPage; page++ {
+		listOptions := request.ListOptions.WithPage(page)
+		pullRequests, pagination, fetchErr := request.Provider.GetPullRequests(request.Query, listOptions)
+		if fetchErr != nil {
+			return nil, nil, false, fetchErr
 		}
-		all = append(all, prs...)
-		if p == upToPage {
-			currentPRs = prs
-			hasNext = next.HasNext
+		allPullRequests = append(allPullRequests, pullRequests...)
+		if page == upToPage {
+			currentPagePullRequests = pullRequests
+			hasNext = pagination.HasNext
 		}
 	}
-	return all, currentPRs, hasNext, nil
+	return allPullRequests, currentPagePullRequests, hasNext, nil
 }
 
-func ptrOrDefault(p *string) string {
-	if p != nil {
-		return *p
+func optionalRepositoryFilterValue(value *string) string {
+	if value == nil {
+		return ""
 	}
-	return ""
+	return *value
 }
 
-func Page(rt *ProviderRoute, w http.ResponseWriter, r *http.Request) {
-	filters := model.FilterSet{
-		Owner:       rt.Params.Owner,
-		Repo:        rt.Params.Repo,
-		Scope:       ptrOrDefault(rt.Params.Scope),
-		Contributor: ptrOrDefault(rt.Params.Contributor),
-		Status:      ptrOrDefault(rt.Params.Status),
+// RepositoryFragment identifies a rendered repository fragment requested through
+// the fragment query parameter. An empty value selects a document or main-view response.
+type RepositoryFragment string
+
+const (
+	PullRequestDetailFragment RepositoryFragment = "pr-detail"
+	ContributorsFragment      RepositoryFragment = "contributors"
+	ScopesFragment            RepositoryFragment = "scopes"
+)
+
+func isHTMXRequest(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
+}
+
+func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http.Request) {
+	// Response contract: `fragment` selects a named repository fragment and takes
+	// precedence; otherwise HX-Request=true returns the repository main view, while
+	// direct navigation returns the complete HTML document.
+	filters := model.RepositoryFilters{
+		Owner:       request.Query.Owner,
+		Repository:  request.Query.Repository,
+		Scope:       optionalRepositoryFilterValue(request.Query.Scope),
+		Contributor: optionalRepositoryFilterValue(request.Query.Contributor),
+		Status:      optionalRepositoryFilterValue(request.Query.Status),
 	}
 
-	// Load-more: fetch all pages 1..current to compute combined stats
-	if rt.Options.Page > 1 && r.Header.Get("HX-Request") != "" {
-		allPRs, curPRs, hasNext, err := fetchAllPages(rt, rt.Options.Page)
+	// Load-more requests return the requested page of pull requests and updated aggregate summaries.
+	fragment := RepositoryFragment(r.URL.Query().Get("fragment"))
+	if fragment == "" && request.ListOptions.Page > 1 && isHTMXRequest(r) {
+		allPullRequests, currentPagePullRequests, hasNext, err := fetchPullRequestPages(request, request.ListOptions.Page)
 		if err != nil {
-			rt.Logger.Warn(err.Error())
+			request.Logger.Warn(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		nextPage := rt.Options.Page + 1
+		nextPullRequestPage := request.ListOptions.Page + 1
 
 		scopes := make([]model.ScopeInfo, 0)
-		for _, s := range model.ScopeAges(allPRs) {
-			scopes = append(scopes, s)
+		for _, scope := range model.ScopeAges(allPullRequests) {
+			scopes = append(scopes, scope)
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		err = pages.LoadMorePRs(
-			curPRs,
+		err = pages.AppendPullRequestsResponse(
+			currentPagePullRequests,
 			filters,
-			nextPage,
+			nextPullRequestPage,
 			hasNext,
-			model.GetCounts(allPRs),
+			model.PullRequestExpiryCounts(allPullRequests),
 			scopes,
 			"recent",
-			model.ContributorActivity(allPRs),
+			model.ContributorActivity(allPullRequests),
 			"recent",
 		).Render(r.Context(), w)
 		if err != nil {
-			rt.Logger.Error(err.Error())
+			request.Logger.Error(err.Error())
 		}
 		return
 	}
 
-	prs, hasNext, err := rt.Provider.GetPullRequests(rt.Params, rt.Options)
+	pullRequests, pagination, err := request.Provider.GetPullRequests(request.Query, request.ListOptions)
 	if err != nil {
-		rt.Logger.Warn(err.Error())
+		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	scopeCounts := model.ScopeAges(prs)
-	filteredScopes := make([]model.ScopeInfo, 0, len(scopeCounts))
-	for _, s := range scopeCounts {
-		filteredScopes = append(filteredScopes, s)
-	}
+	scopeSummaries := model.ScopeAges(pullRequests)
 
-	props := model.RepoPageProps{
-		BaseURL:           rt.BaseURL,
-		Owner:             rt.Params.Owner,
-		Repo:              rt.Params.Repo,
+	viewData := model.RepositoryViewData{
+		BaseURL:           request.BaseURL,
+		Owner:             request.Query.Owner,
+		Repository:        request.Query.Repository,
 		Scope:             filters.Scope,
 		Contributor:       filters.Contributor,
 		Status:            filters.Status,
-		PRs:               prs,
-		OverallCounts:     model.GetCounts(prs),
-		ScopeCounts:       filteredScopes,
+		PullRequests:      pullRequests,
+		OverallCounts:     model.PullRequestExpiryCounts(pullRequests),
+		ScopeCounts:       scopeSummaries,
 		ScopeSort:         "recent",
-		ContributorCounts: model.ContributorActivity(prs),
+		ContributorCounts: model.ContributorActivity(pullRequests),
 		ContributorSort:   "recent",
 		CurrentPage:       1,
-		HasMore:           hasNext.HasNext,
+		HasMore:           pagination.HasNext,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.URL.Query().Get("part") == "pr-detail" {
-		prNumber, err := strconv.Atoi(r.URL.Query().Get("number"))
+	switch fragment {
+	case PullRequestDetailFragment:
+		pullRequestNumber, err := strconv.Atoi(r.URL.Query().Get("number"))
 		if err != nil {
-			http.Error(w, "Invalid PR number", http.StatusBadRequest)
+			http.Error(w, "Invalid pull request number", http.StatusBadRequest)
 			return
 		}
-		for _, pr := range props.PRs {
-			if pr.Number == prNumber {
-				err = components.PaneContent(pr, rt.Params.Owner, rt.Params.Repo, r.URL.Path).Render(r.Context(), w)
+		for _, pullRequest := range viewData.PullRequests {
+			if pullRequest.Number == pullRequestNumber {
+				err = components.PullRequestDetail(pullRequest, request.Query.Owner, request.Query.Repository, r.URL.Path+r.URL.RawQuery).Render(r.Context(), w)
 				if err != nil {
-					rt.Logger.Error(err.Error())
+					request.Logger.Error(err.Error())
 				}
 				return
 			}
 		}
-		http.Error(w, "PR not found", http.StatusNotFound)
+		http.Error(w, "Pull request not found", http.StatusNotFound)
 		return
-	} else if r.URL.Query().Get("part") == "contributors" {
-		method := r.URL.Query().Get("sort")
-		contributors := props.ContributorCounts
-		if method == "top" {
-			sort.SliceStable(contributors, func(i, j int) bool {
-				return contributors[i].Count() > contributors[j].Count()
+	case ContributorsFragment:
+		sortOrder := r.URL.Query().Get("sort")
+		contributorSummaries := viewData.ContributorCounts
+		if sortOrder == "top" {
+			sort.SliceStable(contributorSummaries, func(i, j int) bool {
+				return contributorSummaries[i].TotalPullRequests() > contributorSummaries[j].TotalPullRequests()
 			})
 		}
-		err = components.Contributors(contributors, method, filters).Render(r.Context(), w)
-	} else if r.URL.Query().Get("part") == "scopes" {
-		method := r.URL.Query().Get("sort")
-		scopes := props.ScopeCounts
-		if method == "top" {
-			sort.SliceStable(scopes, func(i, j int) bool {
-				return scopes[i].Count() > scopes[j].Count()
+		err = components.ContributorSummaries(contributorSummaries, sortOrder, filters).Render(r.Context(), w)
+	case ScopesFragment:
+		sortOrder := r.URL.Query().Get("sort")
+		scopeSummaries := viewData.ScopeCounts
+		if sortOrder == "top" {
+			sort.SliceStable(scopeSummaries, func(i, j int) bool {
+				return scopeSummaries[i].TotalPullRequests() > scopeSummaries[j].TotalPullRequests()
 			})
 		}
-		err = components.Scopes(scopes, method, filters).Render(r.Context(), w)
-	} else if r.Header.Get("HX-Request") != "" {
-		w.Header().Set("HX-Push-Url", filters.URL())
-		err = pages.RepoContent(props, r.URL.Path).Render(r.Context(), w)
-	} else {
-		err = pages.RepoPage(props, r.URL.Path).Render(r.Context(), w)
+		err = components.ScopeSummaries(scopeSummaries, sortOrder, filters).Render(r.Context(), w)
+	default:
+		if fragment != "" {
+			http.Error(w, "Unknown fragment", http.StatusBadRequest)
+			return
+		}
+		if isHTMXRequest(r) {
+			w.Header().Set("HX-Push-Url", filters.URL())
+			err = pages.RepositoryMainView(viewData).Render(r.Context(), w)
+		} else {
+			err = pages.RepositoryDocument(viewData, r.URL.Path).Render(r.Context(), w)
+		}
 	}
 	if err != nil {
-		rt.Logger.Error(err.Error())
+		request.Logger.Error(err.Error())
 	}
 }
 
-func (s *Server) HandlePRDiff(w http.ResponseWriter, r *http.Request) {
+func (s *Server) HandlePullRequestDiff(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	owner := vars["owner"]
-	repo := vars["repo"]
-	number, err := strconv.Atoi(vars["number"])
+	repository := vars["repo"]
+	pullRequestNumber, err := strconv.Atoi(vars["number"])
 	if err != nil {
-		http.Error(w, "invalid PR number", http.StatusBadRequest)
+		http.Error(w, "invalid pull request number", http.StatusBadRequest)
 		return
 	}
 
-	diff, err := s.Provider.GetPullRequestDiff(owner, repo, number)
+	diff, err := s.Provider.GetPullRequestDiff(owner, repository, pullRequestNumber)
 	if err != nil {
 		s.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -237,15 +259,15 @@ func (s *Server) HandlePRDiff(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(diff))
 }
 
-func (s *Server) Start() error {
+func (s *Server) ListenAndServe() error {
 	s.Router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
-	s.Router.HandleFunc("/", s.HandleIndex)
+	s.Router.HandleFunc("/", s.HandleHomePage)
 
-	s.Router.HandleFunc("/{owner}/{repo}/pull/{number}/diff", s.HandlePRDiff)
-	s.Router.HandleFunc("/{owner}/{repo}", s.HandleGitHubRoute(Page))
-	s.Router.HandleFunc("/{owner}/{repo}/", s.HandleGitHubRoute(Page))
-	s.Router.HandleFunc("/{owner}/{repo}/{scope:.*}", s.HandleGitHubRoute(Page))
+	s.Router.HandleFunc("/{owner}/{repo}/pull/{number}/diff", s.HandlePullRequestDiff)
+	s.Router.HandleFunc("/{owner}/{repo}", s.WithParsedRepositoryRequest(HandleRepository))
+	s.Router.HandleFunc("/{owner}/{repo}/", s.WithParsedRepositoryRequest(HandleRepository))
+	s.Router.HandleFunc("/{owner}/{repo}/{scope:.*}", s.WithParsedRepositoryRequest(HandleRepository))
 
-	s.Logger.Info(fmt.Sprintf("Server starting on port %d", s.Port))
+	s.Logger.Info("starting HTTP server", "port", s.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
 }

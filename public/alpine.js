@@ -42,10 +42,10 @@ function getDiffTheme() {
   return 'pierre-light';
 }
 
-async function loadPRDiffs(container, owner, repo, prNumber, signal) {
+async function loadPullRequestDiffs(container, owner, repository, pullRequestNumber, signal) {
   const lib = await ensureDiffsLib();
 
-  const resp = await fetch(`/${owner}/${repo}/pull/${prNumber}/diff`, { signal });
+  const resp = await fetch(`/${owner}/${repository}/pull/${pullRequestNumber}/diff`, { signal });
   if (!resp.ok) throw new Error('Failed to fetch diff: ' + resp.status);
 
   const diffText = await resp.text();
@@ -139,27 +139,27 @@ document.addEventListener('alpine:init', () => {
 
   Alpine.store('contextPane', {
     open: false,
-    prNumber: null,
-    prTitle: '',
-    prStatusClass: '',
-    prUrl: '',
-    prState: '',
-    prAge: '',
-    prAuthorName: '',
-    prAuthorUrl: '',
-    prScope: '',
-    prScopeUrl: '',
+    pullRequestNumber: null,
+    pullRequestTitle: '',
+    pullRequestStatusClass: '',
+    pullRequestURL: '',
+    pullRequestState: '',
+    pullRequestAge: '',
+    pullRequestAuthorName: '',
+    pullRequestAuthorURL: '',
+    pullRequestScope: '',
+    pullRequestScopeURL: '',
     bodyHtml: '',
     loadingBody: false,
     diffInstances: [],
     loadingDiffs: false,
     _abortController: null,
     _owner: '',
-    _repo: '',
+    _repository: '',
     _stashedDiffs: [],
 
-    async openPane(prNumber, dataset = {}) {
-      if (prNumber === this.prNumber) {
+    async openPane(pullRequestNumber, dataset = {}) {
+      if (pullRequestNumber === this.pullRequestNumber) {
         if (this.open) {
           this._stashDiffs();
           this.open = false;
@@ -171,31 +171,31 @@ document.addEventListener('alpine:init', () => {
 
       this._cleanup();
 
-      this.prNumber = prNumber;
+      this.pullRequestNumber = pullRequestNumber;
 
-      this.prTitle = dataset.prTitle || 'Pull Request';
-      this.prStatusClass = dataset.prStatusClass || '';
-      this.prUrl = dataset.prUrl || '#';
-      this.prState = dataset.prState || '';
-      this.prAge = dataset.prAge || '';
-      this.prAuthorName = dataset.prAuthorName || '';
-      this.prAuthorUrl = dataset.prAuthorUrl || '#';
-      this.prScope = dataset.prScope || '';
-      this.prScopeUrl = dataset.prScopeUrl || '#';
+      this.pullRequestTitle = dataset.pullRequestTitle || 'Pull Request';
+      this.pullRequestStatusClass = dataset.pullRequestStatusClass || '';
+      this.pullRequestURL = dataset.pullRequestURL || '#';
+      this.pullRequestState = dataset.pullRequestState || '';
+      this.pullRequestAge = dataset.pullRequestAge || '';
+      this.pullRequestAuthorName = dataset.pullRequestAuthorName || '';
+      this.pullRequestAuthorURL = dataset.pullRequestAuthorURL || '#';
+      this.pullRequestScope = dataset.pullRequestScope || '';
+      this.pullRequestScopeURL = dataset.pullRequestScopeURL || '#';
 
-      const card = document.querySelector(`.pull-request[data-pr-number="${prNumber}"]`);
+      const card = document.querySelector(`.pull-request[data-pull-request-number="${pullRequestNumber}"]`);
       const owner = card?.closest('[data-owner]')?.dataset.owner;
-      const repo = card?.closest('[data-repo]')?.dataset.repo;
+      const repository = card?.closest('[data-repository]')?.dataset.repository;
 
-      if (!owner || !repo) {
+      if (!owner || !repository) {
         const pathParts = window.location.pathname.split('/').filter(Boolean);
         if (pathParts.length >= 2) {
           this._owner = pathParts[0];
-          this._repo = pathParts[1];
+          this._repository = pathParts[1];
         }
       } else {
         this._owner = owner;
-        this._repo = repo;
+        this._repository = repository;
       }
 
       this.bodyHtml = this._bodySkeletonHtml();
@@ -208,7 +208,7 @@ document.addEventListener('alpine:init', () => {
       if (selected) selected.classList.remove('selected');
       card?.classList.add('selected');
 
-      this._fetchBodyAndDiffs(prNumber);
+      this._fetchBodyAndDiffs(pullRequestNumber);
     },
 
     closePane() {
@@ -223,42 +223,42 @@ document.addEventListener('alpine:init', () => {
     },
 
     openPrRef(event) {
-      const link = event.target.closest('.pr-ref');
+      const link = event.target.closest('.pull-request-reference');
       if (!link) return;
       event.preventDefault();
 
-      const prNumber = parseInt(link.dataset.prNumber, 10);
-      if (isNaN(prNumber)) return;
+      const pullRequestNumber = parseInt(link.dataset.pullRequestNumber, 10);
+      if (isNaN(pullRequestNumber)) return;
 
-      const card = document.querySelector(`.pull-request[data-pr-number="${prNumber}"]`);
+      const card = document.querySelector(`.pull-request[data-pull-request-number="${pullRequestNumber}"]`);
       if (card) {
-        this.openPane(prNumber, card.dataset);
+        this.openPane(pullRequestNumber, card.dataset);
         return;
       }
 
       const pathParts = window.location.pathname.split('/').filter(Boolean);
       const owner = pathParts[0] || this._owner;
-      const repo = pathParts[1] || this._repo;
-      if (!owner || !repo) return;
+      const repository = pathParts[1] || this._repository;
+      if (!owner || !repository) return;
 
       link.classList.add('loading');
 
-      this._fetchBodyRaw(prNumber).then(html => {
+      this._fetchBodyRaw(pullRequestNumber).then(html => {
         link.classList.remove('loading');
 
         this._cleanup();
-        this.prNumber = prNumber;
-        this.prTitle = 'Pull Request #' + prNumber;
-        this.prStatusClass = '';
-        this.prUrl = `https://github.com/${owner}/${repo}/pull/${prNumber}`;
-        this.prState = '';
-        this.prAge = '';
-        this.prAuthorName = '';
-        this.prAuthorUrl = '#';
-        this.prScope = '';
-        this.prScopeUrl = '#';
+        this.pullRequestNumber = pullRequestNumber;
+        this.pullRequestTitle = 'Pull Request #' + pullRequestNumber;
+        this.pullRequestStatusClass = '';
+        this.pullRequestURL = `https://github.com/${owner}/${repository}/pull/${pullRequestNumber}`;
+        this.pullRequestState = '';
+        this.pullRequestAge = '';
+        this.pullRequestAuthorName = '';
+        this.pullRequestAuthorURL = '#';
+        this.pullRequestScope = '';
+        this.pullRequestScopeURL = '#';
         this._owner = owner;
-        this._repo = repo;
+        this._repository = repository;
 
         this.bodyHtml = html;
         this.open = true;
@@ -313,7 +313,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     async rerenderDiffs() {
-      if (!this.open || !this.prNumber || !this._owner || !this._repo) return;
+      if (!this.open || !this.pullRequestNumber || !this._owner || !this._repository) return;
       if (!this.diffInstances.length) return;
 
       const container = document.getElementById('context-pane-content');
@@ -328,7 +328,7 @@ document.addEventListener('alpine:init', () => {
 
       const tempDiffContainer = document.createElement('div');
       try {
-        const instances = await loadPRDiffs(tempDiffContainer, this._owner, this._repo, this.prNumber);
+        const instances = await loadPullRequestDiffs(tempDiffContainer, this._owner, this._repository, this.pullRequestNumber);
 
         body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         Array.from(tempDiffContainer.children).forEach(el => body.appendChild(el));
@@ -338,7 +338,7 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
-    async _fetchBodyAndDiffs(prNumber) {
+    async _fetchBodyAndDiffs(pullRequestNumber) {
       this._abortController = new AbortController();
       const signal = this._abortController.signal;
 
@@ -352,8 +352,8 @@ document.addEventListener('alpine:init', () => {
 
       const tempDiffContainer = document.createElement('div');
 
-      const bodyPromise = this._fetchBodyRaw(prNumber, signal);
-      const diffsPromise = this._fetchDiffsRaw(prNumber, signal, tempDiffContainer);
+      const bodyPromise = this._fetchBodyRaw(pullRequestNumber, signal);
+      const diffsPromise = this._fetchDiffsRaw(pullRequestNumber, signal, tempDiffContainer);
 
       try {
         const [bodyHtml, diffInstances] = await Promise.all([bodyPromise, diffsPromise]);
@@ -388,8 +388,8 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
-    async _fetchBodyRaw(prNumber, signal) {
-      const response = await fetch(`/${this._owner}/${this._repo}?part=pr-detail&number=${prNumber}`, { signal });
+    async _fetchBodyRaw(pullRequestNumber, signal) {
+      const response = await fetch(`/${this._owner}/${this._repository}?fragment=pr-detail&number=${pullRequestNumber}`, { signal });
       if (!response.ok) throw new Error('Failed to fetch body');
 
       const html = await response.text();
@@ -413,9 +413,9 @@ document.addEventListener('alpine:init', () => {
       return html;
     },
 
-    async _fetchDiffsRaw(prNumber, signal, target) {
-      if (!this._owner || !this._repo) return [];
-      const instances = await loadPRDiffs(target, this._owner, this._repo, prNumber, signal);
+    async _fetchDiffsRaw(pullRequestNumber, signal, target) {
+      if (!this._owner || !this._repository) return [];
+      const instances = await loadPullRequestDiffs(target, this._owner, this._repository, pullRequestNumber, signal);
       return instances;
     },
 
@@ -551,7 +551,7 @@ document.addEventListener('alpine:init', () => {
 
   Alpine.data('nav', () => ({
     origOwner: '',
-    origRepo: '',
+    origRepository: '',
     origScope: '',
     _fontsReady: false,
 
@@ -588,7 +588,7 @@ document.addEventListener('alpine:init', () => {
 
     _captureOriginals() {
       this.origOwner = document.querySelector('.title-input[data-part="owner"]')?.value.trim() || '';
-      this.origRepo = document.querySelector('.title-input[data-part="repo"]')?.value.trim() || '';
+      this.origRepository = document.querySelector('.title-input[data-part="repository"]')?.value.trim() || '';
       this.origScope = document.querySelector('.title-input[data-part="scope"]')?.value.trim() || '';
     },
 
@@ -635,14 +635,14 @@ document.addEventListener('alpine:init', () => {
 
     _navigate() {
       const owner = (document.querySelector('.title-input[data-part="owner"]')?.value || '').trim();
-      const repo = (document.querySelector('.title-input[data-part="repo"]')?.value || '').trim();
+      const repository = (document.querySelector('.title-input[data-part="repository"]')?.value || '').trim();
       const scope = (document.querySelector('.title-input[data-part="scope"]')?.value || '').trim();
 
-      if (owner === this.origOwner && repo === this.origRepo && scope === this.origScope) return;
+      if (owner === this.origOwner && repository === this.origRepository && scope === this.origScope) return;
 
-      if (repo) {
-        let url = `/${owner}/${repo}`;
-        if (owner === this.origOwner && repo === this.origRepo && scope !== this.origScope) {
+      if (repository) {
+        let url = `/${owner}/${repository}`;
+        if (owner === this.origOwner && repository === this.origRepository && scope !== this.origScope) {
           if (scope) {
             url += `/${scope}`;
           }

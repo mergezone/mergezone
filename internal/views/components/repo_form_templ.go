@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func RepoForm(formID string) templ.Component {
+func RepositoryForm(formIdentifier string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,15 +34,15 @@ func RepoForm(formID string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(formID)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(formIdentifier)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_form.templ`, Line: 4, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_form.templ`, Line: 4, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"repo-form\"><span class=\"input-pill\"><input type=\"text\" class=\"title-input owner-input\" placeholder=\"facebook\" required aria-label=\"Search your team\" autofocus></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input type=\"text\" class=\"title-input repo-input\" placeholder=\"react\" required aria-label=\"Search your repositories\"></span> <button type=\"submit\" aria-label=\"Submit\"><i class=\"fa-solid fa-magnifying-glass\" aria-hidden=\"true\"></i></button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"repo-form\"><span class=\"input-pill\"><input type=\"text\" class=\"title-input owner-input\" placeholder=\"facebook\" required aria-label=\"Search your team\" autofocus></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input type=\"text\" class=\"title-input repository-input\" placeholder=\"react\" required aria-label=\"Search your repositories\"></span> <button type=\"submit\" aria-label=\"Submit\"><i class=\"fa-solid fa-magnifying-glass\" aria-hidden=\"true\"></i></button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

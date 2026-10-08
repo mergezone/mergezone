@@ -16,7 +16,8 @@ import (
 	"merge/internal/views/helpers"
 )
 
-func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) templ.Component {
+// PullRequestDetail renders the detail fragment for a single pull request.
+func PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository, currentPath string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -42,9 +43,9 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(pr.URL)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(pullRequest.URL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 13, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 14, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -54,7 +55,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 = []any{"status-icon fa-solid " + helpers.GetStatusClass(pr)}
+		var templ_7745c5c3_Var3 = []any{"status-icon fa-solid " + helpers.GetStatusClass(pullRequest)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -76,8 +77,8 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if pr.Title != "" {
-			templ_7745c5c3_Err = Markdown(pr.Title).Render(ctx, templ_7745c5c3_Buffer)
+		if pullRequest.Title != "" {
+			templ_7745c5c3_Err = Markdown(pullRequest.Title).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -92,9 +93,9 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#%d", pr.Number))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#%d", pullRequest.Number))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 33, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 34, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -105,9 +106,9 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(pr.State)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.State)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 40, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 41, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -117,7 +118,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Age(pr.TimeOpen, pr.DaysOpen).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Age(pullRequest.TimeOpen, pullRequest.DaysOpen).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,7 +128,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		}
 		authorPath := helpers.StripQueryParam(currentPath, "contributor")
 		currentStatus := helpers.GetQueryParam(currentPath, "status")
-		q := []string{"contributor=" + pr.Author.Name}
+		q := []string{"contributor=" + pullRequest.Author.Name}
 		if currentStatus != "" {
 			q = append(q, "status="+currentStatus)
 		}
@@ -139,7 +140,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(authorURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 64, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 65, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -152,7 +153,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(authorURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 65, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 66, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -163,9 +164,9 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(pr.Author.Name)
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.Author.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 67, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 68, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -175,12 +176,12 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(pr.Scopes) > 0 {
+		if len(pullRequest.Scopes) > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"meta-row\"><span class=\"meta-label\"><i class=\"fa-solid fa-tag\"></i> Scope</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repo, pr.Scopes[0])
+			scopeURL := fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
 			currentStatus := helpers.GetQueryParam(currentPath, "status")
 			currentContributor := helpers.GetQueryParam(currentPath, "contributor")
 			q := []string{}
@@ -200,7 +201,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			var templ_7745c5c3_Var10 templ.SafeURL
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 91, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 92, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -213,7 +214,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 92, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 93, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {
@@ -224,9 +225,9 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(pr.Scopes[0])
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(pullRequest.Scopes[0])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 94, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pane_content.templ`, Line: 95, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -241,7 +242,7 @@ func PaneContent(pr model.StampedPullRequest, owner, repo, currentPath string) t
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Markdown(pr.Body).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Markdown(pullRequest.Body).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

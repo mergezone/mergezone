@@ -18,7 +18,7 @@ import (
 	"merge/internal/model"
 )
 
-func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet) templ.Component {
+func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,12 +43,12 @@ func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(scopes) > 0 || filters.Scope != "" {
+		if len(scopeSummaries) > 0 || filters.Scope != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"buttons\"><i id=\"scopes-sort-indicator\" class=\"fa-solid fa-spinner fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <span class=\"sort-label\">SORT:</span> <button")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if activeSort == "recent" {
+			if activeSortOrder == "recent" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " data-active-sort=\"true\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -59,9 +59,9 @@ func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?part=scopes&sort=recent"))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=scopes&sort=recent"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 23, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 23, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 			if templ_7745c5c3_Err != nil {
@@ -71,7 +71,7 @@ func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if activeSort == "top" {
+			if activeSortOrder == "top" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " data-active-sort=\"true\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -82,9 +82,9 @@ func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?part=scopes&sort=top"))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("?fragment=scopes&sort=top"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 33, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 33, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -99,13 +99,13 @@ func Scopes(scopes []model.ScopeInfo, activeSort string, filters model.FilterSet
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(scopes) > 0 {
+		if len(scopeSummaries) > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"scopes-container\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, info := range scopes {
-				templ_7745c5c3_Err = Scope(info, filters).Render(ctx, templ_7745c5c3_Buffer)
+			for _, scope := range scopeSummaries {
+				templ_7745c5c3_Err = ScopeCard(scope, filters).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

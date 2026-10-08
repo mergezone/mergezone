@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "merge/internal/model"
 
-func Sidebar(filters model.FilterSet, scopeCounts []model.ScopeInfo, scopeSort string, contributorCounts []model.ContributorInfo, contributorSort string) templ.Component {
+func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.ScopeInfo, scopeSortOrder string, contributorSummaries []model.ContributorInfo, contributorSortOrder string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,7 +35,7 @@ func Sidebar(filters model.FilterSet, scopeCounts []model.ScopeInfo, scopeSort s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Nav(filters.Owner, filters.Repo, filters.Scope).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = RepositoryNavigation(filters.Owner, filters.Repository, filters.Scope).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func Sidebar(filters model.FilterSet, scopeCounts []model.ScopeInfo, scopeSort s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Scopes(scopeCounts, scopeSort, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ScopeSummaries(scopeSummaries, scopeSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -51,7 +51,7 @@ func Sidebar(filters model.FilterSet, scopeCounts []model.ScopeInfo, scopeSort s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Contributors(contributorCounts, contributorSort, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ContributorSummaries(contributorSummaries, contributorSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

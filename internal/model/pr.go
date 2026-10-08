@@ -206,17 +206,17 @@ type ExpiryCounts struct {
 	ExpiredCount int
 }
 
-func (c ExpiryCounts) Count() int {
+func (c ExpiryCounts) TotalPullRequests() int {
 	return c.FreshCount + c.StaleCount + c.ExpiredCount + c.MergedCount
 }
 
-func GetCounts(prs []StampedPullRequest) ExpiryCounts {
+func PullRequestExpiryCounts(pullRequests []StampedPullRequest) ExpiryCounts {
 	merged := 0
 	fresh := 0
 	stale := 0
 	expired := 0
 
-	for _, pr := range prs {
+	for _, pr := range pullRequests {
 		if pr.State == Merged {
 			merged += 1
 			continue
@@ -252,7 +252,7 @@ func ScopeCounts(prs []StampedPullRequest) map[string]ExpiryCounts {
 	counts := make(map[string]ExpiryCounts)
 
 	for scope, prs := range scopes {
-		counts[scope] = GetCounts(prs)
+		counts[scope] = PullRequestExpiryCounts(prs)
 	}
 
 	return counts
@@ -264,8 +264,8 @@ type ScopeInfo struct {
 	NewestPRAge string
 }
 
-func (s ScopeInfo) Count() int {
-	return s.Counts.Count()
+func (s ScopeInfo) TotalPullRequests() int {
+	return s.Counts.TotalPullRequests()
 }
 
 func TimeAgo(open time.Duration, days int) string {
@@ -362,7 +362,7 @@ func ScopeAges(prs []StampedPullRequest) []ScopeInfo {
 
 	var entries []scopeEntry
 	for name, data := range scopeMap {
-		counts := GetCounts(data.prs)
+		counts := PullRequestExpiryCounts(data.prs)
 		ageStr := ""
 		for _, pr := range data.prs {
 			if pr.UpdatedAt != nil && pr.UpdatedAt.Equal(data.newestTime) {
@@ -402,8 +402,8 @@ type ContributorInfo struct {
 	NewestPRAge string
 }
 
-func (c ContributorInfo) Count() int {
-	return c.Counts.Count()
+func (c ContributorInfo) TotalPullRequests() int {
+	return c.Counts.TotalPullRequests()
 }
 
 func ContributorActivity(prs []StampedPullRequest) []ContributorInfo {
@@ -437,7 +437,7 @@ func ContributorActivity(prs []StampedPullRequest) []ContributorInfo {
 
 	entries := make([]*contrib, 0, len(m))
 	for _, c := range m {
-		c.Counts = GetCounts(c.prs)
+		c.Counts = PullRequestExpiryCounts(c.prs)
 		entries = append(entries, c)
 	}
 

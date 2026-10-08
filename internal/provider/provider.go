@@ -7,28 +7,28 @@ import (
 	"time"
 )
 
-type Params struct {
+type RepositoryQuery struct {
 	Owner       string
-	Repo        string
+	Repository  string
 	AsOf        time.Time
 	Scope       *string
 	Contributor *string
 	Status      *string
 }
 
-type Options struct {
-	Count int
-	Page  int
+type PullRequestListOptions struct {
+	PerPage int
+	Page    int
 }
 
-func (o Options) WithPage(page int) Options {
-	o.Page = page
-	return o
+func (options PullRequestListOptions) WithPage(page int) PullRequestListOptions {
+	options.Page = page
+	return options
 }
 
-func tryInt(key string, query url.Values, fallback int) int {
-	if p := query.Get(key); p != "" {
-		if parsed, err := strconv.Atoi(p); err == nil {
+func repositoryQueryIntOrDefault(key string, queryValues url.Values, fallback int) int {
+	if rawValue := queryValues.Get(key); rawValue != "" {
+		if parsed, err := strconv.Atoi(rawValue); err == nil {
 			return parsed
 		}
 	}
@@ -36,36 +36,36 @@ func tryInt(key string, query url.Values, fallback int) int {
 	return fallback
 }
 
-func ParseMux(vars map[string]string, query url.Values) (Params, Options) {
-	ps := Params{
-		Owner: vars["owner"],
-		Repo:  vars["repo"],
+func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Values) (RepositoryQuery, PullRequestListOptions) {
+	repositoryQuery := RepositoryQuery{
+		Owner:      routeVariables["owner"],
+		Repository: routeVariables["repo"],
 		// TODO(hayden): Move this to options for historical slicing?
 		AsOf: time.Now(),
 	}
-	if scope, ok := vars["scope"]; ok {
-		ps.Scope = &scope
+	if scope, ok := routeVariables["scope"]; ok {
+		repositoryQuery.Scope = &scope
 	}
-	if contributor := query.Get("contributor"); contributor != "" {
-		ps.Contributor = &contributor
+	if contributor := queryValues.Get("contributor"); contributor != "" {
+		repositoryQuery.Contributor = &contributor
 	}
-	if status := query.Get("status"); status != "" {
-		ps.Status = &status
-	}
-
-	options := Options{
-		Count: 20,
-		Page:  tryInt("page", query, 1),
+	if status := queryValues.Get("status"); status != "" {
+		repositoryQuery.Status = &status
 	}
 
-	return ps, options
+	options := PullRequestListOptions{
+		PerPage: 20,
+		Page:    repositoryQueryIntOrDefault("page", queryValues, 1),
+	}
+
+	return repositoryQuery, options
 }
 
-type PaginationResult struct {
+type PullRequestPagination struct {
 	HasNext bool
 }
 
 type Provider interface {
-	GetPullRequests(params Params, options Options) ([]model.StampedPullRequest, PaginationResult, error)
-	GetPullRequestDiff(owner, repo string, number int) (string, error)
+	GetPullRequests(query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, error)
+	GetPullRequestDiff(owner, repository string, pullRequestNumber int) (string, error)
 }
