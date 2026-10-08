@@ -753,7 +753,6 @@ document.addEventListener('alpine:init', () => {
     _captureOriginals() {
       this.origOwner = document.querySelector('.title-input[data-part="owner"]')?.value.trim() || '';
       this.origRepository = document.querySelector('.title-input[data-part="repository"]')?.value.trim() || '';
-      this.origScope = document.querySelector('.title-input[data-part="scope"]')?.value.trim() || '';
     },
 
     _setupInputs() {
@@ -800,48 +799,15 @@ document.addEventListener('alpine:init', () => {
     _navigate() {
       const owner = (document.querySelector('.title-input[data-part="owner"]')?.value || '').trim();
       const repository = (document.querySelector('.title-input[data-part="repository"]')?.value || '').trim();
-      const scope = (document.querySelector('.title-input[data-part="scope"]')?.value || '').trim();
 
-      if (owner === this.origOwner && repository === this.origRepository && scope === this.origScope) return;
+      if (owner === this.origOwner && repository === this.origRepository) return;
 
       if (repository) {
         let url = `/${owner}/${repository}`;
-        if (owner === this.origOwner && repository === this.origRepository && scope !== this.origScope) {
-          if (scope) {
-            url += `/${scope}`;
-          }
-          const params = new URLSearchParams(window.location.search);
-          const paramStr = params.toString();
-          if (paramStr) {
-            url += '?' + paramStr;
-          }
-        }
         htmx.ajax('GET', url, {
           target: 'main',
           swap: 'innerHTML'
         });
-      }
-    },
-
-    _syncScopeFromUrl() {
-      const parts = window.location.pathname.split('/').filter(Boolean);
-      if (parts.length > 2) {
-        const curScope = parts.slice(2).join('/');
-        if (curScope !== this.origScope) {
-          const inp = document.querySelector('.title-input[data-part="scope"]');
-          if (inp) {
-            inp.value = curScope;
-            this.origScope = curScope;
-            inp.dispatchEvent(new Event('input'));
-          }
-        }
-      } else {
-        const inp = document.querySelector('.title-input[data-part="scope"]');
-        if (inp && inp.value) {
-          inp.value = '';
-          this.origScope = '';
-          inp.dispatchEvent(new Event('input'));
-        }
       }
     }
   }));

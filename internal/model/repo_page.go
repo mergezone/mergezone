@@ -35,14 +35,14 @@ func (f RepositoryFilters) PageURL(page int) string {
 
 func (f RepositoryFilters) basePath() string {
 	p := "/" + f.Owner + "/" + f.Repository
-	if f.Scope != "" {
-		p += "/" + f.Scope
-	}
 	return p
 }
 
 func (f RepositoryFilters) queryValues() url.Values {
 	q := url.Values{}
+	if f.Scope != "" {
+		q.Set("scope", f.Scope)
+	}
 	if f.Contributor != "" {
 		q.Set("contributor", f.Contributor)
 	}

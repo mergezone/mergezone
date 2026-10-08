@@ -43,7 +43,7 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 		// TODO(hayden): Move this to options for historical slicing?
 		AsOf: time.Now(),
 	}
-	if scope, ok := routeVariables["scope"]; ok {
+	if scope := queryValues.Get("scope"); scope != "" {
 		repositoryQuery.Scope = &scope
 	}
 	if contributor := queryValues.Get("contributor"); contributor != "" {
@@ -54,7 +54,7 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 	}
 
 	options := PullRequestListOptions{
-		PerPage: 20,
+		PerPage: 100,
 		Page:    repositoryQueryIntOrDefault("page", queryValues, 1),
 	}
 
