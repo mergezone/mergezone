@@ -2,6 +2,7 @@ package components
 
 import (
 	"strings"
+	"unicode"
 
 	"merge/internal/model"
 )
@@ -13,16 +14,25 @@ func repositoryStatusURL(filters model.RepositoryFilters, targetStatus string) s
 	return filters.WithStatus(targetStatus).URL()
 }
 
+func titleCaseFirst(value string) string {
+	runes := []rune(value)
+	if len(runes) == 0 {
+		return value
+	}
+	runes[0] = unicode.ToTitle(runes[0])
+	return string(runes)
+}
+
 func repositoryFilterLabel(filters model.RepositoryFilters) string {
 	parts := []string{}
 	if filters.Scope != "" {
-		parts = append(parts, strings.ToUpper(filters.Scope))
+		parts = append(parts, titleCaseFirst(filters.Scope))
 	}
 	if filters.Status != "" {
-		parts = append(parts, strings.ToUpper(filters.Status))
+		parts = append(parts, titleCaseFirst(filters.Status))
 	}
 	if filters.Contributor != "" {
-		parts = append(parts, strings.ToUpper(filters.Contributor))
+		parts = append(parts, titleCaseFirst(filters.Contributor))
 	}
 	return "Filter: " + strings.Join(parts, ", ")
 }
@@ -32,24 +42,19 @@ templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests boo
 	<div class="stats">
 		<div class="section-heading">
             <span>Overview</span>
-			<div class="buttons">
+			<div class="section-actions">
 				if filters.Scope != "" || filters.Contributor != "" || filters.Status != "" {
-					<button class="filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">{ repositoryFilterLabel(filters) }</button>
-					<a class="link-button" id="filter-clear"
-						href={ templ.SafeURL(filters.URL()) }
-						hx-get={ templ.SafeURL(filters.URL()) }
-						hx-target="main"
-						hx-push-url="true">Clear</a>
+					<button class="button is-ghost filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">{ repositoryFilterLabel(filters) }</button>
 				} else {
-					<button class="filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">Filter</button>
+					<button class="button is-ghost filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">Filter</button>
 				}
 			</div>
         </div>
-		<div class="stats-tiles">
-			@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")
-			@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")
-			@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")
-			@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")
+		<div class="level is-mobile stats-tiles">
+			<div class="level-item">@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")</div>
+			<div class="level-item">@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")</div>
+			<div class="level-item">@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")</div>
+			<div class="level-item">@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")</div>
 		</div>
 	</div>
 }

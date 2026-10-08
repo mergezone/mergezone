@@ -23,10 +23,10 @@ templ AppendPullRequestsResponse(
 	<div id="overview-stats" hx-swap-oob="true">
 		@components.PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
 	</div>
-	<div id="scopes-section" hx-swap-oob="true">
+	<div id="scopes-section" x-data="{ collapsed: false }" hx-swap-oob="true">
 		@components.ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
 	</div>
-	<div id="contributors-section" hx-swap-oob="true">
+	<div id="contributors-section" x-data="{ collapsed: false }" hx-swap-oob="true">
 		@components.ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
 	</div>
 }

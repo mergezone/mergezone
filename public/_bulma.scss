@@ -1,0 +1,54 @@
+// ---------------------------------------------------------------------------
+// Bulma integration
+// ---------------------------------------------------------------------------
+// Bulma is configured here, once, before any module consumes its variables.
+// Only modules used by the templates are imported. Bulma owns component
+// styling; Merge Zone keeps its page layout and runtime theme tokens (see
+// _variables.scss and _bulma-bridge.scss).
+
+@use "bulma/sass/utilities" with (
+  $family-primary: (system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
+  $family-secondary: (system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
+  $family-code: (ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace),
+  $primary: #0d6efd,
+  $link: #0d6efd,
+  $info: #0dcaf0,
+  $success: #198754,
+  $warning: #ffc107,
+  $danger: #dc3545,
+  $radius-small: 0.25rem,
+  $radius: 0.375rem,
+  $radius-medium: 0.5rem,
+  $radius-large: 0.5rem,
+  $duration: 200ms,
+  $easing: ease-out
+);
+
+@use "bulma/sass/utilities/initial-variables" as iv;
+@use "bulma/sass/themes/light";
+@use "bulma/sass/themes/setup";
+
+// Bulma reset/base and native loading skeleton primitive.
+@use "bulma/sass/base";
+@use "bulma/sass/base/skeleton";
+
+// Elements used by the existing server-rendered components.
+@use "bulma/sass/elements/box";
+@use "bulma/sass/elements/button";
+@use "bulma/sass/elements/content";
+@use "bulma/sass/elements/delete";
+@use "bulma/sass/elements/table";
+
+// Form controls.
+@use "bulma/sass/form/shared";
+@use "bulma/sass/form/input-textarea";
+@use "bulma/sass/components/panel";
+@use "bulma/sass/layout/level";
+
+// Emit Bulma's own light theme and the computed semantic variables once.
+// Merge Zone's _bulma-bridge.scss maps its component variables onto the
+// existing light/dark runtime themes.
+#{iv.$variables-host} {
+  @include light.light-theme;
+  @include setup.setup-theme;
+}

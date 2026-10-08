@@ -39,7 +39,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceho
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"input-pill\"><input class=\"title-input\" type=\"text\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"input-pill\"><input class=\"input title-input\" type=\"text\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -85,7 +85,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceho
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input class=\"title-input\" type=\"text\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input class=\"input title-input\" type=\"text\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -131,7 +131,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceho
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input class=\"title-input\" type=\"text\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "></span> <span class=\"bold title-sep\">/</span> <span class=\"input-pill\"><input class=\"input title-input\" type=\"text\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

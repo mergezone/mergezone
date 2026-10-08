@@ -1,16 +1,16 @@
 @use 'variables' as *;
 @use 'silver-link';
 
-body, input {
+body, button, input, select, textarea {
     font-family: $body-family;
     font-weight: $body-weight;
     letter-spacing: $body-letter-spacing;
     font-style: normal;
     line-height: $line-height-body;
-    text-wrap: balance;
+    text-wrap: pretty;
 }
 
-h1, h2, h3, .title, .title-input, .site-brand {
+h1, h2, h3, .item-title, .title-input, .site-brand {
     font-family: $heading-family;
     font-weight: $heading-weight;
     letter-spacing: $heading-letter-spacing;
@@ -25,7 +25,7 @@ h1 {
     font-weight: $font-weight-bold;
     line-height: $line-height-heading;
     margin-block: $spacing-6;
-    letter-spacing: -0.025em;
+    letter-spacing: normal;
 }
 
 h2 {
@@ -33,7 +33,7 @@ h2 {
     font-weight: $font-weight-bold;
     line-height: $line-height-heading-h2;
     margin-block: $spacing-6;
-    letter-spacing: -0.02em;
+    letter-spacing: normal;
 }
 
 h3 {
@@ -41,7 +41,7 @@ h3 {
     font-weight: $font-weight-semibold;
     line-height: $line-height-subheading;
     margin-block: $spacing-4;
-    letter-spacing: -0.015em;
+    letter-spacing: normal;
 }
 
 h4 {
@@ -49,10 +49,14 @@ h4 {
     font-weight: $font-weight-semibold;
     line-height: $line-height-subheading;
     margin-block: $spacing-4;
-    letter-spacing: -0.01em;
+    letter-spacing: normal;
 }
 
-p, .title-input {
+p {
+    font-size: $text-sm;
+}
+
+.title-input {
     font-size: $text-md;
 }
 

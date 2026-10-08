@@ -1,12 +1,22 @@
 @use 'variables' as *;
 @use 'base';
 
-.filter-toggle {
+.button.filter-toggle {
     @include base.label-font($color-950);
     display: inline-flex;
     align-items: center;
     gap: $spacing-2;
     cursor: pointer;
+    height: auto;
+    min-height: 0;
+    padding: $spacing-1 $spacing-2;
+    border: $border-width-normal solid $color-700;
+    background: transparent;
+
+    &:hover {
+        background-color: $color-500;
+        border-color: $color-700;
+    }
 }
 
 .filter-panel {
@@ -33,6 +43,11 @@
 
         .button-toggle {
             @include base.button-toggle;
+            width: 1.5rem;
+            height: 1.5rem;
+            min-width: 1.5rem;
+            min-height: 1.5rem;
+            padding: 0;
         }
     }
 
@@ -47,7 +62,7 @@ body.filter-pane-open main > .scroll {
 }
 
 @media (min-width: $breakpoint-desktop) {
-    .filter-toggle {
+    .button.filter-toggle {
         display: none;
     }
 
@@ -57,7 +72,7 @@ body.filter-pane-open main > .scroll {
 }
 
 @media (max-width: $breakpoint-desktop) {
-    .filter-toggle {
+    .button.filter-toggle {
         display: inline-flex;
     }
 }

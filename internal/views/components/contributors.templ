@@ -9,46 +9,53 @@ import (
 )
 
 templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) {
-    <section class="contributors">
-        <div class="section-heading">
-            <span>Contributors</span>
-            <span class="buttons">
-                <i id="contributors-sort-indicator" class="fa-solid fa-spinner fa-spin htmx-indicator" aria-hidden="true"></i>
-                <span class="sort-label">SORT:</span>
-                <button
-                    if activeSortOrder == "recent" {
-                        data-active-sort="true"
-                    }
-                    hx-get={ fmt.Sprintf("?fragment=contributors&sort=recent") }
-                    hx-target="#contributors-section"
-                    hx-indicator="#contributors-sort-indicator"
-                >
-                    Recent
-                </button>
-                <button
-                    if activeSortOrder == "top" {
-                        data-active-sort="true"
-                    }
-                    hx-get={ fmt.Sprintf("?fragment=contributors&sort=top") }
-                    hx-target="#contributors-section"
-                    hx-indicator="#contributors-sort-indicator"
-                >
-                    Top
-                </button>
-            </span>
-        </div>
-        if len(contributorSummaries) > 0 {
-            <div class="contributors-container">
-                for _, contributor := range contributorSummaries {
-                    @ContributorCard(contributor, filters)
-                }
-            </div>
-        }
-        if filters.Contributor != "" {
-            {{ clearPath := filters.WithContributor("").URL() }}
-            <div class="scope-notice">
-                <span><a href={ templ.SafeURL(clearPath) } hx-get={ templ.SafeURL(clearPath) } hx-target="main" hx-push-url="true">Clear filter</a></span>
-            </div>
-        }
-    </section>
+	<section class="panel contributors filter-section">
+		<div class="panel-heading section-heading filter-section-heading">
+			<span class="section-heading-label">
+				<span class="section-heading-control">
+					<i class="fa-solid fa-users section-heading-icon" aria-hidden="true"></i>
+					<button class="link-button collapse-section-button" type="button"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand contributors' : 'Collapse contributors'"
+						:title="$data.collapsed ? 'Expand contributors' : 'Collapse contributors'"
+						@click.stop="$data.collapsed = !$data.collapsed">
+						<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+					</button>
+				</span>
+				<span>Contributors</span>
+			</span>
+			<span class="section-actions">
+				<i id="contributors-sort-indicator" class="fa-solid fa-circle-notch fa-spin htmx-indicator" aria-hidden="true"></i>
+				<button class="link-button sort-control"
+					aria-label="Sort contributors by recency"
+					title="Sort by recency"
+					if activeSortOrder == "recent" {
+						data-active-sort="true"
+					}
+					hx-get={ fmt.Sprintf("?fragment=contributors&sort=recent") }
+					hx-target="#contributors-section"
+					hx-indicator="#contributors-sort-indicator">
+					<i class="fa-solid fa-clock" aria-hidden="true"></i>
+				</button>
+				<button class="link-button sort-control"
+					aria-label="Sort contributors by pull request count"
+					title="Sort by pull request count"
+					if activeSortOrder == "top" {
+						data-active-sort="true"
+					}
+					hx-get={ fmt.Sprintf("?fragment=contributors&sort=top") }
+					hx-target="#contributors-section"
+					hx-indicator="#contributors-sort-indicator">
+					<i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>
+				</button>
+			</span>
+		</div>
+		<div class="filter-section-content" x-show="!$data.collapsed">
+			if len(contributorSummaries) > 0 {
+				for _, contributor := range contributorSummaries {
+					@ContributorCard(contributor, filters)
+				}
+			}
+		</div>
+	</section>
 }

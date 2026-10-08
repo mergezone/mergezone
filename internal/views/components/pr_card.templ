@@ -9,7 +9,7 @@ import (
 
 templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) {
 	<div
-		class="item pull-request"
+		class="item pull-request box"
 		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
 		data-pull-request-number={ fmt.Sprintf("%d", pullRequest.Number) }
 		data-pull-request-title={ pullRequest.Title }
@@ -30,7 +30,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
                 <i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
             </div>
             <div class="title-row">
-                <b class="title">@Markdown(pullRequest.Title)</b>
+                <b class="item-title">@Markdown(pullRequest.Title)</b>
             </div>
             <div class="description-row">
                 <span>

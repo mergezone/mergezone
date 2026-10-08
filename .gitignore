@@ -1,3 +1,4 @@
 .env*
 /merge
 /merge.exe
+node_modules/

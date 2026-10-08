@@ -1,3 +1,46 @@
+$aside-width: 24rem !default;
+$aside-width-min: 16rem !default;
+$aside-width-max: 40rem !default;
+$context-pane-width: 24rem !default;
+$context-pane-width-min: 20rem !default;
+$context-pane-max-width: 40rem !default;
+
+:root, html.light {
+  color-scheme: light;
+  --color-50: #ffffff;
+  --color-100: #ffffff;
+  --color-200: #f1f3f5;
+  --color-300: #f8f9fa;
+  --color-400: #e9ecef;
+  --color-500: #f1f3f5;
+  --color-600: #dee2e6;
+  --color-700: #ced4da;
+  --color-800: #6c757d;
+  --color-900: #495057;
+  --color-950: #212529;
+  --color-code-bg: #212529;
+  --color-code-text: #f8f9fa;
+  --color-control-hover: #e9ecef;
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-50: #f8f9fa;
+  --color-100: #212529;
+  --color-200: #1b1f22;
+  --color-300: #212529;
+  --color-400: #2b3035;
+  --color-500: #343a40;
+  --color-600: #1b1f22;
+  --color-700: #5c636a;
+  --color-800: #adb5bd;
+  --color-900: #dee2e6;
+  --color-950: #f8f9fa;
+  --color-code-bg: #111827;
+  --color-code-text: #f9fafb;
+  --color-control-hover: #14181b;
+}
+
 :root {
   --color-page: var(--color-300);
   --color-surface: var(--color-100);
@@ -9,71 +52,19 @@
   --color-text-secondary: var(--color-900);
   --color-text-muted: var(--color-800);
   --color-text-heading: var(--color-950);
-  --color-code-bg: var(--color-950);
-  --color-code-text: var(--color-50);
   --color-inline-code-bg: var(--color-600);
   --color-inline-code-text: var(--color-950);
-  --color-red-500: #db4d14;
-  --color-amber-500: #df8816;
-  --color-green-500: #5b7e3c;
-  --color-purple-500: #7f577f;
-  --context-pane-max-width: 40rem;
-}
-
-html.white {
-  --color-50: #fafafa;
-  --color-100: #f5f5f5;
-  --color-200: #ffffff;
-  --color-300: #ffffff;
-  --color-400: #ffffff;
-  --color-500: #f0f0f0;
-  --color-600: #e0e0e0;
-  --color-700: #d0d0d0;
-  --color-800: #6a6a6a;
-  --color-900: #404040;
-  --color-950: #1a1a1a;
-}
-
-html.parchment {
-  --color-50: #fffcf2;
-  --color-100: #faf7ed;
-  --color-200: #f0e9dd;
-  --color-300: #eee8dd;
-  --color-400: #eee8dd;
-  --color-500: #dfd8c9;
-  --color-600: #d9d1c2;
-  --color-700: #ccc5b9;
-  --color-800: #70695c;
-  --color-900: #524b40;
-  --color-950: #403d39;
-}
-
-html.purple {
-  --color-50: #d0d6e8;
-  --color-100: #181c26;
-  --color-200: #0a0a0a;
-  --color-300: #0a0a0a;
-  --color-400: #0a0a0a;
-  --color-500: #242834;
-  --color-600: #2c303e;
-  --color-700: #383c4e;
-  --color-800: #7c8294;
-  --color-900: #aeb4c8;
-  --color-950: #d6dcee;
-}
-
-html.midnight {
-  --color-50: #e0e0e0;
-  --color-100: #111111;
-  --color-200: #0a0a0a;
-  --color-300: #0a0a0a;
-  --color-400: #0a0a0a;
-  --color-500: #161616;
-  --color-600: #1e1e1e;
-  --color-700: #2a2a2a;
-  --color-800: #7a7a7a;
-  --color-900: #aaaaaa;
-  --color-950: #e0e0e0;
+  --color-red-500: #dc3545;
+  --color-amber-500: #ffc107;
+  --color-green-500: #198754;
+  --color-special-500: #845ef7;
+  --color-primary: #0d6efd;
+  --filter-sidebar-width: #{$aside-width};
+  --filter-sidebar-min-width: #{$aside-width-min};
+  --filter-sidebar-max-width: #{$aside-width-max};
+  --context-pane-width: #{$context-pane-width};
+  --context-pane-min-width: #{$context-pane-width-min};
+  --context-pane-max-width: #{$context-pane-max-width};
 }
 
 $color-50:  var(--color-50);
@@ -88,98 +79,100 @@ $color-950: var(--color-950);
 $color-red-500:    var(--color-red-500);
 $color-amber-500:  var(--color-amber-500);
 $color-green-500:  var(--color-green-500);
-$color-purple-500: var(--color-purple-500);
+$color-special-500: var(--color-special-500);
 
 $color-cutout:        var(--color-cutout);
 $color-cutout-strong: var(--color-cutout-strong);
+$color-control-hover: var(--color-control-hover);
 
-$font-family-sans:    "Inter", sans-serif;
-$font-family-display: "Space Grotesk", sans-serif;
-$font-family-serif:   "Lora", serif;
-$font-family-mono:    "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+$font-family-sans:    system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+$font-family-display: $font-family-sans;
+$font-family-serif:   Georgia, "Times New Roman", serif;
+$font-family-mono:    ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
 
-$font-weight-body:        450;
+$font-weight-body:        400;
 $font-weight-semibold:    600;
-$font-weight-bold:        650;
-$font-weight-extrabold:   700;
+$font-weight-bold:        700;
+$font-weight-extrabold:   800;
 
 $body-family:          $font-family-sans;
 $body-weight:          $font-weight-body;
-$body-letter-spacing:  -0.01em;
+$body-letter-spacing:  normal;
 
 $heading-family:          $font-family-display;
 $heading-weight:          $font-weight-semibold;
-$heading-letter-spacing:  -0.02em;
+$heading-letter-spacing:  normal;
 
 $pane-heading-family:         $font-family-display;
 $pane-heading-weight:         $font-weight-semibold;
-$pane-heading-letter-spacing: -0.02em;
+$pane-heading-letter-spacing: normal;
 
 $filter-heading-family:         $font-family-display;
 $filter-heading-weight:         $font-weight-semibold;
-$filter-heading-letter-spacing: -0.02em;
+$filter-heading-letter-spacing: normal;
 
 $code-family: $font-family-mono;
 
+// Bulma's common scale, based on a 16px root size.
 $text-3xl: 3rem;
-$text-2xl: 2.25rem;
-$text-xl:  1.75rem;
-$text-lg:  1.375rem;
-$text-md:  1.125rem;
+$text-2xl: 2.5rem;
+$text-xl:  2rem;
+$text-lg:  1.5rem;
+$text-md:  1.25rem;
 $text-sm:  1rem;
 $text-xs:  0.875rem;
 $text-xxs: 0.75rem;
-$text-small-class: 0.9375rem;
+$text-small-class: 0.875rem;
 
-$line-height-heading:       1.1;
-$line-height-heading-h2:    1.15;
-$line-height-body:          1.6;
+$line-height-heading:       1.2;
+$line-height-heading-h2:    1.2;
+$line-height-body:          1.5;
 $line-height-subheading:    1.25;
-$line-height-markdown-body: 1.65;
+$line-height-markdown-body: 1.6;
 $line-height-code:          1.6;
 
+// Four-point spacing scale, expressed in quarter-rem Sass units.
+$space-unit: 0.25rem;
 $spacing-0:  0;
-$spacing-1:  0.25rem;
-$spacing-2:  0.5rem;
-$spacing-3:  0.75rem;
-$spacing-4:  1rem;
-$spacing-6:  1.5rem;
-$spacing-8:  2rem;
-$spacing-16: 4rem;
+$spacing-1:  $space-unit;
+$spacing-2:  $space-unit * 2;
+$spacing-3:  $space-unit * 3;
+$spacing-4:  $space-unit * 4;
+$spacing-6:  $space-unit * 6;
+$spacing-8:  $space-unit * 8;
+$spacing-16: $space-unit * 16;
 
 $nav-padding-inline: $spacing-4;
 $main-mobile-gap:    $spacing-6;
 
-$card-border-radius:      8px;
-$card-border-radius-sm:   6px;
-$inline-border-radius:    4px;
-$border-radius-code:      4px;
+$card-border-radius:      0.375rem;
+$card-border-radius-sm:   0.25rem;
+$inline-border-radius:    0.25rem;
+$border-radius-code:      0.25rem;
 $border-radius-circle:    50%;
-$sidebar-card-radius:     6px;
-$skeleton-border-radius:  6px;
+$sidebar-card-radius:     0.375rem;
+$skeleton-border-radius:  0.375rem;
 
-$border-width-normal: 1.5px;
+$border-width-normal: 1px;
 $border-width-thick:  2px;
 
 $transition-fast:         150ms;
 $transition-normal:       200ms;
-$transition-pane-fast:    100ms ease-out;
-$easing-spring:           cubic-bezier(0.34, 1.56, 0.64, 1);
+$transition-pane-fast:    160ms ease-out;
+$easing-spring:           ease-out;
 $easing-skeleton:         1.5s ease-in-out infinite;
 
-$breakpoint-mobile:  720px;
+$breakpoint-mobile:  768px;
 $breakpoint-desktop: 1024px;
 
-$scale-hover:       1.1;
-$scale-hover-large: 1.15;
-$scale-hover-icon:  110%;
-$scale-active:      0.85;
-$rotate-hover:      -5deg;
-$rotate-hover-large: -7.5deg;
+$scale-hover:       1.03;
+$scale-hover-large: 1.03;
+$scale-hover-icon:  103%;
+$scale-active:      0.98;
+$rotate-hover:      0deg;
+$rotate-hover-large: 0deg;
 
 $body-width:            100%;
-$aside-width:           24rem;
-$context-pane-width:    32rem;
 $filter-pane-ratio-scroll: 50%;
 
 $title-input-height-factor: 1.1;
@@ -187,17 +180,17 @@ $title-input-min-width:     1ch;
 $input-pill-inset-y:        -2px;
 $input-pill-inset-x:        -4px;
 
-$letter-spacing-label: 0.08em;
+$letter-spacing-label: 0.05em;
 
 $stats-tiles-grid-columns: 2;
 
-$heading-scale-h1: 0.67;
-$heading-scale-h2: 0.67;
+$heading-scale-h1: 0.8;
+$heading-scale-h2: 0.8;
 
 $code-padding-y: 0.15rem;
 $code-padding-x: 0.35rem;
 
-$stat-font-size:                1.75rem;
+$stat-font-size:                1.5rem;
 $stat-icon-size:                1.375rem;
 $status-icon-font-size-factor:  1.1;
 $status-icon-margin-top-factor: 0.3;
@@ -233,11 +226,11 @@ $skeleton-opacity-end:    0.7;
 $sidebar-card-padding-y: 0.4rem;
 $sidebar-card-padding-x: 0.5rem;
 
-$scrollbar-thumb-radius: 3px;
+$scrollbar-thumb-radius: 0.25rem;
 // Prevent Sass rgba() formatting with spaces
 $scrollbar-track-bg:     #{'rgba(0,0,0,0)'};
 
-$pr-card-desc-font-size: 0.8125rem;
+$pr-card-desc-font-size: 0.875rem;
 
 $stat-hover-bg: var(--color-500);
 

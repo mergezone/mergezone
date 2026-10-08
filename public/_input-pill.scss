@@ -27,9 +27,11 @@
 .title-input {
     line-height: inherit;
     color: $color-950;
-    background: rgba(0,0,0,0);
+    background: transparent;
     border: none;
+    box-shadow: none;
     padding: 0;
+    width: auto;
     margin: 0;
     height: calc($text-lg * #{$title-input-height-factor});
     overflow: visible;
@@ -39,6 +41,13 @@
     text-decoration-color: $color-700;
     text-decoration-thickness: $border-width-thick;
     transition: text-decoration-color $transition-normal;
+    min-height: 0;
+    border-radius: 0;
+
+    &:hover, &:focus, &:focus-visible {
+        border-color: transparent;
+        box-shadow: none;
+    }
 
     &:hover, &:focus {
         text-decoration: none;
