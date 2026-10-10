@@ -16,6 +16,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		data-pull-request-status-class={ helpers.GetStatusClass(pullRequest) }
 		data-pull-request-url={ pullRequest.URL }
 		data-pull-request-state={ pullRequest.State }
+		data-pull-request-comments={ fmt.Sprintf("%d", pullRequest.CommentCount()) }
 		data-pull-request-age={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }
 		data-pull-request-author-name={ pullRequest.Author.Name }
 		data-pull-request-author-url={ pullRequest.Author.URL }
@@ -38,6 +39,9 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
                 </span>
                 <span>
                     { pullRequest.State }
+                </span>
+                <span title="Discussion">
+                    <i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
                 </span>
                 <span title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
                     @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)

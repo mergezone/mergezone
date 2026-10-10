@@ -15,6 +15,10 @@ type GitHub struct {
 	Token string
 }
 
+func (g GitHub) GitHubToken() string {
+	return g.Token
+}
+
 func (g GitHub) configureAPIRequest(request *http.Request) {
 	request.Header.Set("Accept", "application/vnd.github+json")
 	request.Header.Set("Authorization", "Bearer "+g.Token)
@@ -66,6 +70,10 @@ func (g GitHub) GetPullRequests(query provider.RepositoryQuery, options provider
 	var pullRequests []model.PullRequest
 
 	if err := json.Unmarshal(bytes, &pullRequests); err != nil {
+		return nil, hasNext, err
+	}
+
+	if err := g.populatePullRequestCommentCounts(query.Owner, query.Repository, pullRequests); err != nil {
 		return nil, hasNext, err
 	}
 

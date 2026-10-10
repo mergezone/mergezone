@@ -57,6 +57,26 @@ function contextPaneErrorHtml() {
   return '<p class="context-pane-error">Pull request details could not be loaded. Please try again.</p>';
 }
 
+function discussionErrorHtml() {
+  return '<p class="context-pane-error">Discussion could not be loaded. <a href="#" data-discussion-retry>Try again</a>.</p>';
+}
+
+async function loadPullRequestDiscussion(container, owner, repository, number, signal) {
+  const response = await fetch(`/${owner}/${repository}?fragment=pr-discussion&number=${number}`, {
+    headers: { 'HX-Request': 'true' },
+    signal,
+  });
+  if (!response.ok) throw new Error(`Failed to load discussion (${response.status})`);
+
+  const html = await response.text();
+  const parsed = new DOMParser().parseFromString(html, 'text/html');
+  const discussion = parsed.querySelector('.context-pane-discussion');
+  if (!discussion) throw new Error('Discussion fragment is missing its container');
+  discussion.dataset.loaded = 'true';
+  discussion.dataset.loading = 'false';
+  container.replaceWith(discussion);
+}
+
 function enhanceContextPaneImages() {
   try {
     Alpine.store('app')._loadContextPaneImages();
@@ -282,6 +302,7 @@ document.addEventListener('alpine:init', () => {
     pullRequestStatusClass: '',
     pullRequestURL: '',
     pullRequestState: '',
+    pullRequestComments: '0',
     pullRequestAge: '',
     pullRequestAuthorName: '',
     pullRequestAuthorURL: '',
@@ -292,6 +313,7 @@ document.addEventListener('alpine:init', () => {
     diffInstances: [],
     loadingDiffs: false,
     _abortController: null,
+    _discussionController: null,
     _owner: '',
     _repository: '',
     _stashedDiffs: [],
@@ -315,6 +337,7 @@ document.addEventListener('alpine:init', () => {
       this.pullRequestStatusClass = dataset.pullRequestStatusClass || '';
       this.pullRequestURL = dataset.pullRequestURL || '#';
       this.pullRequestState = dataset.pullRequestState || '';
+      this.pullRequestComments = dataset.pullRequestComments || '0';
       this.pullRequestAge = dataset.pullRequestAge || '';
       this.pullRequestAuthorName = dataset.pullRequestAuthorName || '';
       this.pullRequestAuthorURL = dataset.pullRequestAuthorURL || '#';
@@ -358,6 +381,18 @@ document.addEventListener('alpine:init', () => {
     },
 
     openPrRef(event) {
+      const retry = event.target.closest('[data-discussion-retry]');
+      if (retry) {
+        event.preventDefault();
+        const container = retry.closest('.context-pane-discussion');
+        if (container) {
+          container.dataset.loading = 'false';
+          container.dataset.loaded = 'false';
+        }
+        this._loadDiscussion();
+        return;
+      }
+
       const link = event.target.closest('.pull-request-reference');
       if (!link) return;
       event.preventDefault();
@@ -444,6 +479,10 @@ document.addEventListener('alpine:init', () => {
         this._abortController.abort();
         this._abortController = null;
       }
+      if (this._discussionController) {
+        this._discussionController.abort();
+        this._discussionController = null;
+      }
 
       if (this.diffInstances.length) {
         cleanupDiffs(this.diffInstances);
@@ -525,7 +564,12 @@ document.addEventListener('alpine:init', () => {
 
         this.bodyHtml = bodyHtml;
         this.loadingBody = false;
-        setTimeout(enhanceContextPaneImages, 0);
+        setTimeout(() => {
+          enhanceContextPaneImages();
+          if (this.open && this.pullRequestNumber === pullRequestNumber) {
+            this._loadDiscussion();
+          }
+        }, 0);
 
         const diffInstances = await diffsPromise;
         if (signal.aborted || this.pullRequestNumber !== pullRequestNumber || !this.open) {
@@ -556,6 +600,27 @@ document.addEventListener('alpine:init', () => {
       } finally {
         if (this._abortController === controller) this._abortController = null;
       }
+    },
+
+    _loadDiscussion() {
+      if (!this.open || !this.pullRequestNumber || !this._owner || !this._repository) return;
+      const container = document.querySelector(`#discussion-${this.pullRequestNumber}`);
+      if (!container || container.dataset.loading === 'true' || container.dataset.loaded === 'true') return;
+
+      if (this._discussionController) this._discussionController.abort();
+      const controller = new AbortController();
+      this._discussionController = controller;
+      container.dataset.loading = 'true';
+      loadPullRequestDiscussion(container, this._owner, this._repository, this.pullRequestNumber, controller.signal)
+        .catch(error => {
+          if (controller.signal.aborted || error.name === 'AbortError') return;
+          console.warn('[context-pane] could not load discussion fragment', error);
+          container.dataset.loading = 'false';
+          container.innerHTML = `<h2>Discussion</h2>${discussionErrorHtml()}`;
+        })
+        .finally(() => {
+          if (this._discussionController === controller) this._discussionController = null;
+        });
     },
 
     async _fetchBodyRaw(pullRequestNumber, signal) {
@@ -611,7 +676,10 @@ document.addEventListener('alpine:init', () => {
         setTimeout(enhanceContextPaneImages, 0);
       };
 
-      this._onTransitionComplete(pane, replaceSkeleton);
+      this._onTransitionComplete(pane, () => {
+        replaceSkeleton();
+        this._loadDiscussion();
+      });
     },
 
     _onTransitionComplete(pane, callback) {

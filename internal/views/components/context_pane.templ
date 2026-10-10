@@ -34,6 +34,10 @@ templ ContextPane() {
 							<td class="meta-value" x-text="$store.contextPane.pullRequestAge"></td>
 						</tr>
 						<tr class="meta-row">
+							<th class="meta-label" scope="row"><i class="fa-regular fa-comments" aria-hidden="true"></i> Discussion</th>
+							<td class="meta-value" x-text="$store.contextPane.pullRequestComments"></td>
+						</tr>
+						<tr class="meta-row">
 							<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
 							<td class="meta-value">
 								<a class="meta-link" :href="$store.contextPane.pullRequestAuthorUrl" x-text="$store.contextPane.pullRequestAuthorName"></a>

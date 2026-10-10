@@ -111,6 +111,79 @@
         }
     }
 
+    .context-pane-discussion {
+        margin-top: $spacing-4;
+        padding-top: $spacing-4;
+        border-top: $border-width-normal solid $color-700;
+
+        > h2 {
+            margin: 0 0 $spacing-3;
+            font-size: $text-md;
+        }
+
+        .discussion-comment {
+            padding: $spacing-3 0;
+            border-top: $border-width-normal solid $color-700;
+
+            &.discussion-comment-skeleton {
+                .discussion-comment-header {
+                    margin-bottom: $spacing-3;
+                }
+            }
+
+            .discussion-comment-header {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: $spacing-3;
+                margin-bottom: $spacing-2;
+                font-size: $text-xs;
+
+                time {
+                    color: var(--color-text-muted);
+                    text-align: right;
+                }
+            }
+
+            .content {
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        .discussion-skeleton-author,
+        .discussion-skeleton-date,
+        .discussion-skeleton-line {
+            display: block;
+            border-radius: $skeleton-border-radius;
+        }
+
+        .discussion-skeleton-author {
+            width: 6rem;
+            height: $text-xs;
+        }
+
+        .discussion-skeleton-date {
+            width: 8rem;
+            height: $text-xs;
+        }
+
+        .discussion-skeleton-body {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-2;
+        }
+
+        .discussion-skeleton-line {
+            width: 100%;
+            height: $skeleton-line-height-sm;
+
+            &.short {
+                width: 55%;
+            }
+        }
+    }
+
     .context-pane-body {
         @include base.scrollable-flex-child;
         display: flex;

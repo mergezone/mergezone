@@ -40,6 +40,10 @@ templ PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository,
 					<td class="meta-value">@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)</td>
 				</tr>
 				<tr class="meta-row">
+					<th class="meta-label" scope="row"><i class="fa-regular fa-comments" aria-hidden="true"></i> Discussion</th>
+					<td class="meta-value">{ fmt.Sprintf("%d", pullRequest.CommentCount()) }</td>
+				</tr>
+				<tr class="meta-row">
 					<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
 					{{ authorPath := helpers.StripQueryParam(currentPath, "contributor")
 					currentStatus := helpers.GetQueryParam(currentPath, "status")
@@ -79,6 +83,33 @@ templ PullRequestDetail(pullRequest model.StampedPullRequest, owner, repository,
 		</table>
 		<div class="content">
 			@Markdown(pullRequest.Body)
+		</div>
+		<div class="context-pane-discussion" id={ fmt.Sprintf("discussion-%d", pullRequest.Number) } hx-get={ fmt.Sprintf("/%s/%s?fragment=pr-discussion&number=%d", owner, repository, pullRequest.Number) } hx-trigger="load" hx-swap="outerHTML">
+			<h2>Discussion</h2>
+			<div class="discussion-comments">
+				<div class="discussion-comment discussion-comment-skeleton" aria-hidden="true">
+					<div class="discussion-comment-header">
+						<span class="skeleton discussion-skeleton-author"></span>
+						<span class="skeleton discussion-skeleton-date"></span>
+					</div>
+					<div class="discussion-skeleton-body">
+						<span class="skeleton discussion-skeleton-line"></span>
+						<span class="skeleton discussion-skeleton-line"></span>
+						<span class="skeleton discussion-skeleton-line short"></span>
+					</div>
+				</div>
+				<div class="discussion-comment discussion-comment-skeleton" aria-hidden="true">
+					<div class="discussion-comment-header">
+						<span class="skeleton discussion-skeleton-author"></span>
+						<span class="skeleton discussion-skeleton-date"></span>
+					</div>
+					<div class="discussion-skeleton-body">
+						<span class="skeleton discussion-skeleton-line"></span>
+						<span class="skeleton discussion-skeleton-line"></span>
+						<span class="skeleton discussion-skeleton-line short"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 }

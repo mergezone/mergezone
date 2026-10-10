@@ -15,19 +15,35 @@ type User struct {
 	AvatarURL string `json:"avatar_url"`
 }
 
+type PullRequestComment struct {
+	Body      string `json:"body"`
+	CreatedAt string `json:"created_at"`
+	User      struct {
+		Login   string `json:"login"`
+		HTMLURL string `json:"html_url"`
+	} `json:"user"`
+}
+
 type PullRequest struct {
-	Number    int        `json:"number"`
-	Title     string     `json:"title"`
-	Body      string     `json:"body"`
-	URL       string     `json:"html_url"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	ClosedAt  *time.Time `json:"closed_at"`
-	MergedAt  *time.Time `json:"merged_at"`
-	IsDraft   bool       `json:"draft"`
-	Author    User       `json:"user"`
-	Assignees []User     `json:"assignees"`
-	Reviewers []User     `json:"requested_reviewers"`
+	Number         int        `json:"number"`
+	Title          string     `json:"title"`
+	Body           string     `json:"body"`
+	URL            string     `json:"html_url"`
+	CreatedAt      *time.Time `json:"created_at"`
+	UpdatedAt      *time.Time `json:"updated_at"`
+	ClosedAt       *time.Time `json:"closed_at"`
+	MergedAt       *time.Time `json:"merged_at"`
+	IsDraft        bool       `json:"draft"`
+	Author         User       `json:"user"`
+	Assignees      []User     `json:"assignees"`
+	Reviewers      []User     `json:"requested_reviewers"`
+	Comments       int        `json:"-"`
+	ReviewComments int        `json:"-"`
+}
+
+// CommentCount is the total of top-level discussion comments and inline review comments.
+func (pr PullRequest) CommentCount() int {
+	return pr.Comments + pr.ReviewComments
 }
 
 func (pr *PullRequest) TimeOpen(time time.Time) time.Duration {

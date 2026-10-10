@@ -15,6 +15,7 @@ func TestShouldPushURL(t *testing.T) {
 		{name: "scopes fragment", fragment: ScopesFragment, page: 1, want: false},
 		{name: "contributors fragment", fragment: ContributorsFragment, page: 1, want: false},
 		{name: "pull request detail fragment", fragment: PullRequestDetailFragment, page: 1, want: false},
+		{name: "pull request discussion fragment", fragment: PullRequestDiscussionFragment, page: 1, want: false},
 	}
 
 	for _, tt := range tests {
