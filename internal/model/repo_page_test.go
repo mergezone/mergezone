@@ -10,11 +10,10 @@ import (
 // Old BuildLoadMoreURL, copied verbatim from helpers.go before removal.
 func oldBuildLoadMoreURL(owner, repo, scope, contributor, status string, page int) string {
 	base := "/" + owner + "/" + repo
-	if scope != "" {
-		base += "/" + scope
-	}
-
 	parts := []string{}
+	if scope != "" {
+		parts = append(parts, "scope="+scope)
+	}
 	if page > 1 {
 		parts = append(parts, fmt.Sprintf("page=%d", page))
 	}
@@ -33,11 +32,10 @@ func oldBuildLoadMoreURL(owner, repo, scope, contributor, status string, page in
 // oldBuildStatusURL is the old buildStatusURL from counts.templ.
 func oldBuildStatusURL(owner, repo, scope, contributor, currentStatus, targetStatus string) string {
 	base := "/" + owner + "/" + repo
-	if scope != "" {
-		base += "/" + scope
-	}
-
 	parts := []string{}
+	if scope != "" {
+		parts = append(parts, "scope="+scope)
+	}
 	if contributor != "" {
 		parts = append(parts, "contributor="+contributor)
 	}
@@ -93,7 +91,7 @@ func TestRepositoryFilters_URL(t *testing.T) {
 		{
 			name:    "with scope",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend"},
-			want:    "/octocat/hello-world/backend",
+			want:    "/octocat/hello-world?scope=backend",
 		},
 		{
 			name:    "with contributor",
@@ -108,12 +106,12 @@ func TestRepositoryFilters_URL(t *testing.T) {
 		{
 			name:    "with scope and contributor",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice"},
-			want:    "/octocat/hello-world/backend?contributor=alice",
+			want:    "/octocat/hello-world?scope=backend&contributor=alice",
 		},
 		{
 			name:    "with scope and status",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Status: "stale"},
-			want:    "/octocat/hello-world/backend?status=stale",
+			want:    "/octocat/hello-world?scope=backend&status=stale",
 		},
 		{
 			name:    "with contributor and status",
@@ -123,7 +121,7 @@ func TestRepositoryFilters_URL(t *testing.T) {
 		{
 			name:    "with all filters",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"},
-			want:    "/octocat/hello-world/backend?contributor=alice&status=fresh",
+			want:    "/octocat/hello-world?scope=backend&contributor=alice&status=fresh",
 		},
 	}
 
@@ -166,7 +164,7 @@ func TestRepositoryFilters_PageURL(t *testing.T) {
 			name:    "page 5 with scope",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend"},
 			page:    5,
-			want:    "/octocat/hello-world/backend?page=5",
+			want:    "/octocat/hello-world?scope=backend&page=5",
 		},
 		{
 			name:    "page 3 with contributor and status",
@@ -178,7 +176,7 @@ func TestRepositoryFilters_PageURL(t *testing.T) {
 			name:    "page 10 with all filters",
 			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale"},
 			page:    10,
-			want:    "/octocat/hello-world/backend?contributor=alice&status=stale&page=10",
+			want:    "/octocat/hello-world?scope=backend&contributor=alice&status=stale&page=10",
 		},
 	}
 
@@ -225,7 +223,7 @@ func TestRepositoryFilters_WithStatus(t *testing.T) {
 		if got.Status != "stale" {
 			t.Errorf("expected status %q, got %q", "stale", got.Status)
 		}
-		if !urlsEqual(got.URL(), "/octocat/hello-world/backend?contributor=alice&status=stale") {
+		if !urlsEqual(got.URL(), "/octocat/hello-world?scope=backend&contributor=alice&status=stale") {
 			t.Errorf("URL = %q", got.URL())
 		}
 	})
@@ -235,7 +233,7 @@ func TestRepositoryFilters_WithStatus(t *testing.T) {
 		if got.Status != "" {
 			t.Errorf("expected empty status, got %q", got.Status)
 		}
-		if !urlsEqual(got.URL(), "/octocat/hello-world/backend?contributor=alice") {
+		if !urlsEqual(got.URL(), "/octocat/hello-world?scope=backend&contributor=alice") {
 			t.Errorf("URL = %q", got.URL())
 		}
 	})
@@ -271,7 +269,7 @@ func TestRepositoryFilters_StatusToggle_MatchesOldBuildStatusURL(t *testing.T) {
 			if target == "" {
 				// Old code would produce "...&status=" which is a degenerate query param.
 				// New code correctly omits it. Verify the new output is clean.
-				want := "/octocat/hello-world/backend?contributor=alice"
+				want := "/octocat/hello-world?scope=backend&contributor=alice"
 				if !urlsEqual(got, want) {
 					t.Errorf("clearing status: got %q, want %q", got, want)
 				}
@@ -304,7 +302,7 @@ func TestRepositoryFilters_WithScope(t *testing.T) {
 		if got.Scope != "frontend" {
 			t.Errorf("expected scope %q, got %q", "frontend", got.Scope)
 		}
-		if !urlsEqual(got.URL(), "/octocat/hello-world/frontend?contributor=alice&status=fresh") {
+		if !urlsEqual(got.URL(), "/octocat/hello-world?scope=frontend&contributor=alice&status=fresh") {
 			t.Errorf("URL = %q", got.URL())
 		}
 	})
@@ -325,7 +323,7 @@ func TestRepositoryFilters_WithContributor(t *testing.T) {
 		if got.Contributor != "" {
 			t.Errorf("expected empty contributor, got %q", got.Contributor)
 		}
-		if !urlsEqual(got.URL(), "/octocat/hello-world/backend?status=fresh") {
+		if !urlsEqual(got.URL(), "/octocat/hello-world?scope=backend&status=fresh") {
 			t.Errorf("URL = %q", got.URL())
 		}
 	})
@@ -335,7 +333,7 @@ func TestRepositoryFilters_WithContributor(t *testing.T) {
 		if got.Contributor != "bob" {
 			t.Errorf("expected contributor %q, got %q", "bob", got.Contributor)
 		}
-		if !urlsEqual(got.URL(), "/octocat/hello-world/backend?contributor=bob&status=fresh") {
+		if !urlsEqual(got.URL(), "/octocat/hello-world?scope=backend&contributor=bob&status=fresh") {
 			t.Errorf("URL = %q", got.URL())
 		}
 	})
@@ -362,7 +360,7 @@ func TestRepositoryFilters_ClearContributor_MatchesOldContributorsClearFilter(t 
 	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithContributor("").URL()
-	want := "/octocat/hello-world/backend?status=fresh"
+	want := "/octocat/hello-world?scope=backend&status=fresh"
 	if !urlsEqual(got, want) {
 		t.Errorf("clear contributor URL = %q, want %q", got, want)
 	}
@@ -372,7 +370,7 @@ func TestRepositoryFilters_ScopeLink_MatchesOldSidebarCard(t *testing.T) {
 	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "old-scope", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithScope("new-scope").URL()
-	want := "/octocat/hello-world/new-scope?contributor=alice&status=fresh"
+	want := "/octocat/hello-world?scope=new-scope&contributor=alice&status=fresh"
 	if !urlsEqual(got, want) {
 		t.Errorf("scope link URL = %q, want %q", got, want)
 	}
@@ -382,7 +380,7 @@ func TestRepositoryFilters_ContributorLink_MatchesOldSidebarCard(t *testing.T) {
 	filters := RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "fresh"}
 
 	got := filters.WithContributor("bob").URL()
-	want := "/octocat/hello-world/backend?contributor=bob&status=fresh"
+	want := "/octocat/hello-world?scope=backend&contributor=bob&status=fresh"
 	if !urlsEqual(got, want) {
 		t.Errorf("contributor link URL = %q, want %q", got, want)
 	}

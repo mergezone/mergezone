@@ -22,6 +22,15 @@ func (f RepositoryFilters) URL() string {
 	return u.String()
 }
 
+func (f RepositoryFilters) FragmentURL(fragment, sortOrder string) string {
+	u := url.URL{Path: f.basePath()}
+	q := f.queryValues()
+	q.Set("fragment", fragment)
+	q.Set("sort", sortOrder)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
 func (f RepositoryFilters) PageURL(page int) string {
 	if page <= 1 {
 		return f.URL()
