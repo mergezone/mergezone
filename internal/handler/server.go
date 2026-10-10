@@ -111,6 +111,14 @@ func isHTMXRequest(r *http.Request) bool {
 	return r.Header.Get("HX-Request") == "true"
 }
 
+// ShouldPushURL reports whether a repository response is a page-level navigation
+// whose filters should be reflected in the browser URL. Fragment responses and
+// paginated load-more responses are rendered in place and must not push a URL,
+// because fragment, sort, and page are request-local rather than page state.
+func ShouldPushURL(fragment RepositoryFragment, page int) bool {
+	return fragment == "" && page <= 1
+}
+
 func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http.Request) {
 	// Response contract: `fragment` selects a named repository fragment and takes
 	// precedence; otherwise HX-Request=true returns the repository main view, while
@@ -227,7 +235,9 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 			return
 		}
 		if isHTMXRequest(r) {
-			w.Header().Set("HX-Push-Url", filters.URL())
+			if ShouldPushURL(fragment, request.ListOptions.Page) {
+				w.Header().Set("HX-Push-Url", filters.URL())
+			}
 			err = pages.RepositoryMainView(viewData).Render(r.Context(), w)
 		} else {
 			err = pages.RepositoryDocument(viewData, r.URL.Path).Render(r.Context(), w)
