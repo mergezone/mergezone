@@ -9,7 +9,7 @@ templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel
 		<div class={ "item stat box", templ.KV("active", isActive) }
 			hx-get={ templ.SafeURL(destinationURL) }
 			hx-target="main"
-			hx-push-destinationURL="true">
+			hx-push-url="true">
 			<p class="bold">{ statusLabel }</p>
 			<i class={ "status-icon fa-solid " + iconClass }></i>
 			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>

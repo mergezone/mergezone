@@ -30,18 +30,5 @@ templ RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceh
 				}
 			/>
 		</span>
-		<span class="bold title-sep">/</span>
-		<span class="input-pill">
-			<input class="input title-input" type="text"
-				if interactive {
-					data-part="scope"
-				}
-				value={ scopeValue }
-				placeholder={ scopePlaceholder }
-				if !interactive {
-					readonly
-				}
-			/>
-		</span>
 	</span>
 }
