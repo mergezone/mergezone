@@ -73,12 +73,12 @@ const (
 )
 
 func (pr *PullRequest) State() State {
-	if pr.IsDraft {
-		return Draft
-	} else if pr.MergedAt != nil {
+	if pr.MergedAt != nil {
 		return Merged
 	} else if pr.ClosedAt != nil {
 		return Closed
+	} else if pr.IsDraft {
+		return Draft
 	}
 
 	return Open
@@ -169,6 +169,14 @@ func (pr *PullRequest) IsBot() bool {
 	return strings.Contains(pr.Author.URL, "app")
 }
 
+// Supersession records the newer pull request in a shared scope that caused
+// this pull request to become stale or expired.
+type Supersession struct {
+	Number int
+	URL    string
+	Merged bool
+}
+
 type StampedPullRequest struct {
 	PullRequest
 	Time         time.Time
@@ -176,6 +184,7 @@ type StampedPullRequest struct {
 	TimeOpen     time.Duration
 	DaysOpen     int
 	ExpiryStatus ExpiryStatus
+	SupersededBy *Supersession
 	Type         string
 	Scopes       []string
 	Contributors []string
@@ -255,8 +264,10 @@ func applyScopeSupersession(prs []StampedPullRequest) {
 		if newest != nil {
 			if newest.State == Merged {
 				pr.ExpiryStatus = Expired
+				pr.SupersededBy = &Supersession{Number: newest.Number, URL: newest.URL, Merged: true}
 			} else {
 				pr.ExpiryStatus = Stale
+				pr.SupersededBy = &Supersession{Number: newest.Number, URL: newest.URL}
 			}
 		}
 	}

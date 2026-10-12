@@ -329,6 +329,10 @@ document.addEventListener('alpine:init', () => {
     pullRequestStatusClass: '',
     pullRequestURL: '',
     pullRequestState: '',
+    pullRequestExpiryStatus: '',
+    pullRequestExpiryIconClass: '',
+    pullRequestExpiryReason: '',
+    pullRequestSupersededBy: null,
     pullRequestComments: '0',
     pullRequestAge: '',
     pullRequestAuthorName: '',
@@ -383,6 +387,10 @@ document.addEventListener('alpine:init', () => {
       this.pullRequestStatusClass = seed.statusClass || dataset.pullRequestStatusClass || '';
       this.pullRequestURL = seed.url || dataset.pullRequestURL || '#';
       this.pullRequestState = seed.state || dataset.pullRequestState || '';
+      this.pullRequestExpiryStatus = seed.expiryStatus || dataset.pullRequestExpiryStatus || '';
+      this.pullRequestExpiryIconClass = seed.expiryIconClass || dataset.pullRequestExpiryIconClass || '';
+      this.pullRequestExpiryReason = seed.expiryReason || dataset.pullRequestExpiryReason || '';
+      this.pullRequestSupersededBy = this._supersession(seed.supersededBy, dataset);
       this.pullRequestComments = String(seed.comments ?? dataset.pullRequestComments ?? '0');
       this.pullRequestAge = seed.age || dataset.pullRequestAge || '';
       this.pullRequestAuthorName = seed.authorName || dataset.pullRequestAuthorName || '';
@@ -482,6 +490,10 @@ document.addEventListener('alpine:init', () => {
       this.pullRequestStatusClass = '';
       this.pullRequestURL = `https://github.com/${owner}/${repository}/pull/${pullRequestNumber}`;
       this.pullRequestState = '';
+      this.pullRequestExpiryStatus = '';
+      this.pullRequestExpiryIconClass = '';
+      this.pullRequestExpiryReason = '';
+      this.pullRequestSupersededBy = null;
       this.pullRequestAge = '';
       this.pullRequestAuthorName = '';
       this.pullRequestAuthorURL = '#';
@@ -496,6 +508,10 @@ document.addEventListener('alpine:init', () => {
         this.pullRequestStatusClass = seed.statusClass || '';
         this.pullRequestURL = seed.url || this.pullRequestURL;
         this.pullRequestState = seed.state || '';
+        this.pullRequestExpiryStatus = seed.expiryStatus || '';
+        this.pullRequestExpiryIconClass = seed.expiryIconClass || '';
+        this.pullRequestExpiryReason = seed.expiryReason || '';
+        this.pullRequestSupersededBy = this._supersession(seed.supersededBy);
         this.pullRequestComments = String(seed.comments ?? 0);
         this.pullRequestAge = seed.age || '';
         this.pullRequestAuthorName = seed.authorName || '';
@@ -516,6 +532,16 @@ document.addEventListener('alpine:init', () => {
       this.changesLoaded = false;
       this.open = true;
       setTimeout(enhanceContextPaneImages, 0);
+    },
+
+    _supersession(seedSupersededBy, dataset = {}) {
+      const number = seedSupersededBy?.number ?? dataset.pullRequestSupersededByNumber;
+      if (number === undefined || number === null || number === '') return null;
+      return {
+        number: String(number),
+        url: seedSupersededBy?.url || dataset.pullRequestSupersededByUrl || '#',
+        reason: seedSupersededBy?.reason || dataset.pullRequestSupersededByReason || 'is newer',
+      };
     },
 
     _stashDiffs() {

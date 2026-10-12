@@ -5,6 +5,14 @@ import (
 	"time"
 )
 
+func TestPullRequestStatePrioritizesClosedOverDraft(t *testing.T) {
+	closedAt := time.Date(2025, time.January, 2, 0, 0, 0, 0, time.UTC)
+	pr := PullRequest{IsDraft: true, ClosedAt: &closedAt}
+	if got := pr.State(); got != Closed {
+		t.Errorf("State() = %q, want %q", got, Closed)
+	}
+}
+
 func TestColonScopeExtractionSupportsCommaSeparatedScopes(t *testing.T) {
 	pr := PullRequest{Title: "gtk,opengl: reuse GTK’s EGL display when possible"}
 	got := pr.Scopes()
@@ -135,6 +143,57 @@ func TestStampAppliesScopeSupersession(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestStampRecordsSupersedingPullRequest(t *testing.T) {
+	createdAt := func(day int) *time.Time {
+		value := time.Date(2025, time.January, day, 0, 0, 0, 0, time.UTC)
+		return &value
+	}
+	now := time.Date(2025, time.January, 10, 0, 0, 0, 0, time.UTC)
+
+	t.Run("stale pull request references the newer unmerged pull request", func(t *testing.T) {
+		got := Stamp([]PullRequest{
+			{Number: 1, Title: "feat(backend): earlier", URL: "https://example.com/pull/1", CreatedAt: createdAt(1)},
+			{Number: 2, Title: "fix(backend): later", URL: "https://example.com/pull/2", CreatedAt: createdAt(2)},
+		}, now)
+
+		if got[0].SupersededBy == nil {
+			t.Fatal("expected a superseding pull request, got nil")
+		}
+		if got[0].SupersededBy.Number != 2 || got[0].SupersededBy.URL != "https://example.com/pull/2" || got[0].SupersededBy.Merged {
+			t.Errorf("SupersededBy = %+v, want number 2, URL and merged false", *got[0].SupersededBy)
+		}
+		if got[1].SupersededBy != nil {
+			t.Errorf("newest pull request should not be superseded, got %+v", *got[1].SupersededBy)
+		}
+	})
+
+	t.Run("expired pull request references the newer merged pull request", func(t *testing.T) {
+		got := Stamp([]PullRequest{
+			{Number: 1, Title: "feat(backend): earlier", URL: "https://example.com/pull/1", CreatedAt: createdAt(1)},
+			{Number: 2, Title: "fix(backend): later", URL: "https://example.com/pull/2", CreatedAt: createdAt(2), MergedAt: createdAt(3)},
+		}, now)
+
+		if got[0].SupersededBy == nil {
+			t.Fatal("expected a superseding pull request, got nil")
+		}
+		if got[0].SupersededBy.Number != 2 || !got[0].SupersededBy.Merged {
+			t.Errorf("SupersededBy = %+v, want number 2 and merged true", *got[0].SupersededBy)
+		}
+	})
+
+	t.Run("age-based expiry has no superseding pull request", func(t *testing.T) {
+		got := Stamp([]PullRequest{
+			{Number: 1, Title: "feat(backend): ancient", CreatedAt: createdAt(1)},
+		}, time.Date(2025, time.March, 1, 0, 0, 0, 0, time.UTC))
+		if got[0].ExpiryStatus != Expired {
+			t.Fatalf("ExpiryStatus = %q, want %q", got[0].ExpiryStatus, Expired)
+		}
+		if got[0].SupersededBy != nil {
+			t.Errorf("SupersededBy = %+v, want nil", *got[0].SupersededBy)
+		}
+	})
 }
 
 func TestScopeSupersessionOverridesAgeBasedExpiry(t *testing.T) {

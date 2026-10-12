@@ -3,7 +3,74 @@ package helpers
 import (
 	"strings"
 	"testing"
+	"time"
+
+	"merge/internal/model"
 )
+
+func TestExpiryStateDetailHelpers(t *testing.T) {
+	stale := model.StampedPullRequest{
+		ExpiryStatus: model.Stale,
+		SupersededBy: &model.Supersession{Number: 123},
+	}
+	if got := ExpiryLabel(stale); got != "Stale" {
+		t.Errorf("ExpiryLabel(stale) = %q, want %q", got, "Stale")
+	}
+	if got := StatusIconClass(stale); got != "fa-leaf" {
+		t.Errorf("StatusIconClass(stale) = %q, want %q", got, "fa-leaf")
+	}
+	if got := SupersessionReason(stale); got != "is newer" {
+		t.Errorf("SupersessionReason(stale) = %q, want %q", got, "is newer")
+	}
+
+	expired := model.StampedPullRequest{
+		ExpiryStatus: model.Expired,
+		SupersededBy: &model.Supersession{Number: 456, Merged: true},
+	}
+	if got := SupersessionReason(expired); got != "is newer and merged" {
+		t.Errorf("SupersessionReason(expired) = %q, want %q", got, "is newer and merged")
+	}
+
+	merged := model.StampedPullRequest{State: model.Merged, ExpiryStatus: model.Fresh}
+	if got := ExpiryLabel(merged); got != "Merged" {
+		t.Errorf("ExpiryLabel(merged) = %q, want %q", got, "Merged")
+	}
+	if got := StatusIconClass(merged); got != "fa-code-merge" {
+		t.Errorf("StatusIconClass(merged) = %q, want %q", got, "fa-code-merge")
+	}
+
+	closedAt := time.Date(2025, time.January, 2, 0, 0, 0, 0, time.UTC)
+	closed := model.StampedPullRequest{
+		State:        model.Closed,
+		ExpiryStatus: model.Expired,
+		PullRequest:  model.PullRequest{ClosedAt: &closedAt},
+	}
+	if got := ExpiryLabel(closed); got != "Closed" {
+		t.Errorf("ExpiryLabel(closed) = %q, want %q", got, "Closed")
+	}
+	if got := StatusIconClass(closed); got != "fa-ban" {
+		t.Errorf("StatusIconClass(closed) = %q, want %q", got, "fa-ban")
+	}
+	if got := GetStatusClass(closed); got != "fa-ban" {
+		t.Errorf("GetStatusClass(closed) = %q, want %q", got, "fa-ban")
+	}
+}
+
+func TestExpiryReasonExplainsClosedPullRequests(t *testing.T) {
+	closedAt := time.Date(2025, time.January, 2, 0, 0, 0, 0, time.UTC)
+	closed := model.StampedPullRequest{
+		ExpiryStatus: model.Expired,
+		PullRequest:  model.PullRequest{ClosedAt: &closedAt},
+	}
+	if got := ExpiryReason(closed); got != "closed" {
+		t.Errorf("ExpiryReason(closed) = %q, want %q", got, "closed")
+	}
+
+	open := model.StampedPullRequest{ExpiryStatus: model.Stale}
+	if got := ExpiryReason(open); got != "" {
+		t.Errorf("ExpiryReason(open) = %q, want empty", got)
+	}
+}
 
 func TestRenderMarkdownConvertsImageAndVideoEmbeds(t *testing.T) {
 	got := RenderMarkdown(strings.Join([]string{

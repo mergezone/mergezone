@@ -51,6 +51,20 @@ templ ContextPane() {
 									<th class="meta-label" scope="row"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> Status</th>
 									<td class="meta-value" x-text="$store.contextPane.pullRequestState"></td>
 								</tr>
+								<template x-if="$store.contextPane.pullRequestExpiryStatus">
+									<tr class="meta-row">
+										<th class="meta-label" scope="row"><i class="fa-solid" :class="$store.contextPane.pullRequestExpiryIconClass" aria-hidden="true"></i> State</th>
+										<td class="meta-value">
+											<span x-text="$store.contextPane.pullRequestExpiryStatus"></span>
+											<template x-if="$store.contextPane.pullRequestSupersededBy">
+												<span>; <a class="meta-link" :href="$store.contextPane.pullRequestSupersededBy.url" x-text="'#' + $store.contextPane.pullRequestSupersededBy.number"></a> <span x-text="$store.contextPane.pullRequestSupersededBy.reason"></span></span>
+											</template>
+											<template x-if="$store.contextPane.pullRequestExpiryReason">
+												<span>; <span x-text="$store.contextPane.pullRequestExpiryReason"></span></span>
+											</template>
+										</td>
+									</tr>
+								</template>
 								<tr class="meta-row">
 									<th class="meta-label" scope="row"><i class="fa-solid fa-clock" aria-hidden="true"></i> Age</th>
 									<td class="meta-value" x-text="$store.contextPane.pullRequestAge"></td>
