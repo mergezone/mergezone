@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"merge/internal/model"
+	"merge/internal/provider"
 )
 
 type pullRequestCommentCounts struct {
@@ -62,6 +63,7 @@ func (g GitHub) getPullRequestCommentCounts(owner, repository string, number int
 	}
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
+		provider.LogRateLimitExceeded(g.Logger, response)
 		return pullRequestCommentCounts{}, fmt.Errorf("request for pull request #%d comment counts failed with status: %s", number, response.Status)
 	}
 

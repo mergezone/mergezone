@@ -42,7 +42,10 @@ func repositoryFilterLabel(filters model.RepositoryFilters) string {
 	if filters.Contributor != "" {
 		parts = append(parts, titleCaseFirst(filters.Contributor))
 	}
-	return "Filter: " + strings.Join(parts, ", ")
+	if len(parts) == 0 {
+		return "Filters"
+	}
+	return "Filters: " + strings.Join(parts, ", ")
 }
 
 // PullRequestCounts renders the repository's status summaries and filter controls.
@@ -67,35 +70,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"stats\"><div class=\"section-heading\"><span>Overview</span><div class=\"section-actions\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if filters.Scope != "" || filters.Contributor != "" || filters.Status != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"button is-ghost filter-toggle\" id=\"filter-toggle\" type=\"button\" aria-label=\"Toggle filter\" hx-on:click=\"Alpine.store('filterPanel').openPanel()\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(repositoryFilterLabel(filters))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/counts.templ`, Line: 47, Col: 197}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</button>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"button is-ghost filter-toggle\" id=\"filter-toggle\" type=\"button\" aria-label=\"Toggle filter\" hx-on:click=\"Alpine.store('filterPanel').openPanel()\">Filter</button>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div class=\"level is-mobile stats-tiles\"><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"stats\"><div class=\"section-heading\"><span>Overview</span></div><div class=\"level is-mobile stats-tiles\"><div class=\"level-item\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,7 +78,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"level-item\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,7 +86,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"level-item\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -119,7 +94,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div class=\"level-item\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,7 +102,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

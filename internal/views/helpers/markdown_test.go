@@ -64,3 +64,18 @@ func TestRenderMarkdownSanitizesUntrustedEmbedMarkup(t *testing.T) {
 		t.Errorf("RenderMarkdown() retained unsafe embed markup: %s", got)
 	}
 }
+
+func TestRenderMarkdownInlineKeepsInlineFormattingWithoutParagraph(t *testing.T) {
+	got := RenderMarkdownInline("Fix `foo` and **bar**")
+	want := "Fix <code>foo</code> and <strong>bar</strong>"
+	if got != want {
+		t.Errorf("RenderMarkdownInline() = %q, want %q", got, want)
+	}
+}
+
+func TestRenderMarkdownInlineEscapesUntrustedMarkup(t *testing.T) {
+	got := RenderMarkdownInline("<script>alert(1)</script> `ok`")
+	if strings.Contains(got, "<script") {
+		t.Errorf("RenderMarkdownInline() retained unsafe markup: %s", got)
+	}
+}

@@ -29,7 +29,7 @@ func RepositoryNavigation(owner, repository string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\"><div><h4 class=\"bold site-brand\"><a href=\"/\">Merge Zone</a></h4><button id=\"theme-toggle\" class=\"button is-ghost\" @click=\"$store.app.cycleTheme()\" aria-label=\"Toggle light and dark theme\"><i class=\"fa-solid\" :class=\"{\n                    'fa-sun': $store.app.theme === 'light',\n                    'fa-moon': $store.app.theme === 'dark'\n                }\" aria-hidden=\"true\"></i></button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\"><div><h4 class=\"bold site-brand\"><a href=\"/\">Merge Zone</a></h4><button id=\"theme-toggle\" class=\"button is-ghost\" @click=\"$store.app.cycleTheme()\" aria-label=\"Toggle light and dark theme\"><i class=\"fa-solid\" :class=\"{\n                    'fa-sun': $store.app.theme === 'light',\n                    'fa-moon': $store.app.theme === 'dark'\n                }\" aria-hidden=\"true\"></i></button></div><div id=\"nav-search-slot\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -37,7 +37,7 @@ func RepositoryNavigation(owner, repository string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,30 @@
+package components
+
+import "merge/internal/model"
+
+// MobileDock is the bottom action bar shown on small screens. Alpine relocates
+// the repository search input into #mobile-dock-search (see
+// syncSearchPlacement in alpine.js). On repository pages it also renders the
+// button that toggles the filter bottom sheet. Because the dock is fixed to the
+// viewport bottom and `main` reserves its height, the filter sheet and the
+// context pane open above the dock rather than covering it.
+templ MobileDock(showFilters bool, filters model.RepositoryFilters) {
+	<div class="mobile-dock" id="mobile-dock">
+		<div class="mobile-dock-search" id="mobile-dock-search"></div>
+		if showFilters {
+			<button
+				class="button mobile-dock-filter"
+				type="button"
+				aria-label="Filters"
+				title="Filters"
+				@click.stop="$store.filterPanel.toggle()"
+			>
+				<i class="fa-solid" :class="$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'" aria-hidden="true"></i>
+				<span>Filters</span>
+				if filters.Scope != "" || filters.Status != "" || filters.Contributor != "" {
+					<i class="fa-solid fa-circle mobile-dock-active" aria-hidden="true"></i>
+				}
+			</button>
+		}
+	</div>
+}

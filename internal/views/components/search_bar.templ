@@ -11,7 +11,7 @@ templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repos
 	}
 	}}
 	if interactive {
-		<div class="breadcrumb search-input-row" role="navigation" aria-label="Repository" hx-indicator="#search-loading-indicator">
+		<nav class="breadcrumb search-input-row" aria-label="Repository" hx-indicator="#search-loading-indicator">
 			<ul>
 				<li>
 					if showIcon {
@@ -42,9 +42,9 @@ templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repos
 			<span id="search-loading-indicator" class="icon search-loading-indicator htmx-indicator" role="status" aria-label="Loading">
 				<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
 			</span>
-		</div>
+		</nav>
 	} else {
-		<div class="breadcrumb search-input-row" role="navigation" aria-label="Repository">
+		<nav class="breadcrumb search-input-row" aria-label="Repository">
 			<ul>
 				<li>
 					if showIcon {
@@ -54,6 +54,6 @@ templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repos
 				</li>
 				<li class="is-active"><span class="static-repository">{ repositoryLabel }</span></li>
 			</ul>
-		</div>
+		</nav>
 	}
 }

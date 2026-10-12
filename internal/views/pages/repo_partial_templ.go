@@ -55,6 +55,10 @@ func RepositoryMainView(viewData model.RepositoryViewData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = components.SiteFooter("mobile-footer").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -64,6 +68,10 @@ func RepositoryMainView(viewData model.RepositoryViewData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.ContextPane().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.MobileDock(true, filters).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
