@@ -21,6 +21,18 @@
         grid-template-rows: min-content min-content;
         row-gap: $spacing-1;
         column-gap: $spacing-3;
+
+        .breadcrumb li + li::before {
+          padding-inline: $spacing-1;
+        }
+
+        .breadcrumb a {
+          padding: 0;
+        }
+
+        .breadcrumb li i.fa-regular {
+          padding-right: $spacing-1;
+        }
     }
 
     @include base.status-icon-hover($rotate-hover-large);

@@ -52,27 +52,29 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
             <div class="title-row">
                 <b class="item-title">@Markdown(pullRequest.Title)</b>
             </div>
-            <div class="description-row">
-                <span>
-                    #{ pullRequest.Number }
-                </span>
-                <span>
-                    { pullRequest.State }
-                </span>
-                <span title="Discussion">
-                    <i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
-                </span>
-                <span title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
-                    @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
-                </span>
-                <span>
-                    <a href={ pullRequest.Author.URL }>{ pullRequest.Author.Name }</a>
-                </span>
-				for _, scope := range pullRequest.Scopes {
-					<span>
-                        <a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
-                    </span>
-				}
+            <div class="breadcrumb has-bullet-separator is-small">
+                <ul>
+                    <li>
+                        #{ pullRequest.Number }
+                    </li>
+                    <li>
+                        { pullRequest.State }
+                    </li>
+                    <li title="Discussion">
+                        <i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
+                    </li>
+                    <li title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
+                        @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
+                    </li>
+                    <li>
+                        <a href={ pullRequest.Author.URL }>{ pullRequest.Author.Name }</a>
+                    </li>
+                    for _, scope := range pullRequest.Scopes {
+                        <li>
+                            <a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
 	</div>
