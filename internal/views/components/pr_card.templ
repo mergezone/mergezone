@@ -16,6 +16,19 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		"titleHtml": helpers.RenderMarkdownInline(pullRequest.Title),
 		"state": pullRequest.State,
 		"statusClass": helpers.GetStatusClass(pullRequest),
+		"expiryStatus": helpers.ExpiryLabel(pullRequest),
+		"expiryIconClass": helpers.StatusIconClass(pullRequest),
+		"supersededBy": func() any {
+			if pullRequest.SupersededBy == nil {
+				return nil
+			}
+			return map[string]any{
+				"number": pullRequest.SupersededBy.Number,
+				"url":    pullRequest.SupersededBy.URL,
+				"reason": helpers.SupersessionReason(pullRequest),
+			}
+		}(),
+		"expiryReason": helpers.ExpiryReason(pullRequest),
 		"url": pullRequest.URL,
 		"comments": pullRequest.CommentCount(),
 		"age": model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
@@ -33,6 +46,14 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		data-pull-request-title={ pullRequest.Title }
 		data-pull-request-state={ pullRequest.State }
 		data-pull-request-status-class={ helpers.GetStatusClass(pullRequest) }
+		data-pull-request-expiry-status={ helpers.ExpiryLabel(pullRequest) }
+		data-pull-request-expiry-icon-class={ helpers.StatusIconClass(pullRequest) }
+		data-pull-request-expiry-reason={ helpers.ExpiryReason(pullRequest) }
+		if pullRequest.SupersededBy != nil {
+			data-pull-request-superseded-by-number={ fmt.Sprintf("%d", pullRequest.SupersededBy.Number) }
+			data-pull-request-superseded-by-url={ pullRequest.SupersededBy.URL }
+			data-pull-request-superseded-by-reason={ helpers.SupersessionReason(pullRequest) }
+		}
 		data-pull-request-url={ pullRequest.URL }
 		data-pull-request-comments={ fmt.Sprintf("%d", pullRequest.CommentCount()) }
 		data-pull-request-age={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }

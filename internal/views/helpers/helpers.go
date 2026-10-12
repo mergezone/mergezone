@@ -9,6 +9,8 @@ func GetStatusClass(pr model.StampedPullRequest) string {
 	switch pr.State {
 	case model.Merged:
 		return "fa-code-merge special"
+	case model.Closed:
+		return "fa-ban"
 	}
 	switch pr.ExpiryStatus {
 	case model.Expired:
@@ -20,6 +22,60 @@ func GetStatusClass(pr model.StampedPullRequest) string {
 	default:
 		return "fa-eye-slash"
 	}
+}
+
+// StatusIconClass returns just the Font Awesome icon for a pull request's
+// freshness without an accompanying color class, for contexts that want the
+// icon shape only.
+func StatusIconClass(pr model.StampedPullRequest) string {
+	switch pr.State {
+	case model.Merged:
+		return "fa-code-merge"
+	case model.Closed:
+		return "fa-ban"
+	}
+	switch pr.ExpiryStatus {
+	case model.Expired:
+		return "fa-skull"
+	case model.Stale:
+		return "fa-leaf"
+	case model.Fresh:
+		return "fa-seedling"
+	default:
+		return "fa-eye-slash"
+	}
+}
+
+// ExpiryLabel is the freshness state shown in pull request details. Merged pull
+// requests report a Merged state instead of a freshness state.
+func ExpiryLabel(pr model.StampedPullRequest) string {
+	if pr.State == model.Merged || pr.State == model.Closed {
+		return string(pr.State)
+	}
+	return string(pr.ExpiryStatus)
+}
+
+// ExpiryReason explains a freshness state that was not caused by a newer pull
+// request, such as a pull request that was closed without merging. It returns
+// an empty string when there is no additional explanation.
+func ExpiryReason(pr model.StampedPullRequest) string {
+	if pr.ClosedAt != nil && pr.MergedAt == nil {
+		return "closed"
+	}
+	return ""
+}
+
+// SupersessionReason describes why a pull request became stale or expired. It
+// is the phrase following the referenced pull request number, or empty when the
+// status was not caused by a newer pull request.
+func SupersessionReason(pr model.StampedPullRequest) string {
+	if pr.SupersededBy == nil {
+		return ""
+	}
+	if pr.SupersededBy.Merged {
+		return "is newer and merged"
+	}
+	return "is newer"
 }
 
 func StripQueryParam(path, key string) string {
