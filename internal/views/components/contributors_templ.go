@@ -35,7 +35,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel contributors filter-section\"><div class=\"panel-heading section-heading filter-section-heading\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-users section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" :title=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Contributors</span></span> <span class=\"section-actions\"><i id=\"contributors-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by recency\" title=\"Sort by recency\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel contributors filter-section\"><div class=\"panel-heading section-heading filter-section-heading\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-users section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" :title=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Contributors</span></span> <span class=\"section-actions\"><i id=\"contributors-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by recency\" title=\"Sort by recency\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,7 +52,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.FragmentURL("contributors", "recent"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 31, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 34, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.FragmentURL("contributors", "top"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 42, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 45, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {

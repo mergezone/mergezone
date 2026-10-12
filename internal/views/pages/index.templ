@@ -8,7 +8,7 @@ import (
 templ HomePage(baseURL, owner, repository string) {
 	@layout.BaseDocument("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repository, "") {
 		<aside class="aside-column">
-				@components.RepositoryNavigation(owner, repository, "")
+				@components.RepositoryNavigation(owner, repository)
 				<footer>
 					<span>Made by <a class="bold" href="https://www.haydenheroux.com">Hayden Heroux</a></span>
 					<span>View on <a class="bold" href="https://www.github.com/mergezone/mergezone">GitHub</a></span>
@@ -28,7 +28,7 @@ templ HomePage(baseURL, owner, repository string) {
 						<span>Finding a repository</span>
 					</div>
 					<div class="static-search-demo">
-						@components.RepositorySearchInput("", "", "", "owner", "repository", "scope", false, false)
+						@components.RepositorySearchInput("", "", "owner", "repository", false, false)
 					</div>
 					<p class="text-secondary home-explainer">
 						<strong>owner</strong> / <strong>repository</strong> points to any public GitHub repository.

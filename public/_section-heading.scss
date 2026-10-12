@@ -6,6 +6,10 @@ nav, section {
     padding: $spacing-4;
 }
 
+section.filter-section {
+    padding: 0;
+}
+
 .section-heading {
     margin-inline: $spacing-1;
     margin-block: $spacing-2 $spacing-3;
@@ -130,16 +134,23 @@ nav, section {
 
 // Keep sidebar sort controls hidden until the heading is hovered.
 .filter-section-heading {
+    cursor: pointer;
     margin: 0;
     padding: $spacing-3 $spacing-4;
     border-bottom: 0;
-    border-radius: $sidebar-card-radius;
+    border-radius: 0;
     background-color: var(--color-cutout);
     transition: background-color $transition-fast, box-shadow $transition-fast;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
         background-color: var(--color-cutout-strong);
         box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: -2px;
     }
 }
 

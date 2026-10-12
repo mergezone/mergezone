@@ -8,14 +8,32 @@ import (
 )
 
 templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) {
+	{{ paneSeed := map[string]any{
+		"number": pullRequest.Number,
+		"owner": owner,
+		"repository": repository,
+		"title": pullRequest.Title,
+		"state": pullRequest.State,
+		"statusClass": helpers.GetStatusClass(pullRequest),
+		"url": pullRequest.URL,
+		"comments": pullRequest.CommentCount(),
+		"age": model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
+		"authorName": pullRequest.Author.Name,
+		"authorURL": pullRequest.Author.URL,
+		"scope": func() string { if len(pullRequest.Scopes) > 0 { return pullRequest.Scopes[0] }; return "" }(),
+		"scopeURL": func() string { if len(pullRequest.Scopes) > 0 { return fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0]) }; return "" }(),
+		"bodyHtml": helpers.RenderMarkdown(pullRequest.Body),
+		"refs": helpers.PullRequestReferences(pullRequest.Body),
+	} }}
 	<div
 		class="item pull-request box"
 		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
 		data-pull-request-number={ fmt.Sprintf("%d", pullRequest.Number) }
 		data-pull-request-title={ pullRequest.Title }
+		data-pull-request-state={ pullRequest.State }
 		data-pull-request-status-class={ helpers.GetStatusClass(pullRequest) }
 		data-pull-request-url={ pullRequest.URL }
-		data-pull-request-state={ pullRequest.State }
+		data-pull-request-comments={ fmt.Sprintf("%d", pullRequest.CommentCount()) }
 		data-pull-request-age={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }
 		data-pull-request-author-name={ pullRequest.Author.Name }
 		data-pull-request-author-url={ pullRequest.Author.URL }
@@ -25,6 +43,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		}
 		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.pullRequestNumber), this.dataset)"
 	>
+		<div hidden class="pull-request-seed">@templ.JSONScript("", paneSeed)</div>
         <div class="pull-request-header">
             <div class="icon-container">
                 <i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
@@ -38,6 +57,9 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
                 </span>
                 <span>
                     { pullRequest.State }
+                </span>
+                <span title="Discussion">
+                    <i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
                 </span>
                 <span title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
                     @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)

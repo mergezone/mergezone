@@ -35,7 +35,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes filter-section\"><div class=\"panel-heading section-heading filter-section-heading\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-folder-tree section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes filter-section\"><div class=\"panel-heading section-heading filter-section-heading\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-folder-tree section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +57,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.FragmentURL("scopes", "recent"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 32, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 35, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 			if templ_7745c5c3_Err != nil {
@@ -80,7 +80,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.FragmentURL("scopes", "top"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 43, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 46, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {

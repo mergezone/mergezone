@@ -1,0 +1,33 @@
+package components
+
+import (
+	"time"
+
+	"merge/internal/model"
+)
+
+// PullRequestDiscussion renders the comment list for a pull request's discussion.
+templ PullRequestDiscussion(comments []model.PullRequestComment) {
+	<div class="discussion-comments" data-loaded="true">
+		if len(comments) == 0 {
+			<p class="discussion-empty">No comments yet.</p>
+		} else {
+			for _, comment := range comments {
+				<article class="discussion-comment">
+					<div class="discussion-comment-header">
+						<div class="discussion-comment-author">
+							if comment.User.AvatarURL != "" {
+							<img class="discussion-avatar" src={ templ.SafeURL(comment.User.AvatarURL) } alt={ comment.User.Login + "'s profile picture" } loading="lazy"/>
+							}
+							<a class="meta-link" href={ templ.SafeURL(comment.User.HTMLURL) }>{ comment.User.Login }</a>
+						</div>
+						if createdAt, err := time.Parse(time.RFC3339, comment.CreatedAt); err == nil {
+							<time datetime={ comment.CreatedAt }>{ createdAt.Format("Jan 2, 2006 3:04 PM") }</time>
+						}
+					</div>
+					<div class="content discussion-comment-content">@templ.Raw(comment.BodyHTML)</div>
+				</article>
+			}
+		}
+	</div>
+}

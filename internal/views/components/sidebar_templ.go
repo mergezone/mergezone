@@ -35,7 +35,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = RepositoryNavigation(filters.Owner, filters.Repository, filters.Scope).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = RepositoryNavigation(filters.Owner, filters.Repository).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

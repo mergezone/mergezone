@@ -72,6 +72,67 @@
       margin-left: auto;
     }
 
+    .context-pane-section {
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+
+        .panel-heading {
+            background: transparent;
+            color: $color-950;
+        }
+
+        .panel-block {
+            display: block;
+            border: 0;
+        }
+    }
+
+    .context-pane-section-heading {
+        cursor: pointer;
+        margin: 0;
+        padding: $spacing-2 $spacing-4;
+        border-radius: 0;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-cutout-strong);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
+        }
+
+        &:hover .section-heading-icon,
+        &:has(.collapse-section-button:focus-visible) .section-heading-icon {
+            opacity: 0;
+        }
+
+        &:hover .collapse-section-button,
+        &:has(.collapse-section-button:focus-visible) .collapse-section-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    @media (hover: none) {
+        .context-pane-section-heading .section-heading-icon {
+            opacity: 0;
+        }
+
+        .context-pane-section-heading .collapse-section-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    .context-pane-section-content {
+        padding: $spacing-2 $spacing-4 $spacing-4;
+    }
+
     .context-pane-meta {
         flex: 0 0 auto;
         width: 100%;
@@ -111,19 +172,139 @@
         }
     }
 
+    .context-pane-discussion {
+        .discussion-empty {
+            margin: 0;
+            color: var(--color-text-muted);
+            font-size: $text-xs;
+        }
+
+        .discussion-comment {
+            padding: $spacing-3 0;
+
+            &:not(.discussion-comment-skeleton) {
+                border-top: $border-width-normal solid $color-700;
+            }
+
+            &.discussion-comment-skeleton {
+                padding: $spacing-0;
+                border: 0;
+                margin-bottom: $spacing-4;
+
+                .discussion-comment-header {
+                    margin-bottom: $spacing-4;
+                }
+            }
+
+            .discussion-comment-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: $spacing-3;
+                margin-bottom: $spacing-2;
+                font-size: $text-xs;
+
+                .discussion-comment-author {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: $spacing-2;
+                    min-width: 0;
+                }
+
+                .discussion-avatar {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    flex: 0 0 1.5rem;
+                    border-radius: 0.5rem;
+                    object-fit: cover;
+                }
+
+                time {
+                    color: var(--color-text-muted);
+                    text-align: right;
+                }
+            }
+
+            .discussion-comment-content {
+                overflow-wrap: anywhere;
+
+                > :last-child {
+                    margin-bottom: 0;
+                }
+
+                img,
+                video,
+                iframe {
+                    display: block;
+                    max-width: 100%;
+                }
+
+                video,
+                iframe {
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                }
+
+                iframe {
+                    border: 0;
+                }
+            }
+        }
+
+        .discussion-skeleton-block {
+            display: block;
+            width: 100%;
+            min-height: 7rem;
+            margin-bottom: $spacing-3;
+            border-radius: $skeleton-border-radius;
+        }
+
+        .discussion-skeleton-author,
+        .discussion-skeleton-date,
+        .discussion-skeleton-line {
+            display: block;
+            border-radius: $skeleton-border-radius;
+        }
+
+        .discussion-skeleton-author {
+            width: 6rem;
+            height: $text-xs;
+        }
+
+        .discussion-skeleton-date {
+            width: 8rem;
+            height: $text-xs;
+        }
+
+        .discussion-skeleton-body {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-3;
+        }
+
+        .discussion-skeleton-line {
+            width: 100%;
+            height: $skeleton-line-height;
+
+            &.short {
+                width: 55%;
+            }
+        }
+    }
+
     .context-pane-body {
         @include base.scrollable-flex-child;
         display: flex;
         flex-direction: column;
-        gap: $spacing-4;
-        padding: $spacing-4;
+        gap: $spacing-2;
+        padding: $spacing-2 $spacing-0 $spacing-4;
         color: $color-900;
         font-size: $text-sm;
         line-height: $line-height-markdown-body;
 
         // Bulma's `.content` owns the markdown typography. Merge Zone keeps a
         // few pane-specific adjustments and its custom rendered elements.
-        > .content {
+        .content {
             flex: 0 0 auto;
         }
 
@@ -379,7 +560,7 @@ diffs-container .pierre-gutter {
     .context-pane .context-pane-header {
         padding: $spacing-4;
     }
-    .context-pane .context-pane-meta {
+    .context-pane .context-pane-section-content {
         padding-inline: $spacing-4;
     }
 }

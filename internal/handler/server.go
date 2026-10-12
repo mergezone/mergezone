@@ -102,9 +102,10 @@ func optionalRepositoryFilterValue(value *string) string {
 type RepositoryFragment string
 
 const (
-	PullRequestDetailFragment RepositoryFragment = "pr-detail"
-	ContributorsFragment      RepositoryFragment = "contributors"
-	ScopesFragment            RepositoryFragment = "scopes"
+	PullRequestDetailFragment     RepositoryFragment = "pr-detail"
+	PullRequestDiscussionFragment RepositoryFragment = "pr-discussion"
+	ContributorsFragment          RepositoryFragment = "contributors"
+	ScopesFragment                RepositoryFragment = "scopes"
 )
 
 func isHTMXRequest(r *http.Request) bool {
@@ -194,6 +195,29 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	switch fragment {
+	case PullRequestDiscussionFragment:
+		pullRequestNumber, err := strconv.Atoi(r.URL.Query().Get("number"))
+		if err != nil {
+			http.Error(w, "Invalid pull request number", http.StatusBadRequest)
+			return
+		}
+		for _, pullRequest := range viewData.PullRequests {
+			if pullRequest.Number == pullRequestNumber {
+				comments, commentErr := request.getPullRequestComments(request.Query.Owner, request.Query.Repository, pullRequestNumber)
+				if commentErr != nil {
+					request.Logger.Warn("could not load pull request discussion", "error", commentErr)
+					http.Error(w, "Could not load pull request discussion", http.StatusBadGateway)
+					return
+				}
+				err = components.PullRequestDiscussion(comments).Render(r.Context(), w)
+				if err != nil {
+					request.Logger.Error(err.Error())
+				}
+				return
+			}
+		}
+		http.Error(w, "Pull request not found", http.StatusNotFound)
+		return
 	case PullRequestDetailFragment:
 		pullRequestNumber, err := strconv.Atoi(r.URL.Query().Get("number"))
 		if err != nil {
@@ -202,7 +226,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		}
 		for _, pullRequest := range viewData.PullRequests {
 			if pullRequest.Number == pullRequestNumber {
-				err = components.PullRequestDetail(pullRequest, request.Query.Owner, request.Query.Repository, r.URL.Path+r.URL.RawQuery).Render(r.Context(), w)
+				err = components.PullRequestDetail(pullRequest).Render(r.Context(), w)
 				if err != nil {
 					request.Logger.Error(err.Error())
 				}
