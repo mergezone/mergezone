@@ -209,7 +209,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 					http.Error(w, "Could not load pull request discussion", http.StatusBadGateway)
 					return
 				}
-				err = components.PullRequestDiscussion(pullRequest, comments).Render(r.Context(), w)
+				err = components.PullRequestDiscussion(comments).Render(r.Context(), w)
 				if err != nil {
 					request.Logger.Error(err.Error())
 				}
@@ -226,7 +226,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		}
 		for _, pullRequest := range viewData.PullRequests {
 			if pullRequest.Number == pullRequestNumber {
-				err = components.PullRequestDetail(pullRequest, request.Query.Owner, request.Query.Repository, r.URL.Path+r.URL.RawQuery).Render(r.Context(), w)
+				err = components.PullRequestDetail(pullRequest).Render(r.Context(), w)
 				if err != nil {
 					request.Logger.Error(err.Error())
 				}

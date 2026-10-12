@@ -95,8 +95,10 @@
 
 .panel {
   --bulma-panel-shadow: none;
-  --bulma-panel-radius: 0;
+  --bulma-panel-radius: 0 !important;
+  --bulma-panel-heading-radius: 0;
   --bulma-panel-item-border: none;
+  border-radius: 0 !important;
   --bulma-panel-block-color: var(--color-text-primary);
   --bulma-panel-block-hover-background-color: var(--color-section);
   --bulma-panel-block-active-border-left-color: transparent;

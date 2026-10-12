@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 section.filter-section {
-    padding: 0 $spacing-2;
+    padding: 0;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -19,7 +19,7 @@ section.filter-section {
     align-items: center;
     gap: $spacing-2;
     padding: $spacing-3 $spacing-4 $spacing-3 $spacing-8;
-    border-radius: $sidebar-card-radius;
+    border-radius: 0;
     background-color: transparent;
     color: var(--color-text-primary);
     text-decoration: none;
@@ -57,8 +57,9 @@ section.filter-section {
 }
 
 .panel .panel-block.sidebar-panel-item:last-child {
-    border-end-start-radius: $sidebar-card-radius;
-    border-end-end-radius: $sidebar-card-radius;
+    border-radius: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
 }
 
 .panel .panel-block.sidebar-panel-item.is-current,
@@ -136,7 +137,7 @@ section.filter-section {
     color: var(--color-text-secondary);
     font-size: $pr-card-desc-font-size;
     opacity: 0;
-    transition: width $transition-fast, opacity $transition-fast, margin-left $transition-fast;
+    transition: none;
     white-space: nowrap;
 
     i {

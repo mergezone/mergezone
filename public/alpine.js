@@ -53,12 +53,15 @@ async function attachZoom(selector) {
   }
 }
 
-function contextPaneErrorHtml() {
-  return '<p class="context-pane-error">Pull request details could not be loaded. Please try again.</p>';
-}
-
 function discussionErrorHtml() {
   return '<p class="context-pane-error">Discussion could not be loaded. <a href="#" data-discussion-retry>Try again</a>.</p>';
+}
+
+function discussionSkeletonHtml() {
+  return `<div class="discussion-comment discussion-comment-skeleton" aria-hidden="true">
+    <div class="discussion-skeleton-block skeleton-block"></div>
+    <div class="discussion-skeleton-block skeleton-block"></div>
+  </div>`;
 }
 
 async function loadPullRequestDiscussion(container, owner, repository, number, signal) {
@@ -70,11 +73,10 @@ async function loadPullRequestDiscussion(container, owner, repository, number, s
 
   const html = await response.text();
   const parsed = new DOMParser().parseFromString(html, 'text/html');
-  const discussion = parsed.querySelector('.context-pane-discussion');
-  if (!discussion) throw new Error('Discussion fragment is missing its container');
-  discussion.dataset.loaded = 'true';
-  discussion.dataset.loading = 'false';
-  container.replaceWith(discussion);
+  const comments = parsed.querySelector('.discussion-comments');
+  if (!comments) throw new Error('Discussion fragment is missing its container');
+  comments.dataset.loaded = 'true';
+  container.replaceWith(comments);
 }
 
 function enhanceContextPaneImages() {
@@ -309,14 +311,16 @@ document.addEventListener('alpine:init', () => {
     pullRequestScope: '',
     pullRequestScopeURL: '',
     bodyHtml: '',
-    loadingBody: false,
     diffInstances: [],
     loadingDiffs: false,
-    _abortController: null,
+    changesLoaded: false,
     _discussionController: null,
+    _discussionSkeleton: '',
     _owner: '',
     _repository: '',
     _stashedDiffs: [],
+    _discussionByPullRequest: new Map(),
+    _seedByPullRequest: new Map(),
 
     async openPane(pullRequestNumber, dataset = {}) {
       if (pullRequestNumber === this.pullRequestNumber) {
@@ -329,20 +333,37 @@ document.addEventListener('alpine:init', () => {
         return;
       }
 
+      if (this.pullRequestNumber) {
+        const currentDiscussion = document.querySelector('.context-pane-discussion .discussion-comments');
+        if (currentDiscussion?.dataset.loaded === 'true') {
+          this._discussionByPullRequest.set(this.pullRequestNumber, currentDiscussion.innerHTML);
+        }
+      }
       this._cleanup();
+      this._resetDiscussion();
 
-      this.pullRequestNumber = pullRequestNumber;
+      let seed = {};
+      try {
+        const card = document.querySelector(`.pull-request[data-pull-request-number="${pullRequestNumber}"]`);
+        const seedNode = card?.querySelector('.pull-request-seed script[type="application/json"]');
+        seed = JSON.parse(seedNode?.textContent || dataset.pullRequestSeed || '{}');
+        if (Object.keys(seed).length) this._seedByPullRequest.set(pullRequestNumber, seed);
+      } catch (error) {
+        console.warn('[context-pane] invalid pull request seed', error);
+      }
 
-      this.pullRequestTitle = dataset.pullRequestTitle || 'Pull Request';
-      this.pullRequestStatusClass = dataset.pullRequestStatusClass || '';
-      this.pullRequestURL = dataset.pullRequestURL || '#';
-      this.pullRequestState = dataset.pullRequestState || '';
-      this.pullRequestComments = dataset.pullRequestComments || '0';
-      this.pullRequestAge = dataset.pullRequestAge || '';
-      this.pullRequestAuthorName = dataset.pullRequestAuthorName || '';
-      this.pullRequestAuthorURL = dataset.pullRequestAuthorURL || '#';
-      this.pullRequestScope = dataset.pullRequestScope || '';
-      this.pullRequestScopeURL = dataset.pullRequestScopeURL || '#';
+      this.pullRequestNumber = seed.number || pullRequestNumber;
+      this.pullRequestTitle = seed.title || dataset.pullRequestTitle || 'Pull Request';
+      this.pullRequestStatusClass = seed.statusClass || dataset.pullRequestStatusClass || '';
+      this.pullRequestURL = seed.url || dataset.pullRequestURL || '#';
+      this.pullRequestState = seed.state || dataset.pullRequestState || '';
+      this.pullRequestComments = String(seed.comments ?? dataset.pullRequestComments ?? '0');
+      this.pullRequestAge = seed.age || dataset.pullRequestAge || '';
+      this.pullRequestAuthorName = seed.authorName || dataset.pullRequestAuthorName || '';
+      this.pullRequestAuthorURL = seed.authorURL || dataset.pullRequestAuthorURL || '#';
+      this.pullRequestScope = seed.scope || dataset.pullRequestScope || '';
+      this.pullRequestScopeURL = seed.scopeURL || dataset.pullRequestScopeURL || '#';
+      this._seedByPullRequest.set(pullRequestNumber, seed);
 
       this._owner = '';
       this._repository = '';
@@ -360,10 +381,14 @@ document.addEventListener('alpine:init', () => {
         this._owner = owner;
         this._repository = repository;
       }
+      this._owner = seed.owner || this._owner;
+      this._repository = seed.repository || this._repository;
 
-      this.bodyHtml = this._bodySkeletonHtml();
-      this.loadingBody = true;
-      this.loadingDiffs = true;
+      this.bodyHtml = seed.bodyHtml || '';
+      this.loadingBody = false;
+      this._seedDiscussion(this.pullRequestNumber);
+      this.loadingDiffs = false;
+      this.changesLoaded = false;
 
       this.open = true;
 
@@ -371,7 +396,7 @@ document.addEventListener('alpine:init', () => {
       if (selected) selected.classList.remove('selected');
       card?.classList.add('selected');
 
-      this._fetchBodyAndDiffs(pullRequestNumber);
+      setTimeout(enhanceContextPaneImages, 0);
     },
 
     closePane() {
@@ -384,12 +409,12 @@ document.addEventListener('alpine:init', () => {
       const retry = event.target.closest('[data-discussion-retry]');
       if (retry) {
         event.preventDefault();
-        const container = retry.closest('.context-pane-discussion');
+        const container = retry.closest('.discussion-comments');
         if (container) {
           container.dataset.loading = 'false';
           container.dataset.loaded = 'false';
         }
-        this._loadDiscussion();
+        this.loadDiscussion();
         return;
       }
 
@@ -406,12 +431,25 @@ document.addEventListener('alpine:init', () => {
         return;
       }
 
+      const seeded = this._seedByPullRequest.get(pullRequestNumber);
+      if (seeded) {
+        this.openPane(pullRequestNumber, { pullRequestSeed: JSON.stringify(seeded) });
+        return;
+      }
+
       const pathParts = window.location.pathname.split('/').filter(Boolean);
       const owner = pathParts[0] || this._owner;
       const repository = pathParts[1] || this._repository;
       if (!owner || !repository) return;
 
+      if (this.pullRequestNumber) {
+        const currentDiscussion = document.querySelector('.context-pane-discussion .discussion-comments');
+        if (currentDiscussion?.dataset.loaded === 'true') {
+          this._discussionByPullRequest.set(this.pullRequestNumber, currentDiscussion.innerHTML);
+        }
+      }
       this._cleanup();
+      this._resetDiscussion();
       this.pullRequestNumber = pullRequestNumber;
       this.pullRequestTitle = 'Pull Request #' + pullRequestNumber;
       this.pullRequestStatusClass = '';
@@ -424,39 +462,40 @@ document.addEventListener('alpine:init', () => {
       this.pullRequestScopeURL = '#';
       this._owner = owner;
       this._repository = repository;
-      this.bodyHtml = this._bodySkeletonHtml();
-      this.loadingBody = true;
-      this.loadingDiffs = false;
-      this.open = true;
-
-      const controller = new AbortController();
-      this._abortController = controller;
-      link.classList.add('loading');
-
-      this._fetchBodyRaw(pullRequestNumber, controller.signal).then(html => {
-        if (controller.signal.aborted || this.pullRequestNumber !== pullRequestNumber) return;
-        this.bodyHtml = html;
+      const seed = this._seedByPullRequest.get(pullRequestNumber);
+      if (seed) {
+        this.pullRequestTitle = seed.title || this.pullRequestTitle;
+        this.pullRequestStatusClass = seed.statusClass || '';
+        this.pullRequestURL = seed.url || this.pullRequestURL;
+        this.pullRequestState = seed.state || '';
+        this.pullRequestComments = String(seed.comments ?? 0);
+        this.pullRequestAge = seed.age || '';
+        this.pullRequestAuthorName = seed.authorName || '';
+        this.pullRequestAuthorURL = seed.authorURL || '#';
+        this.pullRequestScope = seed.scope || '';
+        this.pullRequestScopeURL = seed.scopeURL || '#';
+        this.bodyHtml = seed.bodyHtml || '';
         this.loadingBody = false;
+        this._seedDiscussion(pullRequestNumber);
+        this.open = true;
         setTimeout(enhanceContextPaneImages, 0);
-      }).catch(error => {
-        if (controller.signal.aborted || error.name === 'AbortError') return;
-        console.warn('[context-pane] could not load referenced pull request', error);
-        if (this.pullRequestNumber === pullRequestNumber) {
-          this.bodyHtml = contextPaneErrorHtml();
-          this.loadingBody = false;
-        }
-      }).finally(() => {
-        link.classList.remove('loading');
-        if (this._abortController === controller) this._abortController = null;
-      });
+        return;
+      }
+
+      this.bodyHtml = '';
+      this.loadingBody = false;
+      this.loadingDiffs = false;
+      this.changesLoaded = false;
+      this.open = true;
+      setTimeout(enhanceContextPaneImages, 0);
     },
 
     _stashDiffs() {
       const container = document.getElementById('context-pane-content');
-      const body = container?.querySelector('.context-pane-body');
-      if (!body) return;
+      const diffs = container?.querySelector('.context-pane-diffs');
+      if (!diffs) return;
 
-      body.querySelectorAll('diffs-container').forEach(el => {
+      diffs.querySelectorAll('diffs-container').forEach(el => {
         el.remove();
         this._stashedDiffs.push(el);
       });
@@ -466,19 +505,15 @@ document.addEventListener('alpine:init', () => {
       if (this._stashedDiffs.length === 0) return false;
 
       const container = document.getElementById('context-pane-content');
-      const body = container?.querySelector('.context-pane-body');
-      if (!body) return false;
+      const diffs = container?.querySelector('.context-pane-diffs');
+      if (!diffs) return false;
 
-      this._stashedDiffs.forEach(el => body.appendChild(el));
+      this._stashedDiffs.forEach(el => diffs.appendChild(el));
       this._stashedDiffs = [];
       return true;
     },
 
     _cleanup() {
-      if (this._abortController) {
-        this._abortController.abort();
-        this._abortController = null;
-      }
       if (this._discussionController) {
         this._discussionController.abort();
         this._discussionController = null;
@@ -488,6 +523,8 @@ document.addEventListener('alpine:init', () => {
         cleanupDiffs(this.diffInstances);
         this.diffInstances = [];
       }
+      this.changesLoaded = false;
+      this.loadingDiffs = false;
 
       if (zoomInstance) {
         try { zoomInstance.detach(); } catch (error) {
@@ -509,143 +546,120 @@ document.addEventListener('alpine:init', () => {
 
     async rerenderDiffs() {
       if (!this.open || !this.pullRequestNumber || !this._owner || !this._repository) return;
-      if (!this.diffInstances.length) return;
+      if (!this.changesLoaded || !this.diffInstances.length) return;
 
       const container = document.getElementById('context-pane-content');
-      const body = container?.querySelector('.context-pane-body');
-      if (!body) return;
+      const diffs = container?.querySelector('.context-pane-diffs');
+      if (!diffs) return;
 
       cleanupDiffs(this.diffInstances);
       this.diffInstances = [];
-      body.querySelectorAll('diffs-container').forEach(el => el.remove());
+      diffs.querySelectorAll('diffs-container').forEach(el => el.remove());
 
-      this._showDiffSkeleton(body);
+      this._showDiffSkeleton(diffs);
 
       const tempDiffContainer = document.createElement('div');
       try {
         const instances = await loadPullRequestDiffs(tempDiffContainer, this._owner, this._repository, this.pullRequestNumber);
 
-        body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
-        Array.from(tempDiffContainer.children).forEach(el => body.appendChild(el));
+        diffs.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+        Array.from(tempDiffContainer.children).forEach(el => diffs.appendChild(el));
         this.diffInstances = instances;
         this.loadingDiffs = false;
       } catch (error) {
         console.warn('[context-pane] could not refresh diff', error);
-        body.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+        diffs.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
         this.loadingDiffs = false;
       }
     },
 
-    async _fetchBodyAndDiffs(pullRequestNumber) {
-      const controller = new AbortController();
-      const signal = controller.signal;
-      this._abortController = controller;
+    async loadChanges() {
+      if (!this.open || this.changesLoaded || this.loadingDiffs || !this.pullRequestNumber || !this._owner || !this._repository) return;
+      const container = document.querySelector('.context-pane-diffs');
+      if (!container) return;
 
-      const container = document.getElementById('context-pane-content');
-      const target = container?.querySelector('.context-pane-body') || container;
+      this.loadingDiffs = true;
+      this._showDiffSkeleton(container);
       const tempDiffContainer = document.createElement('div');
-
-      if (target) {
-        target.querySelectorAll('diffs-container').forEach(el => el.remove());
-        this._showDiffSkeleton(target);
-      }
-
-      // Diff rendering is optional: let the description appear as soon as its
-      // request completes, and treat any diff failure as an empty diff result.
-      const diffsPromise = this._fetchDiffsRaw(pullRequestNumber, signal, tempDiffContainer)
-        .catch(error => {
-          if (!signal.aborted) console.warn('[context-pane] diff unavailable', error);
-          return [];
-        });
-
       try {
-        const bodyHtml = await this._fetchBodyRaw(pullRequestNumber, signal);
-        if (signal.aborted || this.pullRequestNumber !== pullRequestNumber) return;
-
-        this.bodyHtml = bodyHtml;
-        this.loadingBody = false;
-        setTimeout(() => {
-          enhanceContextPaneImages();
-          if (this.open && this.pullRequestNumber === pullRequestNumber) {
-            this._loadDiscussion();
-          }
-        }, 0);
-
-        const diffInstances = await diffsPromise;
-        if (signal.aborted || this.pullRequestNumber !== pullRequestNumber || !this.open) {
-          cleanupDiffs(diffInstances);
+        const instances = await this._fetchDiffsRaw(this.pullRequestNumber, undefined, tempDiffContainer);
+        if (!this.open || !container.isConnected) {
+          cleanupDiffs(instances);
           return;
         }
-
-        if (target) {
-          target.querySelectorAll('.diff-skeleton, diffs-container').forEach(el => el.remove());
-          if (diffInstances.length) {
-            Array.from(tempDiffContainer.children).forEach(el => target.appendChild(el));
-          }
-        }
-
-        this.diffInstances = diffInstances;
-        this.loadingDiffs = false;
+        container.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+        Array.from(tempDiffContainer.children).forEach(el => container.appendChild(el));
+        this.diffInstances = instances;
+        this.changesLoaded = true;
       } catch (error) {
-        if (signal.aborted || error.name === 'AbortError') return;
-        console.warn('[context-pane] could not load pull request details', error);
-        controller.abort();
-        if (this.pullRequestNumber === pullRequestNumber) {
-          this.bodyHtml = contextPaneErrorHtml();
-          this.loadingBody = false;
-          this.loadingDiffs = false;
-          if (target) target.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
-        }
-        diffsPromise.then(cleanupDiffs);
+        console.warn('[context-pane] diff unavailable', error);
+        container.querySelectorAll('.diff-skeleton').forEach(el => el.remove());
+        container.innerHTML = '<p class="context-pane-error">Changes could not be loaded.</p>';
       } finally {
-        if (this._abortController === controller) this._abortController = null;
+        this.loadingDiffs = false;
       }
+    },
+
+    _seedDiscussion(pullRequestNumber) {
+      const container = document.querySelector('.context-pane-discussion .discussion-comments');
+      if (!container) return;
+      const cached = this._discussionByPullRequest.get(pullRequestNumber);
+      if (cached !== undefined) {
+        container.innerHTML = cached;
+        container.dataset.loaded = 'true';
+        container.dataset.loading = 'false';
+      } else {
+        this._showDiscussionSkeleton(container);
+        container.dataset.loaded = 'false';
+        container.dataset.loading = 'false';
+      }
+    },
+
+    _showDiscussionSkeleton(container) {
+      container.innerHTML = discussionSkeletonHtml();
+    },
+
+    _resetDiscussion() {
+      const container = document.querySelector('.context-pane-discussion .discussion-comments');
+      if (!container) return;
+      if (container.querySelector('.discussion-comment-skeleton')) {
+        this._discussionSkeleton = container.outerHTML;
+        container.dataset.loading = 'false';
+        return;
+      }
+      if (this._discussionSkeleton) {
+        container.outerHTML = this._discussionSkeleton;
+      }
+    },
+
+    loadDiscussion() {
+      if (!this.open || !this.pullRequestNumber || !this._owner || !this._repository) return;
+      this._loadDiscussion();
     },
 
     _loadDiscussion() {
       if (!this.open || !this.pullRequestNumber || !this._owner || !this._repository) return;
-      const container = document.querySelector(`#discussion-${this.pullRequestNumber}`);
+      const container = document.querySelector('.context-pane-discussion .discussion-comments');
       if (!container || container.dataset.loading === 'true' || container.dataset.loaded === 'true') return;
 
       if (this._discussionController) this._discussionController.abort();
       const controller = new AbortController();
       this._discussionController = controller;
+      this._showDiscussionSkeleton(container);
       container.dataset.loading = 'true';
       loadPullRequestDiscussion(container, this._owner, this._repository, this.pullRequestNumber, controller.signal)
+        .then(() => {
+          this._discussionByPullRequest.set(this.pullRequestNumber, document.querySelector('.context-pane-discussion .discussion-comments')?.innerHTML || '');
+        })
         .catch(error => {
           if (controller.signal.aborted || error.name === 'AbortError') return;
           console.warn('[context-pane] could not load discussion fragment', error);
           container.dataset.loading = 'false';
-          container.innerHTML = `<h2>Discussion</h2>${discussionErrorHtml()}`;
+          container.innerHTML = discussionErrorHtml();
         })
         .finally(() => {
           if (this._discussionController === controller) this._discussionController = null;
         });
-    },
-
-    async _fetchBodyRaw(pullRequestNumber, signal) {
-      const response = await fetch(`/${this._owner}/${this._repository}?fragment=pr-detail&number=${pullRequestNumber}`, { signal });
-      if (!response.ok) throw new Error('Failed to fetch body');
-
-      const html = await response.text();
-
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const bodyElement = doc.querySelector('.context-pane-body');
-
-      if (bodyElement) {
-        const meta = bodyElement.querySelector('.context-pane-meta');
-        let bodyContent = '';
-        let node = bodyElement.firstChild;
-        while (node) {
-          if (node !== meta && !(node.classList && node.classList.contains('context-pane-meta'))) {
-            bodyContent += node.outerHTML || node.textContent;
-          }
-          node = node.nextSibling;
-        }
-        return bodyContent;
-      }
-      return html;
     },
 
     async _fetchDiffsRaw(pullRequestNumber, signal, target) {
@@ -656,30 +670,15 @@ document.addEventListener('alpine:init', () => {
 
     _openWithDeferredDiffs() {
       const container = document.getElementById('context-pane-content');
-      const body = container?.querySelector('.context-pane-body');
       const pane = document.getElementById('context-pane');
-
-      this._showDiffSkeleton(body);
 
       this.open = true;
 
-      const hasStashed = this._stashedDiffs.length > 0;
       const replaceSkeleton = () => {
-        if (body && this.open) {
-          const skeleton = body.querySelector('.diff-skeleton');
-          if (skeleton) skeleton.remove();
-
-          if (hasStashed) {
-            this._unstashDiffs();
-          }
-        }
         setTimeout(enhanceContextPaneImages, 0);
       };
 
-      this._onTransitionComplete(pane, () => {
-        replaceSkeleton();
-        this._loadDiscussion();
-      });
+      this._onTransitionComplete(pane, replaceSkeleton);
     },
 
     _onTransitionComplete(pane, callback) {
@@ -705,8 +704,8 @@ document.addEventListener('alpine:init', () => {
       }, 100);
     },
 
-    _showDiffSkeleton(body) {
-      if (!body) return;
+    _showDiffSkeleton(container) {
+      if (!container) return;
       const skeleton = document.createElement('div');
       skeleton.className = 'diff-skeleton skeleton';
       skeleton.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem;';
@@ -721,33 +720,9 @@ document.addEventListener('alpine:init', () => {
         `;
         skeleton.appendChild(block);
       }
-      body.appendChild(skeleton);
+      container.appendChild(skeleton);
     },
 
-    _bodySkeletonHtml() {
-      return `
-        <div class="body-skeleton skeleton">
-          <div class="skeleton-paragraph">
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line short is-skeleton"></div>
-          </div>
-          <div class="skeleton-paragraph">
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line medium is-skeleton"></div>
-          </div>
-          <div class="skeleton-paragraph">
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line is-skeleton"></div>
-            <div class="skeleton-line short is-skeleton"></div>
-          </div>
-        </div>
-      `;
-    }
   });
 
   // Filter panel store

@@ -19,39 +19,137 @@ templ ContextPane() {
 				</a>
 			</div>
 			<div class="context-pane-body scroll" @click="$store.contextPane.openPrRef($event)">
-				<table class="table is-fullwidth context-pane-meta" x-show="$store.contextPane.open">
-					<tbody>
-						<tr class="meta-row">
-							<th class="meta-label" scope="row"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Number</th>
-							<td class="meta-value" x-text="'#' + $store.contextPane.pullRequestNumber"></td>
-						</tr>
-						<tr class="meta-row">
-							<th class="meta-label" scope="row"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> Status</th>
-							<td class="meta-value" x-text="$store.contextPane.pullRequestState"></td>
-						</tr>
-						<tr class="meta-row">
-							<th class="meta-label" scope="row"><i class="fa-solid fa-clock" aria-hidden="true"></i> Age</th>
-							<td class="meta-value" x-text="$store.contextPane.pullRequestAge"></td>
-						</tr>
-						<tr class="meta-row">
-							<th class="meta-label" scope="row"><i class="fa-regular fa-comments" aria-hidden="true"></i> Discussion</th>
-							<td class="meta-value" x-text="$store.contextPane.pullRequestComments"></td>
-						</tr>
-						<tr class="meta-row">
-							<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
-							<td class="meta-value">
-								<a class="meta-link" :href="$store.contextPane.pullRequestAuthorUrl" x-text="$store.contextPane.pullRequestAuthorName"></a>
-							</td>
-						</tr>
-						<template x-if="$store.contextPane.pullRequestScope">
-							<tr class="meta-row">
-								<th class="meta-label" scope="row"><i class="fa-solid fa-tag" aria-hidden="true"></i> Scope</th>
-								<td class="meta-value"><a class="meta-link" :href="$store.contextPane.pullRequestScopeUrl" x-text="$store.contextPane.pullRequestScope"></a></td>
-							</tr>
-						</template>
-					</tbody>
-				</table>
-				<div class="content" x-show="$store.contextPane.open" x-html="$store.contextPane.bodyHtml"></div>
+				<section class="panel context-pane-section context-pane-details" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
+					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
+						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
+						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed">
+						<span class="section-heading-label">
+							<span class="section-heading-control">
+								<i class="fa-solid fa-circle-info section-heading-icon" aria-hidden="true"></i>
+								<button class="link-button collapse-section-button" type="button"
+									:aria-expanded="!$data.collapsed"
+									:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
+									:title="$data.collapsed ? 'Expand details' : 'Collapse details'"
+									@click.stop="$data.collapsed = !$data.collapsed">
+									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+								</button>
+							</span>
+							<span>Details</span>
+						</span>
+					</div>
+					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
+						<table class="table is-fullwidth context-pane-meta">
+							<tbody>
+								<tr class="meta-row">
+									<th class="meta-label" scope="row"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Number</th>
+									<td class="meta-value" x-text="'#' + $store.contextPane.pullRequestNumber"></td>
+								</tr>
+								<tr class="meta-row">
+									<th class="meta-label" scope="row"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> Status</th>
+									<td class="meta-value" x-text="$store.contextPane.pullRequestState"></td>
+								</tr>
+								<tr class="meta-row">
+									<th class="meta-label" scope="row"><i class="fa-solid fa-clock" aria-hidden="true"></i> Age</th>
+									<td class="meta-value" x-text="$store.contextPane.pullRequestAge"></td>
+								</tr>
+								<tr class="meta-row">
+									<th class="meta-label" scope="row"><i class="fa-regular fa-comments" aria-hidden="true"></i> Discussion</th>
+									<td class="meta-value" x-text="$store.contextPane.pullRequestComments"></td>
+								</tr>
+								<tr class="meta-row">
+									<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
+									<td class="meta-value">
+										<a class="meta-link" :href="$store.contextPane.pullRequestAuthorUrl" x-text="$store.contextPane.pullRequestAuthorName"></a>
+									</td>
+								</tr>
+								<template x-if="$store.contextPane.pullRequestScope">
+									<tr class="meta-row">
+										<th class="meta-label" scope="row"><i class="fa-solid fa-tag" aria-hidden="true"></i> Scope</th>
+										<td class="meta-value"><a class="meta-link" :href="$store.contextPane.pullRequestScopeUrl" x-text="$store.contextPane.pullRequestScope"></a></td>
+									</tr>
+								</template>
+							</tbody>
+						</table>
+					</div>
+				</section>
+				<section class="panel context-pane-section context-pane-description" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
+					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
+						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
+						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed">
+						<span class="section-heading-label">
+							<span class="section-heading-control">
+								<i class="fa-solid fa-align-left section-heading-icon" aria-hidden="true"></i>
+								<button class="link-button collapse-section-button" type="button"
+									:aria-expanded="!$data.collapsed"
+									:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
+									:title="$data.collapsed ? 'Expand description' : 'Collapse description'"
+									@click.stop="$data.collapsed = !$data.collapsed">
+									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+								</button>
+							</span>
+							<span>Description</span>
+						</span>
+					</div>
+					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
+						<div class="content context-pane-description-content" x-html="$store.contextPane.bodyHtml"></div>
+					</div>
+				</section>
+				<section class="panel context-pane-section context-pane-discussion" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
+					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
+						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion() }"
+						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()">
+						<span class="section-heading-label">
+							<span class="section-heading-control">
+								<i class="fa-solid fa-comments section-heading-icon" aria-hidden="true"></i>
+								<button class="link-button collapse-section-button" type="button"
+									:aria-expanded="!$data.collapsed"
+									:aria-label="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
+									:title="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
+									@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()">
+									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+								</button>
+							</span>
+							<span>Discussion</span>
+						</span>
+					</div>
+					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
+						<div class="discussion-comments" data-loaded="false" data-loading="false"></div>
+					</div>
+				</section>
+				<section class="panel context-pane-section context-pane-changes" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
+					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+						:aria-expanded="!$data.collapsed"
+						:aria-label="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
+						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges() }"
+						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()">
+						<span class="section-heading-label">
+							<span class="section-heading-control">
+								<i class="fa-solid fa-code-compare section-heading-icon" aria-hidden="true"></i>
+								<button class="link-button collapse-section-button" type="button"
+									:aria-expanded="!$data.collapsed"
+									:aria-label="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
+									:title="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
+								@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()">
+									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
+								</button>
+							</span>
+							<span>Changes</span>
+						</span>
+					</div>
+					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
+						<div class="context-pane-diffs" x-ref="changes"></div>
+					</div>
+				</section>
 			</div>
 		</div>
 	</aside>

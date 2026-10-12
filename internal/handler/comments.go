@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"merge/internal/model"
+	"merge/internal/views/helpers"
 
 	"github.com/gorilla/mux"
 )
@@ -70,6 +71,9 @@ func (s *Server) getPullRequestComments(owner, repository string, number int) ([
 		response.Body.Close()
 		comments = append(comments, pageComments...)
 		if len(pageComments) < 100 || !strings.Contains(response.Header.Get("Link"), `rel="next"`) {
+			for i := range comments {
+				comments[i].BodyHTML = helpers.RenderDiscussionMarkdown(comments[i].Body)
+			}
 			return comments, nil
 		}
 	}

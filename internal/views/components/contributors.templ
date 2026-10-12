@@ -6,7 +6,10 @@ import "merge/internal/model"
 
 templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) {
 	<section class="panel contributors filter-section">
-		<div class="panel-heading section-heading filter-section-heading">
+		<div class="panel-heading section-heading filter-section-heading"
+			@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
+			@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
+			@keydown.space.prevent="$data.collapsed = !$data.collapsed">
 			<span class="section-heading-label">
 				<span class="section-heading-control">
 					<i class="fa-solid fa-users section-heading-icon" aria-hidden="true"></i>

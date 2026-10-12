@@ -17,10 +17,12 @@ type User struct {
 
 type PullRequestComment struct {
 	Body      string `json:"body"`
+	BodyHTML  string `json:"-"`
 	CreatedAt string `json:"created_at"`
 	User      struct {
-		Login   string `json:"login"`
-		HTMLURL string `json:"html_url"`
+		Login     string `json:"login"`
+		HTMLURL   string `json:"html_url"`
+		AvatarURL string `json:"avatar_url"`
 	} `json:"user"`
 }
 
