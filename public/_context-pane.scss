@@ -55,15 +55,8 @@
             }
 
             .status-icon {
-                font-size: $text-lg;
+                font-size: $text-md;
             }
-
-            i.fa-up-right-from-square {
-                font-size: $text-xs;
-                color: var(--color-text-muted);
-            }
-
-            @include base.status-icon-hover;
         }
     }
 

@@ -42,8 +42,6 @@
         font-size: $stat-icon-size;
     }
 
-    @include base.status-icon-hover;
-
     p {
         @include base.label-font($color-900);
         grid-column: span 2 / span 2;

@@ -35,16 +35,6 @@
     }
 }
 
-@mixin status-icon-hover($rotate: $rotate-hover) {
-    &:hover .status-icon {
-        transform: rotate($rotate) scale($scale-hover);
-    }
-
-    .status-icon:hover {
-        transform: scale($scale-hover);
-    }
-}
-
 @mixin label-font($color: var(--color-text-muted)) {
     font-family: inherit;
     font-size: $text-xxs;
