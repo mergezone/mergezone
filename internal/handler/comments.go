@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"merge/internal/model"
+	"merge/internal/provider"
 	"merge/internal/views/helpers"
 
 	"github.com/gorilla/mux"
@@ -59,6 +60,7 @@ func (s *Server) getPullRequestComments(owner, repository string, number int) ([
 			return nil, err
 		}
 		if response.StatusCode != http.StatusOK {
+			provider.LogRateLimitExceeded(s.Logger, response)
 			response.Body.Close()
 			return nil, fmt.Errorf("GitHub comments request failed with status: %s", response.Status)
 		}

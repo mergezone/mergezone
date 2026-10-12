@@ -13,6 +13,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		"owner": owner,
 		"repository": repository,
 		"title": pullRequest.Title,
+		"titleHtml": helpers.RenderMarkdownInline(pullRequest.Title),
 		"state": pullRequest.State,
 		"statusClass": helpers.GetStatusClass(pullRequest),
 		"url": pullRequest.URL,

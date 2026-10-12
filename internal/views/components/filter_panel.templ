@@ -6,14 +6,8 @@ templ RepositoryFilterPanel() {
 		id="filter-panel"
 		:class="{ 'open': $store.filterPanel.open }"
 		@keydown.escape.window="$store.filterPanel.close()"
-		@click.away="if($store.filterPanel.open && !$event.target.closest('.context-pane'))$store.filterPanel.close()"
+		@click.away="if($store.filterPanel.open && !$event.target.closest('.context-pane') && !$event.target.closest('.mobile-dock'))$store.filterPanel.close()"
 	>
-		<div class="filter-panel-header">
-			<span>Filter</span>
-			<button class="icon-close-button button-toggle" @click="$store.filterPanel.close()" aria-label="Close filters">
-				<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-			</button>
-		</div>
 		<div class="filter-panel-body">
 		</div>
 	</div>

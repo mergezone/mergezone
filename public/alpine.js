@@ -130,7 +130,31 @@ function cleanupDiffs(instances) {
   }
 }
 
+// Relocate the repository search row between the top nav and the mobile bottom
+// dock. The nav is re-rendered on every htmx swap, so this runs from the nav
+// component and from a single resize listener registered below. The dock is
+// present on both home and repository pages, so search placement is consistent.
+function syncSearchPlacement() {
+  // Target the interactive nav search specifically: the home page also renders
+  // a non-interactive demo row, which must stay put.
+  const row = document.querySelector('#nav-search-slot .search-input-row, #mobile-dock-search .search-input-row');
+  if (!row) return;
+
+  const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+  const dock = document.getElementById('mobile-dock-search');
+  const target = isMobile && dock ? dock : document.getElementById('nav-search-slot');
+
+  if (target && row.parentElement !== target) {
+    target.appendChild(row);
+  }
+}
+
 document.addEventListener('alpine:init', () => {
+  window.addEventListener('resize', () => {
+    window.clearTimeout(window._searchPlacementTimer);
+    window._searchPlacementTimer = window.setTimeout(syncSearchPlacement, 150);
+  });
+
   Alpine.store('app', {
     themes: ['light', 'dark'],
     theme: 'dark',
@@ -301,6 +325,7 @@ document.addEventListener('alpine:init', () => {
     open: false,
     pullRequestNumber: null,
     pullRequestTitle: '',
+    pullRequestTitleHtml: '',
     pullRequestStatusClass: '',
     pullRequestURL: '',
     pullRequestState: '',
@@ -354,6 +379,7 @@ document.addEventListener('alpine:init', () => {
 
       this.pullRequestNumber = seed.number || pullRequestNumber;
       this.pullRequestTitle = seed.title || dataset.pullRequestTitle || 'Pull Request';
+      this.pullRequestTitleHtml = seed.titleHtml || this.pullRequestTitle;
       this.pullRequestStatusClass = seed.statusClass || dataset.pullRequestStatusClass || '';
       this.pullRequestURL = seed.url || dataset.pullRequestURL || '#';
       this.pullRequestState = seed.state || dataset.pullRequestState || '';
@@ -452,6 +478,7 @@ document.addEventListener('alpine:init', () => {
       this._resetDiscussion();
       this.pullRequestNumber = pullRequestNumber;
       this.pullRequestTitle = 'Pull Request #' + pullRequestNumber;
+      this.pullRequestTitleHtml = this.pullRequestTitle;
       this.pullRequestStatusClass = '';
       this.pullRequestURL = `https://github.com/${owner}/${repository}/pull/${pullRequestNumber}`;
       this.pullRequestState = '';
@@ -465,6 +492,7 @@ document.addEventListener('alpine:init', () => {
       const seed = this._seedByPullRequest.get(pullRequestNumber);
       if (seed) {
         this.pullRequestTitle = seed.title || this.pullRequestTitle;
+        this.pullRequestTitleHtml = seed.titleHtml || this.pullRequestTitle;
         this.pullRequestStatusClass = seed.statusClass || '';
         this.pullRequestURL = seed.url || this.pullRequestURL;
         this.pullRequestState = seed.state || '';
@@ -729,6 +757,11 @@ document.addEventListener('alpine:init', () => {
   Alpine.store('filterPanel', {
     open: false,
 
+    toggle() {
+      if (this.open) this.close();
+      else this.openPanel();
+    },
+
     openPanel() {
       this._moveFiltersToPanel();
       this.open = true;
@@ -792,8 +825,11 @@ document.addEventListener('alpine:init', () => {
         this._resizeAllInputs();
       });
 
+      // Place the search row before measuring it: on mobile the nav slot is
+      // hidden, so inputs must already be in the visible dock to size correctly.
       this.$nextTick(() => {
         this._captureOriginals();
+        syncSearchPlacement();
         this._setupInputs();
       });
 
@@ -806,6 +842,7 @@ document.addEventListener('alpine:init', () => {
         this.$nextTick(() => {
           Alpine.store('app')._loadAvatars();
           this._captureOriginals();
+          syncSearchPlacement();
           this._setupInputs();
           if (this._fontsReady) {
             this._resizeAllInputs();

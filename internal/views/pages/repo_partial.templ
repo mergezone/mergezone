@@ -13,7 +13,9 @@ templ RepositoryMainView(viewData model.RepositoryViewData) {
 			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage + 1)
 		</div>
 		@components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore)
+		@components.SiteFooter("mobile-footer")
 	</section>
 	@components.RepositoryFilterPanel()
 	@components.ContextPane()
+	@components.MobileDock(true, filters)
 }

@@ -13,11 +13,7 @@ templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.
 				@ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
 			</div>
 		</div>
-		<footer>
-			<span>Built by <a class="bold" href="https://www.haydenheroux.com">Hayden Heroux</a></span>
-			<span>View on <a class="bold" href="https://www.github.com/mergezone/mergezone">GitHub</a></span>
-			<span>View on <a class="bold" href="https://www.merge.zone/mergezone/mergezone">Merge Zone</a></span>
-		</footer>
+		@SiteFooter("sidebar-footer")
 		<div class="pane-resize-handle sidebar-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize filters sidebar" :aria-valuemin="$store.app.filterSidebarMinWidth" :aria-valuemax="$store.app.filterSidebarMaxWidth" :aria-valuenow="$store.app.filterSidebarWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('filter', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('filter', -16)" @keydown.right.prevent="$store.app.adjustPaneWidth('filter', 16)"></div>
 	</aside>
 }

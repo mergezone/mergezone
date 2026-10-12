@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -12,7 +13,8 @@ import (
 )
 
 type GitHub struct {
-	Token string
+	Token  string
+	Logger *slog.Logger
 }
 
 func (g GitHub) GitHubToken() string {
@@ -49,6 +51,7 @@ func (g GitHub) getPullRequestsJSON(query provider.RepositoryQuery, options prov
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		provider.LogRateLimitExceeded(g.Logger, resp)
 		return nil, pagination, fmt.Errorf("request failed with status: %s", resp.Status)
 	}
 
@@ -155,6 +158,7 @@ func (g GitHub) GetPullRequestDiff(owner, repository string, pullRequestNumber i
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		provider.LogRateLimitExceeded(g.Logger, resp)
 		return "", fmt.Errorf("request failed with status: %s", resp.Status)
 	}
 

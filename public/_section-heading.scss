@@ -181,6 +181,10 @@ section.filter-section {
         opacity: 0;
     }
 
+    // Touch devices have no hover state, so the sort controls must be revealed
+    // permanently; otherwise mobile users cannot switch scopes/contributors
+    // back to sorting by recency.
+    .filter-section-heading .section-actions,
     .filter-section-heading .collapse-section-button {
         opacity: 1;
         pointer-events: auto;

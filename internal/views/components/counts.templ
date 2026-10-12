@@ -34,7 +34,10 @@ func repositoryFilterLabel(filters model.RepositoryFilters) string {
 	if filters.Contributor != "" {
 		parts = append(parts, titleCaseFirst(filters.Contributor))
 	}
-	return "Filter: " + strings.Join(parts, ", ")
+	if len(parts) == 0 {
+		return "Filters"
+	}
+	return "Filters: " + strings.Join(parts, ", ")
 }
 
 // PullRequestCounts renders the repository's status summaries and filter controls.
@@ -42,13 +45,6 @@ templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests boo
 	<div class="stats">
 		<div class="section-heading">
             <span>Overview</span>
-			<div class="section-actions">
-				if filters.Scope != "" || filters.Contributor != "" || filters.Status != "" {
-					<button class="button is-ghost filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">{ repositoryFilterLabel(filters) }</button>
-				} else {
-					<button class="button is-ghost filter-toggle" id="filter-toggle" type="button" aria-label="Toggle filter" hx-on:click="Alpine.store('filterPanel').openPanel()">Filter</button>
-				}
-			</div>
         </div>
 		<div class="level is-mobile stats-tiles">
 			<div class="level-item">@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")</div>

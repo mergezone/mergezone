@@ -38,7 +38,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			ownerLabel = ownerPlaceholder
 		}
 		if interactive {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"breadcrumb search-input-row\" role=\"navigation\" aria-label=\"Repository\" hx-indicator=\"#search-loading-indicator\"><ul><li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav class=\"breadcrumb search-input-row\" aria-label=\"Repository\" hx-indicator=\"#search-loading-indicator\"><ul><li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -154,12 +154,12 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" autocomplete=\"off\"></span></div></li></ul><span id=\"search-loading-indicator\" class=\"icon search-loading-indicator htmx-indicator\" role=\"status\" aria-label=\"Loading\"><i class=\"fa-solid fa-circle-notch fa-spin\" aria-hidden=\"true\"></i></span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" autocomplete=\"off\"></span></div></li></ul><span id=\"search-loading-indicator\" class=\"icon search-loading-indicator htmx-indicator\" role=\"status\" aria-label=\"Loading\"><i class=\"fa-solid fa-circle-notch fa-spin\" aria-hidden=\"true\"></i></span></nav>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"breadcrumb search-input-row\" role=\"navigation\" aria-label=\"Repository\"><ul><li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<nav class=\"breadcrumb search-input-row\" aria-label=\"Repository\"><ul><li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -195,7 +195,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></li></ul></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span></li></ul></nav>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

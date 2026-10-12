@@ -223,6 +223,22 @@ func RenderMarkdown(body string) string {
 	return renderMarkdown(body, nil)
 }
 
+// RenderMarkdownInline renders a single line of markdown for inline contexts
+// such as a pull request title. It keeps inline formatting (code, emphasis,
+// links) but strips the wrapping paragraph so the result can be placed inside
+// a heading or span without introducing a block element.
+func RenderMarkdownInline(body string) string {
+	if body == "" {
+		return ""
+	}
+	html := markdown.ToHTML([]byte(body), nil, nil)
+	sanitized := strings.TrimSpace(cachedPolicy.Sanitize(string(html)))
+	if strings.HasPrefix(sanitized, "<p>") && strings.HasSuffix(sanitized, "</p>") && strings.Count(sanitized, "</p>") == 1 {
+		sanitized = strings.TrimSuffix(strings.TrimPrefix(sanitized, "<p>"), "</p>")
+	}
+	return sanitized
+}
+
 // RenderDiscussionMarkdown detects the media type of GitHub user-attachment URLs
 // before rendering them, since these URLs do not include their file extension.
 func RenderDiscussionMarkdown(body string) string {

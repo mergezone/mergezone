@@ -11,13 +11,16 @@ import (
 )
 
 func main() {
+	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
+
 	s := handler.Server{
 		BaseURL: "https://www.merge.zone",
 		Port:    8080,
 		Router:  mux.NewRouter(),
-		Logger:  slog.New(slog.NewTextHandler(os.Stderr, nil)),
+		Logger:  logger,
 		Provider: github.GitHub{
-			Token: os.Getenv("PROVIDER_TOKEN_GITHUB"),
+			Token:  os.Getenv("PROVIDER_TOKEN_GITHUB"),
+			Logger: logger,
 		},
 	}
 

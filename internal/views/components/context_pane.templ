@@ -12,7 +12,7 @@ templ ContextPane() {
 			<div class="context-pane-header">
 				<a class="context-pane-title" :href="$store.contextPane.pullRequestUrl" x-show="$store.contextPane.open">
 					<i class="status-icon fa-solid" :class="$store.contextPane.pullRequestStatusClass"></i>
-					<span x-html="$store.contextPane.pullRequestTitle"></span>
+					<span x-html="$store.contextPane.pullRequestTitleHtml"></span>
                     <button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
                         <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
                     </button>

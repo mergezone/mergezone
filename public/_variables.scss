@@ -200,6 +200,16 @@ $title-sep-color:             var(--color-950);
 $title-sep-font-size:         1.25rem;
 $title-sep-font-weight:       700;
 
+$mobile-dock-height: 4rem;
+$mobile-dock-z:      20;
+
+// Mobile pane stacking. The dim overlay sits above page content but below the
+// open panes, which in turn sit below the bottom dock.
+$pane-overlay-z: 15;
+$pane-z:          16;
+
+$nav-toggle-active-scale: 0.85;
+$nav-toggle-font-size:    1.125rem;
 $theme-toggle-font-size:  1.125rem;
 $theme-toggle-color:      var(--color-text-muted);
 
