@@ -23,7 +23,7 @@
         column-gap: $spacing-3;
 
         .breadcrumb li + li::before {
-          padding-inline: $spacing-1;
+          margin-inline: $spacing-1;
         }
 
         .breadcrumb a {
@@ -31,11 +31,18 @@
         }
 
         .breadcrumb li i.fa-regular {
-          padding-right: $spacing-1;
+          margin-right: $spacing-1;
+        }
+
+        .avatar {
+            width: 1rem;
+            height: 1rem;
+            flex: 0 0 1rem;
+            border-radius: 0.33rem;
+            object-fit: cover;
+            margin-right: $spacing-1;
         }
     }
-
-    @include base.status-icon-hover($rotate-hover-large);
 
     .icon {
         grid-row: span 2 / span 2;
