@@ -135,7 +135,7 @@ func extractSquareBracketScopes(title string) []string {
 }
 
 func extractColonScopes(title string) []string {
-	re := regexp.MustCompile(`^([a-zA-Z0-9_\-/]+):`)
+	re := regexp.MustCompile(`^([a-zA-Z0-9_\-/ ,]+):`)
 	matches := re.FindStringSubmatch(title)
 	if len(matches) == 0 {
 		return []string{}
@@ -203,18 +203,63 @@ func Stamp(prs []PullRequest, time time.Time) []StampedPullRequest {
 			stamped = append(stamped, pr.Stamp(time))
 		}
 	}
+	applyScopeSupersession(stamped)
 	return stamped
 }
 
 func StampNow(prs []PullRequest) []StampedPullRequest {
-	stamped := make([]StampedPullRequest, 0, len(prs))
-	now := time.Now()
-	for _, pr := range prs {
-		if !pr.IsBot() {
-			stamped = append(stamped, pr.Stamp(now))
+	return Stamp(prs, time.Now())
+}
+
+// applyScopeSupersession marks a pull request according to the newest later
+// pull request in any of its scopes. The newest matching PR determines whether
+// the older PR is stale (unmerged) or expired (merged).
+func applyScopeSupersession(prs []StampedPullRequest) {
+	// Finding the latest PR for each scope takes O(P*S), where P is the number
+	// of pull requests and S is the average number of scopes per PR. The second
+	// pass does the same work to apply that latest PR's status to older PRs.
+	latestByScope := make(map[string]int)
+	for i := range prs {
+		if prs[i].CreatedAt == nil {
+			continue
+		}
+		for _, scope := range prs[i].Scopes {
+			latest, ok := latestByScope[scope]
+			if !ok || prs[i].CreatedAt.After(*prs[latest].CreatedAt) {
+				latestByScope[scope] = i
+			}
 		}
 	}
-	return stamped
+
+	for i := range prs {
+		pr := &prs[i]
+		if pr.State == Merged || pr.ClosedAt != nil || pr.CreatedAt == nil {
+			continue
+		}
+
+		var newest *StampedPullRequest
+		for _, scope := range pr.Scopes {
+			latestIndex, ok := latestByScope[scope]
+			if !ok || latestIndex == i {
+				continue
+			}
+			candidate := &prs[latestIndex]
+			if !candidate.CreatedAt.After(*pr.CreatedAt) {
+				continue
+			}
+			if newest == nil || candidate.CreatedAt.After(*newest.CreatedAt) {
+				newest = candidate
+			}
+		}
+
+		if newest != nil {
+			if newest.State == Merged {
+				pr.ExpiryStatus = Expired
+			} else {
+				pr.ExpiryStatus = Stale
+			}
+		}
+	}
 }
 
 type ExpiryCounts struct {

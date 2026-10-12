@@ -54,7 +54,7 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 	}
 
 	options := PullRequestListOptions{
-		PerPage: 10,
+		PerPage: 20,
 		Page:    repositoryQueryIntOrDefault("page", queryValues, 1),
 	}
 
