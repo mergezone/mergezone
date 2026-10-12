@@ -4,7 +4,7 @@ import "merge/internal/model"
 
 templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.ScopeInfo, scopeSortOrder string, contributorSummaries []model.ContributorInfo, contributorSortOrder string) {
 	<aside class="aside-column">
-		@RepositoryNavigation(filters.Owner, filters.Repository, filters.Scope)
+		@RepositoryNavigation(filters.Owner, filters.Repository)
 		<div class="scroll">
 			<div id="scopes-section" x-data="{ collapsed: false }">
 				@ScopeSummaries(scopeSummaries, scopeSortOrder, filters)

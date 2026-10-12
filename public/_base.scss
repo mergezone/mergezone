@@ -1,5 +1,9 @@
 @use 'variables' as *;
 
+[x-cloak] {
+    display: none !important;
+}
+
 @mixin custom-scrollbar {
     scrollbar-color: $color-800 $scrollbar-track-bg;
     scrollbar-width: thin;

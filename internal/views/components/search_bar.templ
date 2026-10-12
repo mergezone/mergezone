@@ -1,34 +1,59 @@
 package components
 
-templ RepositorySearchInput(ownerValue, repositoryValue, scopeValue, ownerPlaceholder, repositoryPlaceholder, scopePlaceholder string, interactive bool, showIcon bool) {
-	<span class="bold search-input-row">
-		if showIcon {
-			<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-		}
-		<span class="input-pill">
-			<input class="input title-input" type="text"
-				if interactive {
-					data-part="owner"
-				}
-				value={ ownerValue }
-				placeholder={ ownerPlaceholder }
-				if !interactive {
-					readonly
-				}
-			/>
-		</span>
-		<span class="bold title-sep">/</span>
-		<span class="input-pill">
-			<input class="input title-input" type="text"
-				if interactive {
-					data-part="repository"
-				}
-				value={ repositoryValue }
-				placeholder={ repositoryPlaceholder }
-				if !interactive {
-					readonly
-				}
-			/>
-		</span>
-	</span>
+templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repositoryPlaceholder string, interactive bool, showIcon bool) {
+	{{ repositoryLabel := repositoryValue
+	if repositoryLabel == "" {
+		repositoryLabel = repositoryPlaceholder
+	}
+	ownerLabel := ownerValue
+	if ownerLabel == "" {
+		ownerLabel = ownerPlaceholder
+	}
+	}}
+	if interactive {
+		<div class="breadcrumb search-input-row" role="navigation" aria-label="Repository" hx-indicator="#search-loading-indicator">
+			<ul>
+				<li>
+					if showIcon {
+						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+					}
+					<div class="owner-search">
+						<button class="button is-ghost owner-avatar-trigger" type="button" x-show="!ownerEditing" @click="startOwnerEdit()" @focus="startOwnerEdit()" aria-label="Edit repository owner">
+							if ownerValue != "" {
+								<img class="owner-avatar" src={ templ.SafeURL("https://github.com/" + ownerValue + ".png") } alt={ ownerValue + " profile picture" }/>
+							} else {
+								<span class="owner-avatar owner-avatar-placeholder" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+							}
+						</button>
+						<span class="input-pill" x-show="ownerEditing" x-cloak>
+							<input id="repository-owner" x-ref="ownerInput" class="input title-input" type="text" data-part="owner" value={ ownerValue } placeholder={ ownerPlaceholder } autocomplete="off"/>
+						</span>
+					</div>
+				</li>
+				<li class="is-active">
+					<div class="repository-search">
+						<button class="button is-ghost repository-label" type="button" x-show="!repositoryEditing" @click="startRepositoryEdit()" @focus="startRepositoryEdit()" aria-label="Edit repository">{ repositoryLabel }</button>
+						<span class="input-pill" x-show="repositoryEditing" x-cloak>
+							<input class="input title-input" type="text" data-part="repository" x-ref="repositoryInput" value={ repositoryValue } placeholder={ repositoryPlaceholder } autocomplete="off"/>
+						</span>
+					</div>
+				</li>
+			</ul>
+			<span id="search-loading-indicator" class="icon search-loading-indicator htmx-indicator" role="status" aria-label="Loading">
+				<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
+			</span>
+		</div>
+	} else {
+		<div class="breadcrumb search-input-row" role="navigation" aria-label="Repository">
+			<ul>
+				<li>
+					if showIcon {
+						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+					}
+					<span class="static-owner">{ ownerLabel }</span>
+				</li>
+				<li class="is-active"><span class="static-repository">{ repositoryLabel }</span></li>
+			</ul>
+		</div>
+	}
 }

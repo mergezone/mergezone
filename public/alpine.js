@@ -759,8 +759,32 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('nav', () => ({
     origOwner: '',
     origRepository: '',
-    origScope: '',
+    ownerEditing: false,
+    repositoryEditing: false,
     _fontsReady: false,
+
+    startOwnerEdit() {
+      this.repositoryEditing = false;
+      this.ownerEditing = true;
+      this._focusEditor('ownerInput');
+    },
+
+    startRepositoryEdit() {
+      this.repositoryEditing = true;
+      this._focusEditor('repositoryInput');
+    },
+
+    _focusEditor(refName) {
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          const input = this.$refs[refName];
+          if (!input) return;
+          input.focus();
+          input.select();
+          this._resize(input);
+        });
+      });
+    },
 
     init() {
       document.fonts.ready.then(() => {
@@ -783,7 +807,6 @@ document.addEventListener('alpine:init', () => {
           Alpine.store('app')._loadAvatars();
           this._captureOriginals();
           this._setupInputs();
-          this._syncScopeFromUrl();
           if (this._fontsReady) {
             this._resizeAllInputs();
           } else {
@@ -802,37 +825,51 @@ document.addEventListener('alpine:init', () => {
       const inputs = document.querySelectorAll('.title-input');
       inputs.forEach(input => {
         this._resize(input);
-        const newInput = input.cloneNode(true);
-        input.parentNode.replaceChild(newInput, input);
+        if (input.dataset.navSetup === 'true') return;
+        input.dataset.navSetup = 'true';
 
-        newInput.addEventListener('input', () => this._resize(newInput));
-        newInput.addEventListener('change', () => this._resize(newInput));
-        newInput.addEventListener('focus', () => newInput.select());
-        newInput.addEventListener('keydown', (ev) => {
-          if (ev.key === 'Enter' && newInput.hasAttribute('data-part')) {
+        input.addEventListener('input', () => this._resize(input));
+        input.addEventListener('change', () => this._resize(input));
+        input.addEventListener('focus', () => {
+          this._resize(input);
+          input.select();
+          if (input.dataset.part === 'owner') this.ownerEditing = true;
+          if (input.dataset.part === 'repository') this.repositoryEditing = true;
+        });
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' && input.hasAttribute('data-part')) {
             ev.preventDefault();
-            this._navigate();
+            this.ownerEditing = false;
+            this.repositoryEditing = false;
+            this._navigate(input);
           }
         });
-        newInput.addEventListener('blur', () => {
+        input.addEventListener('blur', (event) => {
+          const relatedTarget = event.relatedTarget;
           setTimeout(() => {
-            if (document.activeElement?.classList.contains('title-input')) return;
-            this._navigate();
+            const searchBar = input.closest('.search-input-row');
+            if (searchBar?.contains(relatedTarget) || searchBar?.contains(document.activeElement)) return;
+            this.ownerEditing = false;
+            this.repositoryEditing = false;
+            this._navigate(input);
           }, 0);
         });
       });
     },
 
     _resize(input) {
-      input.style.width = '1px';
-      if (input.value) {
-        input.style.width = input.scrollWidth + 'px';
-      } else if (input.placeholder) {
-        const prev = input.value;
-        input.value = input.placeholder;
-        input.style.width = input.scrollWidth + 'px';
-        input.value = prev;
-      }
+      const styles = getComputedStyle(input);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+
+      context.font = styles.font;
+      const text = input.value || input.placeholder || '';
+      const letterSpacing = parseFloat(styles.letterSpacing) || 0;
+      const textWidth = context.measureText(text).width + Math.max(0, text.length - 1) * letterSpacing;
+      const horizontalSpace = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight)
+        + parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth);
+      input.style.width = `${Math.ceil(textWidth + horizontalSpace + 2)}px`;
     },
 
     _resizeAllInputs() {
@@ -846,8 +883,8 @@ document.addEventListener('alpine:init', () => {
       if (owner === this.origOwner && repository === this.origRepository) return;
 
       if (repository) {
-        let url = `/${owner}/${repository}`;
-        htmx.ajax('GET', url, {
+        htmx.ajax('GET', `/${owner}/${repository}`, {
+          source: document.querySelector('.search-input-row'),
           target: 'main',
           swap: 'innerHTML'
         });
