@@ -1,8 +1,8 @@
-.PHONY: all build generate watch run clean fmt tidy
+.PHONY: all build css templ watch run clean fmt tidy deps
 
 NPM ?= pnpm
 
-all: generate build
+all: build
 
 # Build final binary from Go files
 build: templ css
