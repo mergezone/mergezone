@@ -18,14 +18,17 @@ jobs:
       with:
         go-version: '1.25'
 
+    - name: Set up pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22'
-        cache: 'npm'
+        cache: 'pnpm'
 
-    - name: Install frontend dependencies
-      run: npm ci
+    - name: Install dependencies
+      run: make deps
 
     - name: Format
       run: |
@@ -34,13 +37,10 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v ./...
+      run: make build
 
     - name: Test
       run: go test -v ./...
-
-    - name: Generate
-      run: make generate
 
     - name: Diff
       run: git diff --exit-code

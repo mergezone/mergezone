@@ -43,6 +43,11 @@ fmt:
 tidy:
 	go mod tidy
 
+# Install dependencies
 deps:
 	go mod download
 	$(NPM) install --frozen-lockfile
+
+# Test CI locally
+ci:
+	act --pull=false --container-options "-u 0:0"
