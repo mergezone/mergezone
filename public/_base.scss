@@ -1,224 +1,261 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 [x-cloak] {
-    display: none !important;
+  display: none !important;
 }
 
 @mixin custom-scrollbar {
-    scrollbar-color: $color-800 $scrollbar-track-bg;
-    scrollbar-width: thin;
+  scrollbar-color: $color-800 $scrollbar-track-bg;
+  scrollbar-width: thin;
 
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
 
-    &::-webkit-scrollbar-thumb {
-        border-radius: $scrollbar-thumb-radius;
-        background-color: $color-800;
-    }
+  &::-webkit-scrollbar-thumb {
+    border-radius: $scrollbar-thumb-radius;
+    background-color: $color-800;
+  }
 
-    &::-webkit-scrollbar-track {
-        background: $scrollbar-track-bg;
-    }
+  &::-webkit-scrollbar-track {
+    background: $scrollbar-track-bg;
+  }
 }
 
 @mixin button-toggle {
-    position: absolute;
-    top: $spacing-2;
-    right: $spacing-2;
-    font-size: $text-sm;
-    padding: $spacing-1;
-    line-height: 1;
+  position: absolute;
+  top: $spacing-2;
+  right: $spacing-2;
+  font-size: $text-sm;
+  padding: $spacing-1;
+  line-height: 1;
 
-    &:hover {
-        color: var(--color-text-muted);
-    }
+  &:hover {
+    color: var(--color-text-muted);
+  }
 }
 
 @mixin label-font($color: var(--color-text-muted)) {
-    font-family: inherit;
-    font-size: $text-xxs;
-    color: $color;
-    text-transform: none;
-    letter-spacing: normal;
-    font-weight: $font-weight-semibold;
+  font-family: inherit;
+  font-size: $text-xxs;
+  color: $color;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: $font-weight-semibold;
 }
 
 @mixin scrollable-flex-child {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    @include custom-scrollbar;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  @include custom-scrollbar;
 }
 
 @mixin skeleton-base {
-    background-color: $color-700;
-    border-radius: $inline-border-radius;
+  background-color: $color-700;
+  border-radius: $inline-border-radius;
 }
 
 @mixin skeleton-pulse {
-    @include skeleton-base;
-    animation: skeleton-pulse $easing-skeleton;
+  @include skeleton-base;
+  animation: skeleton-pulse $easing-skeleton;
 }
 
 @mixin collapsible-pane {
-    flex: 0 0 0;
-    min-height: 0;
-    overflow: hidden;
-    transition: flex $transition-pane-fast;
+  flex: 0 0 0;
+  min-height: 0;
+  overflow: hidden;
+  transition: flex $transition-pane-fast;
 
-    &.open {
-        flex: 0 0 50vh;
-    }
+  &.open {
+    flex: 0 0 50vh;
+  }
 }
 
 @mixin panel-header-base {
-    background-color: var(--color-cutout);
-    border-bottom: $border-width-normal solid $color-700;
-    flex-shrink: 0;
+  background-color: var(--color-cutout);
+  border-bottom: $border-width-normal solid $color-700;
+  flex-shrink: 0;
 }
 
 @mixin panel-header-padding {
-    padding-block: $spacing-4;
-    padding-inline: $spacing-4;
-    padding-right: $panel-header-padding-right;
+  padding-block: $spacing-4;
+  padding-inline: $spacing-4;
+  padding-right: $panel-header-padding-right;
 }
 
 @mixin status-color {
-    &.ok, i.ok { color: $color-green-500; }
-    &.warn, i.warn { color: $color-amber-500; }
-    &.error, i.error { color: $color-red-500; }
-    &.special, i.special { color: $color-special-500; }
+  &.ok,
+  i.ok {
+    color: $color-green-500;
+  }
+  &.warn,
+  i.warn {
+    color: $color-amber-500;
+  }
+  &.error,
+  i.error {
+    color: $color-red-500;
+  }
+  &.special,
+  i.special {
+    color: $color-special-500;
+  }
 }
 
 // Page shell. Bulma owns the element resets and base typography; Merge Zone
 // only pins the full-height application layout and theme background.
 html {
-    background-color: var(--color-page);
-    transition: background-color $transition-normal, color $transition-normal;
-    @include custom-scrollbar;
+  background-color: var(--color-page);
+  transition:
+    background-color $transition-normal,
+    color $transition-normal;
+  @include custom-scrollbar;
 }
 
 html.dark {
-    color-scheme: dark;
+  color-scheme: dark;
 }
 
 body {
-    width: $body-width;
-    margin-block: $spacing-0;
-    margin-inline: auto;
-    color: $color-950;
+  width: $body-width;
+  margin-block: $spacing-0;
+  margin-inline: auto;
+  color: $color-950;
 }
 
 input::placeholder {
-    color: var(--color-text-muted);
+  color: var(--color-text-muted);
 }
 
 // Close controls share one solid, rounded X icon across the context and filter panes.
 .icon-close-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    flex: 0 0 1.5rem;
-    padding: 0;
-    border: 0;
-    border-radius: $inline-border-radius;
-    background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: $inline-border-radius;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    color $transition-fast,
+    background-color $transition-fast,
+    transform $transition-fast;
+
+  i {
+    font-size: $text-sm;
+  }
+
+  &:hover {
+    background: var(--color-section);
     color: var(--color-text-muted);
-    cursor: pointer;
-    line-height: 1;
-    transition: color $transition-fast, background-color $transition-fast, transform $transition-fast;
+  }
 
-    i { font-size: $text-sm; }
+  &:active {
+    background: var(--color-cutout-strong);
+    transform: scale($scale-active);
+  }
 
-    &:hover {
-        background: var(--color-section);
-        color: var(--color-text-muted);
-    }
-
-    &:active {
-        background: var(--color-cutout-strong);
-        transform: scale($scale-active);
-    }
-
-    &:focus-visible {
-        outline: 2px solid var(--color-primary);
-        outline-offset: 2px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }
 
 // Merge Zone renders some controls as anchors carrying `.link-button`; keep
 // them visually identical to the reset Bulma applies to <button>.
 .link-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: $color-950;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-950;
 
-    &:active {
-        color: var(--color-text-muted);
-    }
+  &:active {
+    color: var(--color-text-muted);
+  }
 }
 
 .status-icon {
-    transition: transform $transition-normal $easing-spring, color $transition-fast;
+  transition:
+    transform $transition-normal $easing-spring,
+    color $transition-fast;
 }
 
 .error {
-    color: $color-red-500;
+  color: $color-red-500;
 }
 
 .warn {
-    color: $color-amber-500;
+  color: $color-amber-500;
 }
 
 .ok {
-    color: $color-green-500;
+  color: $color-green-500;
 }
 
 .special {
-    color: $color-special-500;
+  color: $color-special-500;
 }
 
 .scroll {
-    min-height: 0;
-    overflow-y: auto;
-    @include custom-scrollbar;
+  min-height: 0;
+  overflow-y: auto;
+  @include custom-scrollbar;
 }
 
 .htmx-indicator {
-    visibility: hidden;
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 1;
-    transform-origin: center;
+  visibility: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  transform-origin: center;
 }
 
 .htmx-request .htmx-indicator,
 .htmx-request.htmx-indicator {
-    visibility: visible;
+  visibility: visible;
 }
 
 @keyframes magnify-bob {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(-8deg) scale(1.1); }
-    75% { transform: rotate(8deg) scale(1.1); }
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(8deg) scale(1.1);
+  }
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes skeleton-pulse {
-    0%, 100% { opacity: $skeleton-opacity-start; }
-    50% { opacity: $skeleton-opacity-end; }
+  0%,
+  100% {
+    opacity: $skeleton-opacity-start;
+  }
+  50% {
+    opacity: $skeleton-opacity-end;
+  }
 }
 
 @media (max-width: $breakpoint-desktop) {
-    body {
-        box-sizing: border-box;
-    }
+  body {
+    box-sizing: border-box;
+  }
 }

@@ -1,230 +1,232 @@
-@use 'variables' as *;
-@use 'base';
+@use "variables" as *;
+@use "base";
 
 .pane-resize-handle {
-    display: none;
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+
+  &::after {
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    z-index: 5;
-    width: 0.5rem;
-    cursor: col-resize;
-    touch-action: none;
-    user-select: none;
+    left: 50%;
+    width: 1px;
+    background: transparent;
+    transform: translateX(-50%);
+    transition:
+      background-color $transition-fast,
+      width $transition-fast;
+  }
 
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 50%;
-        width: 1px;
-        background: transparent;
-        transform: translateX(-50%);
-        transition: background-color $transition-fast, width $transition-fast;
-    }
+  &:hover::after,
+  &:focus-visible::after {
+    width: 2px;
+    background: var(--color-primary);
+  }
 
-    &:hover::after,
-    &:focus-visible::after {
-        width: 2px;
-        background: var(--color-primary);
-    }
-
-    &:focus-visible {
-        outline: none;
-    }
+  &:focus-visible {
+    outline: none;
+  }
 }
 
 body.pane-resizing,
 body.pane-resizing * {
-    cursor: col-resize !important;
-    user-select: none !important;
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    gap: $main-mobile-gap;
+  display: flex;
+  flex-direction: column;
+  gap: $main-mobile-gap;
 }
 
 .overview {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
 }
 
 #scopes-section,
 #contributors-section {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 #scopes-section:empty,
 #contributors-section:empty {
-    display: none;
+  display: none;
 }
 
 .home-subtitle {
-    max-width: 36em;
-    margin: 0;
-    font-size: $text-md;
+  max-width: 36em;
+  margin: 0;
+  font-size: $text-md;
 }
 
 .home-explainer {
-    margin-block: $spacing-3 0;
-    font-size: $text-small-class;
-    line-height: $line-height-body;
+  margin-block: $spacing-3 0;
+  font-size: $text-small-class;
+  line-height: $line-height-body;
 
-    strong {
-        color: $color-950;
-        font-weight: $font-weight-semibold;
-    }
+  strong {
+    color: $color-950;
+    font-weight: $font-weight-semibold;
+  }
 }
 
 section.home-scroll {
-    gap: 2.5rem !important;
+  gap: 2.5rem !important;
 }
 
 .home-repos a {
-    &:hover {
-        text-decoration: none;
-    }
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 footer {
-    margin-top: auto;
-    padding: $spacing-4;
-    color: var(--color-text-muted);
-    border-top: $border-width-normal solid $color-700;
+  margin-top: auto;
+  padding: $spacing-4;
+  color: var(--color-text-muted);
+  border-top: $border-width-normal solid $color-700;
+  display: flex;
+  gap: $spacing-4;
+  font-size: $footer-font-size;
+
+  span {
     display: flex;
-    gap: $spacing-4;
-    font-size: $footer-font-size;
+    flex-direction: column;
+  }
 
-    span {
-        display: flex;
-        flex-direction: column;
-    }
-
-    a {
-        color: $color-950;
-    }
+  a {
+    color: $color-950;
+  }
 }
 
 .avatar-wrapper {
-    width: $spacing-6;
-    height: $spacing-6;
-    border-radius: 0.5rem;
+  width: $spacing-6;
+  height: $spacing-6;
+  border-radius: 0.5rem;
 }
 
 .repository-page main {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: $spacing-6;
-    padding-block: $spacing-8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $spacing-6;
+  padding-block: $spacing-8;
 
-    h1 {
-        margin-top: 0;
-    }
+  h1 {
+    margin-top: 0;
+  }
 }
 
 @media (min-width: $breakpoint-desktop) {
-    #scopes-section,
-    #contributors-section {
-        flex: 1;
-        max-height: none;
-    }
+  #scopes-section,
+  #contributors-section {
+    flex: 1;
+    max-height: none;
+  }
 
-    .repository-page {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-    }
+  .repository-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-    .repository-page main {
-        flex: 1;
-        min-height: 0;
-        overflow: hidden;
-        flex-direction: row;
-    }
+  .repository-page main {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    flex-direction: row;
+  }
 
-    .mobile-footer {
-        display: none;
-    }
+  .mobile-footer {
+    display: none;
+  }
 
-    .aside-column {
-        display: flex;
-        flex-direction: column;
-        width: var(--filter-sidebar-width, #{$aside-width});
-        flex-shrink: 0;
-        min-height: 0;
-        position: relative;
-        border-right: $border-width-normal solid $color-700;
-        background-color: var(--color-cutout);
-    }
+  .aside-column {
+    display: flex;
+    flex-direction: column;
+    width: var(--filter-sidebar-width, #{$aside-width});
+    flex-shrink: 0;
+    min-height: 0;
+    position: relative;
+    border-right: $border-width-normal solid $color-700;
+    background-color: var(--color-cutout);
+  }
 
-    .aside-column .scroll {
-      padding-block: $spacing-2;
-    }
+  .aside-column .scroll {
+    padding-block: $spacing-2;
+  }
 
-    .sidebar-resize-handle {
-        display: block;
-        top: 0;
-        right: -0.25rem;
-    }
+  .sidebar-resize-handle {
+    display: block;
+    top: 0;
+    right: -0.25rem;
+  }
 
-    .context-pane.open .context-pane-resize-handle {
-        display: block;
-        left: 0;
-    }
+  .context-pane.open .context-pane-resize-handle {
+    display: block;
+    left: 0;
+  }
 
-    main {
-        gap: 0;
-    }
+  main {
+    gap: 0;
+  }
 
-    main > .scroll {
-        @include base.scrollable-flex-child;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: $spacing-2;
-        transition: flex $transition-pane-fast;
-    }
+  main > .scroll {
+    @include base.scrollable-flex-child;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    transition: flex $transition-pane-fast;
+  }
 
-    main > .scroll h1 {
-        margin-top: $spacing-4;
-    }
+  main > .scroll h1 {
+    margin-top: $spacing-4;
+  }
 }
 
 @media (max-width: $breakpoint-desktop) {
-    .aside-column > .sidebar-footer {
-        display: none;
-    }
+  .aside-column > .sidebar-footer {
+    display: none;
+  }
 
-    main > .scroll > .mobile-footer {
-        display: flex;
-        margin-top: $spacing-4;
-    }
+  main > .scroll > .mobile-footer {
+    display: flex;
+    margin-top: $spacing-4;
+  }
 
-    .aside-column .scroll {
-        display: none;
-    }
+  .aside-column .scroll {
+    display: none;
+  }
 
-    main {
-        height: 100vh;
-        overflow: hidden;
-        gap: 0;
-    }
+  main {
+    height: 100vh;
+    overflow: hidden;
+    gap: 0;
+  }
 
-    main > .scroll {
-        flex: 1 1 0;
-        min-height: 0;
-    }
+  main > .scroll {
+    flex: 1 1 0;
+    min-height: 0;
+  }
 }

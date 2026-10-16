@@ -3,26 +3,26 @@ package layout
 templ BaseDocument(title, description, baseURL, owner, repository, scope string) {
 	<!DOCTYPE html>
 	<html lang="en">
-	<head>
-		<title>{ title }</title>
-		<script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';document.documentElement.className=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})()</script>
-        <link rel="icon" type="image/png" href="/public/favicon.png">
-		<link rel="stylesheet" href="/public/main.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
-		<script defer src="/public/alpine.js"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-		<meta name="description" content={ description }/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta property="og:title" content={ title }/>
-		<meta property="og:type" content="website"/>
-		<meta property="og:url" content={ baseURL }/>
-		<meta property="og:description" content={ description }/>
-	</head>
-	<body class="repository-page" x-data x-init="$store.app.init()">
-        <main>
-            { children... }
-        </main>
-</body>
+		<head>
+			<title>{ title }</title>
+			<script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';document.documentElement.className=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})()</script>
+			<link rel="icon" type="image/png" href="/public/favicon.png"/>
+			<link rel="stylesheet" href="/public/main.css"/>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+			<script defer src="/public/alpine.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<meta name="description" content={ description }/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta property="og:title" content={ title }/>
+			<meta property="og:type" content="website"/>
+			<meta property="og:url" content={ baseURL }/>
+			<meta property="og:description" content={ description }/>
+		</head>
+		<body class="repository-page" x-data x-init="$store.app.init()">
+			<main>
+				{ children... }
+			</main>
+		</body>
 	</html>
 }

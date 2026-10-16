@@ -13,27 +13,34 @@ templ ContextPane() {
 				<a class="context-pane-title" :href="$store.contextPane.pullRequestUrl" x-show="$store.contextPane.open">
 					<i class="status-icon fa-solid" :class="$store.contextPane.pullRequestStatusClass"></i>
 					<span x-html="$store.contextPane.pullRequestTitleHtml"></span>
-                    <button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
-                        <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-                    </button>
+					<button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
+						<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+					</button>
 				</a>
 			</div>
 			<div class="context-pane-body scroll" @click="$store.contextPane.openPrRef($event)">
 				<section class="panel context-pane-section context-pane-details" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
-					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+					<div
+						class="panel-heading section-heading context-pane-section-heading"
+						role="button"
+						tabindex="0"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
 						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed">
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed"
+					>
 						<span class="section-heading-label">
 							<span class="section-heading-control">
 								<i class="fa-solid fa-circle-info section-heading-icon" aria-hidden="true"></i>
-								<button class="link-button collapse-section-button" type="button"
+								<button
+									class="link-button collapse-section-button"
+									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
 									:title="$data.collapsed ? 'Expand details' : 'Collapse details'"
-									@click.stop="$data.collapsed = !$data.collapsed">
+									@click.stop="$data.collapsed = !$data.collapsed"
+								>
 									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
 								</button>
 							</span>
@@ -90,20 +97,27 @@ templ ContextPane() {
 					</div>
 				</section>
 				<section class="panel context-pane-section context-pane-description" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
-					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+					<div
+						class="panel-heading section-heading context-pane-section-heading"
+						role="button"
+						tabindex="0"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
 						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed">
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed"
+					>
 						<span class="section-heading-label">
 							<span class="section-heading-control">
 								<i class="fa-solid fa-align-left section-heading-icon" aria-hidden="true"></i>
-								<button class="link-button collapse-section-button" type="button"
+								<button
+									class="link-button collapse-section-button"
+									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
 									:title="$data.collapsed ? 'Expand description' : 'Collapse description'"
-									@click.stop="$data.collapsed = !$data.collapsed">
+									@click.stop="$data.collapsed = !$data.collapsed"
+								>
 									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
 								</button>
 							</span>
@@ -115,20 +129,27 @@ templ ContextPane() {
 					</div>
 				</section>
 				<section class="panel context-pane-section context-pane-discussion" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
-					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+					<div
+						class="panel-heading section-heading context-pane-section-heading"
+						role="button"
+						tabindex="0"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
 						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion() }"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()">
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
+					>
 						<span class="section-heading-label">
 							<span class="section-heading-control">
 								<i class="fa-solid fa-comments section-heading-icon" aria-hidden="true"></i>
-								<button class="link-button collapse-section-button" type="button"
+								<button
+									class="link-button collapse-section-button"
+									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
 									:title="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
-									@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()">
+									@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
+								>
 									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
 								</button>
 							</span>
@@ -140,20 +161,27 @@ templ ContextPane() {
 					</div>
 				</section>
 				<section class="panel context-pane-section context-pane-changes" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
-					<div class="panel-heading section-heading context-pane-section-heading" role="button" tabindex="0"
+					<div
+						class="panel-heading section-heading context-pane-section-heading"
+						role="button"
+						tabindex="0"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
 						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges() }"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()">
+						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
+					>
 						<span class="section-heading-label">
 							<span class="section-heading-control">
 								<i class="fa-solid fa-code-compare section-heading-icon" aria-hidden="true"></i>
-								<button class="link-button collapse-section-button" type="button"
+								<button
+									class="link-button collapse-section-button"
+									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
 									:title="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
-								@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()">
+									@click.stop="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
+								>
 									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
 								</button>
 							</span>

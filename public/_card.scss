@@ -1,152 +1,154 @@
-@use 'variables' as *;
-@use 'base';
+@use "variables" as *;
+@use "base";
 
 // `.item` layers Merge Zone's flat bordered treatment onto Bulma's `.box`
 // surface. Bulma owns background, radius and padding; this file only adds the
 // border and interaction states that give the project its look.
 .item {
-    box-sizing: border-box;
-    border: $border-width-normal solid $color-700;
-    transition: background-color $transition-fast, border-color $transition-fast;
+  box-sizing: border-box;
+  border: $border-width-normal solid $color-700;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
 }
 
 .item:hover {
-    background-color: $color-500;
+  background-color: $color-500;
 }
 
 .item.active,
 .item.selected {
-    background-color: $color-600;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
-    font-weight: $font-weight-semibold;
+  background-color: $color-600;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-weight: $font-weight-semibold;
 }
 
 .item.active:hover,
 .item.selected:hover {
-    background-color: $color-600;
+  background-color: $color-600;
 }
 
 .icon-card {
-    display: grid;
-    grid-template-columns: min-content auto;
-    grid-template-rows: min-content min-content;
-    align-items: center;
-    row-gap: $spacing-1;
-    column-gap: $spacing-3;
+  display: grid;
+  grid-template-columns: min-content auto;
+  grid-template-rows: min-content min-content;
+  align-items: center;
+  row-gap: $spacing-1;
+  column-gap: $spacing-3;
 }
 
 .icon-container {
-    grid-row: span 2;
-    flex-shrink: 0;
-    width: $icon-container-size;
-    height: $icon-container-size;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  grid-row: span 2;
+  flex-shrink: 0;
+  width: $icon-container-size;
+  height: $icon-container-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    i {
-        font-size: $text-md;
-        color: $color-900;
-    }
+  i {
+    font-size: $text-md;
+    color: $color-900;
+  }
 
-    @include base.status-color;
+  @include base.status-color;
 }
 
 .icon-card .title-row,
 .icon-card .description-row {
-    display: flex;
-    grid-column-start: 2;
+  display: flex;
+  grid-column-start: 2;
 }
 
 .icon-card .title-row {
-    color: $color-950;
-    gap: $spacing-2;
+  color: $color-950;
+  gap: $spacing-2;
 
-    p {
-        margin-block: 0;
-    }
+  p {
+    margin-block: 0;
+  }
 }
 
 .icon-card .description-row {
-    color: $color-900;
+  color: $color-900;
 
-    .small {
-        margin-block: 0;
-    }
+  .small {
+    margin-block: 0;
+  }
 }
 
 .icon-card:not(:has(.description-row)) .title-row,
 .icon-card:not(:has(.description-row)) .icon-container {
-    grid-row: span 2;
+  grid-row: span 2;
 }
 
 .item-group,
 .item-group-tall {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2;
 }
 
 .scroll-content {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-2;
-    border-radius: $card-border-radius;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  border-radius: $card-border-radius;
 }
 
 .features-grid {
-    display: flex !important;
-    flex-direction: column;
-    gap: $spacing-2;
+  display: flex !important;
+  flex-direction: column;
+  gap: $spacing-2;
 }
 
 @media (min-width: 1200px) {
-    .features-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .features-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .home-repos {
-    display: grid !important;
-    grid-template-columns: 1fr;
+  display: grid !important;
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 600px) {
-    .home-repos {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .home-repos {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 #load-more-card {
-    margin-top: $spacing-2;
+  margin-top: $spacing-2;
 }
 
 .item.load-more {
-    min-height: $spacing-16;
-    cursor: pointer;
-    border-style: dashed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-2;
-    color: var(--color-text-muted);
+  min-height: $spacing-16;
+  cursor: pointer;
+  border-style: dashed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-2;
+  color: var(--color-text-muted);
 
-    i:not(.htmx-indicator) {
-        font-size: $text-xs;
-    }
+  i:not(.htmx-indicator) {
+    font-size: $text-xs;
+  }
 
-    span {
-        font-size: $text-xs;
-    }
+  span {
+    font-size: $text-xs;
+  }
 
+  .htmx-indicator {
+    display: none;
+  }
+
+  &.htmx-request {
     .htmx-indicator {
-        display: none;
+      display: inline-block;
     }
-
-    &.htmx-request {
-        .htmx-indicator {
-            display: inline-block;
-        }
-    }
+  }
 }

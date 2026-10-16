@@ -1,97 +1,106 @@
-@use 'variables' as *;
-@use 'silver-link';
+@use "variables" as *;
+@use "silver-link";
 
-body, button, input, select, textarea {
-    font-family: $body-family;
-    font-weight: $body-weight;
-    letter-spacing: $body-letter-spacing;
-    font-style: normal;
-    line-height: $line-height-body;
-    text-wrap: pretty;
+body,
+button,
+input,
+select,
+textarea {
+  font-family: $body-family;
+  font-weight: $body-weight;
+  letter-spacing: $body-letter-spacing;
+  font-style: normal;
+  line-height: $line-height-body;
+  text-wrap: pretty;
 }
 
-h1, h2, h3, .item-title, .title-input, .site-brand {
-    font-family: $heading-family;
-    font-weight: $heading-weight;
-    letter-spacing: $heading-letter-spacing;
+h1,
+h2,
+h3,
+.item-title,
+.title-input,
+.site-brand {
+  font-family: $heading-family;
+  font-weight: $heading-weight;
+  letter-spacing: $heading-letter-spacing;
 }
 
 .bold {
-    font-weight: $font-weight-semibold;
+  font-weight: $font-weight-semibold;
 }
 
 h1 {
-    font-size: $text-3xl;
-    font-weight: $font-weight-bold;
-    line-height: $line-height-heading;
-    margin-block: $spacing-6;
-    letter-spacing: normal;
+  font-size: $text-3xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-heading;
+  margin-block: $spacing-6;
+  letter-spacing: normal;
 }
 
 h2 {
-    font-size: $text-2xl;
-    font-weight: $font-weight-bold;
-    line-height: $line-height-heading-h2;
-    margin-block: $spacing-6;
-    letter-spacing: normal;
+  font-size: $text-2xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-heading-h2;
+  margin-block: $spacing-6;
+  letter-spacing: normal;
 }
 
 h3 {
-    font-size: $text-xl;
-    font-weight: $font-weight-semibold;
-    line-height: $line-height-subheading;
-    margin-block: $spacing-4;
-    letter-spacing: normal;
+  font-size: $text-xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-subheading;
+  margin-block: $spacing-4;
+  letter-spacing: normal;
 }
 
 h4 {
-    font-size: $text-md;
-    font-weight: $font-weight-semibold;
-    line-height: $line-height-subheading;
-    margin-block: $spacing-4;
-    letter-spacing: normal;
+  font-size: $text-md;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-subheading;
+  margin-block: $spacing-4;
+  letter-spacing: normal;
 }
 
 p {
-    font-size: $text-sm;
+  font-size: $text-sm;
 }
 
 .title-input {
-    font-size: $text-md;
+  font-size: $text-md;
 }
 
 .small {
-    font-size: $text-small-class;
+  font-size: $text-small-class;
 }
 
 code {
-    font-size: $text-xs;
-    font-family: $code-family;
+  font-size: $text-xs;
+  font-family: $code-family;
 }
 
 .text-primary {
-    color: $color-950;
+  color: $color-950;
 }
 
 .text-secondary {
-    color: $color-900;
+  color: $color-900;
 }
 
 a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 
-    &:hover {
-        @include silver-link.silver-link;
-    }
+  &:hover {
+    @include silver-link.silver-link;
+  }
 }
 
 @media (max-width: $breakpoint-desktop) {
-    h1 {
-        font-size: calc($text-3xl * #{$heading-scale-h1});
-    }
+  h1 {
+    font-size: calc($text-3xl * #{$heading-scale-h1});
+  }
 
-    h2 {
-        font-size: calc($text-2xl * #{$heading-scale-h2});
-    }
+  h2 {
+    font-size: calc($text-2xl * #{$heading-scale-h2});
+  }
 }

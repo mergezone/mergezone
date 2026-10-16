@@ -1,17 +1,17 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 @mixin dot-separator {
-    @media (max-width: $breakpoint-mobile) {
-        flex-wrap: wrap;
-        column-gap: $spacing-3;
-        row-gap: $spacing-2;
-    }
+  @media (max-width: $breakpoint-mobile) {
+    flex-wrap: wrap;
+    column-gap: $spacing-3;
+    row-gap: $spacing-2;
+  }
 
-    @media (min-width: $breakpoint-mobile + 1px) {
-        > *:not(:last-child)::after {
-            content: "·";
-            margin-inline: $spacing-2;
-            color: var(--color-text-muted);
-        }
+  @media (min-width: $breakpoint-mobile + 1px) {
+    > *:not(:last-child)::after {
+      content: "·";
+      margin-inline: $spacing-2;
+      color: var(--color-text-muted);
     }
+  }
 }

@@ -8,7 +8,6 @@ templ RepositoryFilterPanel() {
 		@keydown.escape.window="$store.filterPanel.close()"
 		@click.away="if($store.filterPanel.open && !$event.target.closest('.context-pane') && !$event.target.closest('.mobile-dock'))$store.filterPanel.close()"
 	>
-		<div class="filter-panel-body">
-		</div>
+		<div class="filter-panel-body"></div>
 	</div>
 }

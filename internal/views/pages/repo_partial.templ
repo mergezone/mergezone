@@ -10,7 +10,7 @@ templ RepositoryMainView(viewData model.RepositoryViewData) {
 	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort)
 	<section class="scroll">
 		<div class="overview" id="overview-stats">
-			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage + 1)
+			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage+1)
 		</div>
 		@components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore)
 		@components.SiteFooter("mobile-footer")

@@ -1,13 +1,13 @@
-@use 'variables' as *;
+@use "variables" as *;
 
 @mixin silver-link {
-    text-decoration: underline;
-    text-decoration-color: $color-700;
-    text-decoration-thickness: $border-width-thick;
+  text-decoration: underline;
+  text-decoration-color: $color-700;
+  text-decoration-thickness: $border-width-thick;
 }
 
 @mixin silver-link-thin {
-    @include silver-link;
-    text-decoration-thickness: $border-width-normal;
-    text-underline-offset: $border-width-thick;
+  @include silver-link;
+  text-decoration-thickness: $border-width-normal;
+  text-underline-offset: $border-width-thick;
 }
