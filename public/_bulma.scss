@@ -7,9 +7,29 @@
 // _variables.scss and _bulma-bridge.scss).
 
 @use "bulma/sass/utilities" with (
-  $family-primary: (system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
-  $family-secondary: (system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif),
-  $family-code: (ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace),
+  $family-primary: (
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif,
+  ),
+  $family-secondary: (
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif,
+  ),
+  $family-code: (
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    "Liberation Mono",
+    monospace,
+  ),
   $primary: #0d6efd,
   $link: #0d6efd,
   $info: #0dcaf0,

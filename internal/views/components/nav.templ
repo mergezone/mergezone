@@ -2,19 +2,23 @@ package components
 
 templ RepositoryNavigation(owner, repository string) {
 	<nav id="nav" x-data="nav">
-        <div>
-            <h4 class="bold site-brand">
-                <a href="/">Merge Zone</a>
-            </h4>
-            <button id="theme-toggle" class="button is-ghost" @click="$store.app.cycleTheme()" aria-label="Toggle light and dark theme">
-                <i class="fa-solid" :class="{
+		<div>
+			<h4 class="bold site-brand">
+				<a href="/">Merge Zone</a>
+			</h4>
+			<button id="theme-toggle" class="button is-ghost" @click="$store.app.cycleTheme()" aria-label="Toggle light and dark theme">
+				<i
+					class="fa-solid"
+					:class="{
                     'fa-sun': $store.app.theme === 'light',
                     'fa-moon': $store.app.theme === 'dark'
-                }" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div id="nav-search-slot">
-            @RepositorySearchInput(owner, repository, "…", "…", true, true)
-        </div>
+                }"
+					aria-hidden="true"
+				></i>
+			</button>
+		</div>
+		<div id="nav-search-slot">
+			@RepositorySearchInput(owner, repository, "…", "…", true, true)
+		</div>
 	</nav>
 }

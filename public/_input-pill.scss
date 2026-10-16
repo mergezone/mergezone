@@ -1,63 +1,66 @@
-@use 'variables' as *;
-@use 'silver-link';
+@use "variables" as *;
+@use "silver-link";
 
 .input-pill {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .input-pill::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: 0 $input-pill-inset-x $input-pill-inset-y $input-pill-inset-x;
-    border-radius: $card-border-radius-sm;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity $transition-normal;
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 $input-pill-inset-x $input-pill-inset-y $input-pill-inset-x;
+  border-radius: $card-border-radius-sm;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity $transition-normal;
 }
 
 .input-pill:has(.title-input:hover)::before,
 .input-pill:has(.title-input:focus)::before {
-    opacity: 1;
-    background-color: $color-cutout-strong;
+  opacity: 1;
+  background-color: $color-cutout-strong;
 }
 
 .title-input {
-    line-height: inherit;
-    color: $color-950;
-    background: transparent;
-    border: none;
+  line-height: inherit;
+  color: $color-950;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  width: auto;
+  margin: 0;
+  height: calc($text-lg * #{$title-input-height-factor});
+  overflow: visible;
+  box-sizing: border-box;
+  min-width: $title-input-min-width;
+  text-decoration: underline;
+  text-decoration-color: $color-700;
+  text-decoration-thickness: $border-width-thick;
+  transition: text-decoration-color $transition-normal;
+  min-height: 0;
+  border-radius: 0;
+
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    border-color: transparent;
     box-shadow: none;
-    padding: 0;
-    width: auto;
-    margin: 0;
-    height: calc($text-lg * #{$title-input-height-factor});
-    overflow: visible;
-    box-sizing: border-box;
-    min-width: $title-input-min-width;
-    text-decoration: underline;
-    text-decoration-color: $color-700;
-    text-decoration-thickness: $border-width-thick;
-    transition: text-decoration-color $transition-normal;
-    min-height: 0;
-    border-radius: 0;
+  }
 
-    &:hover, &:focus, &:focus-visible {
-        border-color: transparent;
-        box-shadow: none;
-    }
-
-    &:hover, &:focus {
-        text-decoration: none;
-    }
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
 }
 
 .title-sep {
-    color: $title-sep-color;
-    font-size: $title-sep-font-size;
-    font-weight: $title-sep-font-weight;
-    margin-top: calc(#{$title-sep-margin-top-factor} * #{$text-md});
-    user-select: none;
+  color: $title-sep-color;
+  font-size: $title-sep-font-size;
+  font-weight: $title-sep-font-weight;
+  margin-top: calc(#{$title-sep-margin-top-factor} * #{$text-md});
+  user-select: none;
 }

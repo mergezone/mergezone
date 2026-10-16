@@ -1,0 +1,12 @@
+# Generated files
+public/main.css
+
+# Generated Go/Templ artifacts
+*_templ.go
+
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+vendor/
+/merge
+/merge.exe

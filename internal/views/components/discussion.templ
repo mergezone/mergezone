@@ -17,7 +17,7 @@ templ PullRequestDiscussion(comments []model.PullRequestComment) {
 					<div class="discussion-comment-header">
 						<div class="discussion-comment-author">
 							if comment.User.AvatarURL != "" {
-							<img class="discussion-avatar" src={ templ.SafeURL(comment.User.AvatarURL) } alt={ comment.User.Login + "'s profile picture" } loading="lazy"/>
+								<img class="discussion-avatar" src={ templ.SafeURL(comment.User.AvatarURL) } alt={ comment.User.Login + "'s profile picture" } loading="lazy"/>
 							}
 							<a class="meta-link" href={ templ.SafeURL(comment.User.HTMLURL) }>{ comment.User.Login }</a>
 						</div>
@@ -25,7 +25,9 @@ templ PullRequestDiscussion(comments []model.PullRequestComment) {
 							<time datetime={ comment.CreatedAt }>{ createdAt.Format("Jan 2, 2006 3:04 PM") }</time>
 						}
 					</div>
-					<div class="content discussion-comment-content">@templ.Raw(comment.BodyHTML)</div>
+					<div class="content discussion-comment-content">
+						@templ.Raw(comment.BodyHTML)
+					</div>
 				</article>
 			}
 		}

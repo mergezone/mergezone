@@ -1,14 +1,15 @@
 package components
 
 templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repositoryPlaceholder string, interactive bool, showIcon bool) {
-	{{ repositoryLabel := repositoryValue
-	if repositoryLabel == "" {
-		repositoryLabel = repositoryPlaceholder
-	}
-	ownerLabel := ownerValue
-	if ownerLabel == "" {
-		ownerLabel = ownerPlaceholder
-	}
+	{{
+		repositoryLabel := repositoryValue
+		if repositoryLabel == "" {
+			repositoryLabel = repositoryPlaceholder
+		}
+		ownerLabel := ownerValue
+		if ownerLabel == "" {
+			ownerLabel = ownerPlaceholder
+		}
 	}}
 	if interactive {
 		<nav class="breadcrumb search-input-row" aria-label="Repository" hx-indicator="#search-loading-indicator">

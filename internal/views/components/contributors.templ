@@ -6,18 +6,23 @@ import "merge/internal/model"
 
 templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) {
 	<section class="panel contributors filter-section">
-		<div class="panel-heading section-heading filter-section-heading"
+		<div
+			class="panel-heading section-heading filter-section-heading"
 			@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
 			@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
-			@keydown.space.prevent="$data.collapsed = !$data.collapsed">
+			@keydown.space.prevent="$data.collapsed = !$data.collapsed"
+		>
 			<span class="section-heading-label">
 				<span class="section-heading-control">
 					<i class="fa-solid fa-users section-heading-icon" aria-hidden="true"></i>
-					<button class="link-button collapse-section-button" type="button"
+					<button
+						class="link-button collapse-section-button"
+						type="button"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand contributors' : 'Collapse contributors'"
 						:title="$data.collapsed ? 'Expand contributors' : 'Collapse contributors'"
-						@click.stop="$data.collapsed = !$data.collapsed">
+						@click.stop="$data.collapsed = !$data.collapsed"
+					>
 						<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
 					</button>
 				</span>
@@ -25,7 +30,8 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 			</span>
 			<span class="section-actions">
 				<i id="contributors-sort-indicator" class="fa-solid fa-circle-notch fa-spin htmx-indicator" aria-hidden="true"></i>
-				<button class="link-button sort-control"
+				<button
+					class="link-button sort-control"
 					aria-label="Sort contributors by recency"
 					title="Sort by recency"
 					if activeSortOrder == "recent" {
@@ -33,10 +39,12 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 					}
 					hx-get={ filters.FragmentURL("contributors", "recent") }
 					hx-target="#contributors-section"
-					hx-indicator="#contributors-sort-indicator">
+					hx-indicator="#contributors-sort-indicator"
+				>
 					<i class="fa-solid fa-clock" aria-hidden="true"></i>
 				</button>
-				<button class="link-button sort-control"
+				<button
+					class="link-button sort-control"
 					aria-label="Sort contributors by pull request count"
 					title="Sort by pull request count"
 					if activeSortOrder == "top" {
@@ -44,7 +52,8 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 					}
 					hx-get={ filters.FragmentURL("contributors", "top") }
 					hx-target="#contributors-section"
-					hx-indicator="#contributors-sort-indicator">
+					hx-indicator="#contributors-sort-indicator"
+				>
 					<i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>
 				</button>
 			</span>

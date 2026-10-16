@@ -44,13 +44,21 @@ func repositoryFilterLabel(filters model.RepositoryFilters) string {
 templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool, filters model.RepositoryFilters, nextPullRequestPage int) {
 	<div class="stats">
 		<div class="section-heading">
-            <span>Overview</span>
-        </div>
+			<span>Overview</span>
+		</div>
 		<div class="level is-mobile stats-tiles">
-			<div class="level-item">@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")</div>
-			<div class="level-item">@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")</div>
-			<div class="level-item">@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")</div>
-			<div class="level-item">@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")</div>
+			<div class="level-item">
+				@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")
+			</div>
+			<div class="level-item">
+				@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")
+			</div>
+			<div class="level-item">
+				@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")
+			</div>
+			<div class="level-item">
+				@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")
+			</div>
 		</div>
 	</div>
 }

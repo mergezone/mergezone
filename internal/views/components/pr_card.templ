@@ -8,37 +8,49 @@ import (
 )
 
 templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) {
-	{{ paneSeed := map[string]any{
-		"number": pullRequest.Number,
-		"owner": owner,
-		"repository": repository,
-		"title": pullRequest.Title,
-		"titleHtml": helpers.RenderMarkdownInline(pullRequest.Title),
-		"state": pullRequest.State,
-		"statusClass": helpers.GetStatusClass(pullRequest),
-		"expiryStatus": helpers.ExpiryLabel(pullRequest),
-		"expiryIconClass": helpers.StatusIconClass(pullRequest),
-		"supersededBy": func() any {
-			if pullRequest.SupersededBy == nil {
-				return nil
-			}
-			return map[string]any{
-				"number": pullRequest.SupersededBy.Number,
-				"url":    pullRequest.SupersededBy.URL,
-				"reason": helpers.SupersessionReason(pullRequest),
-			}
-		}(),
-		"expiryReason": helpers.ExpiryReason(pullRequest),
-		"url": pullRequest.URL,
-		"comments": pullRequest.CommentCount(),
-		"age": model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
-		"authorName": pullRequest.Author.Name,
-		"authorURL": pullRequest.Author.URL,
-		"scope": func() string { if len(pullRequest.Scopes) > 0 { return pullRequest.Scopes[0] }; return "" }(),
-		"scopeURL": func() string { if len(pullRequest.Scopes) > 0 { return fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0]) }; return "" }(),
-		"bodyHtml": helpers.RenderMarkdown(pullRequest.Body),
-		"refs": helpers.PullRequestReferences(pullRequest.Body),
-	} }}
+	{{
+		paneSeed := map[string]any{
+			"number":          pullRequest.Number,
+			"owner":           owner,
+			"repository":      repository,
+			"title":           pullRequest.Title,
+			"titleHtml":       helpers.RenderMarkdownInline(pullRequest.Title),
+			"state":           pullRequest.State,
+			"statusClass":     helpers.GetStatusClass(pullRequest),
+			"expiryStatus":    helpers.ExpiryLabel(pullRequest),
+			"expiryIconClass": helpers.StatusIconClass(pullRequest),
+			"supersededBy": func() any {
+				if pullRequest.SupersededBy == nil {
+					return nil
+				}
+				return map[string]any{
+					"number": pullRequest.SupersededBy.Number,
+					"url":    pullRequest.SupersededBy.URL,
+					"reason": helpers.SupersessionReason(pullRequest),
+				}
+			}(),
+			"expiryReason": helpers.ExpiryReason(pullRequest),
+			"url":          pullRequest.URL,
+			"comments":     pullRequest.CommentCount(),
+			"age":          model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
+			"authorName":   pullRequest.Author.Name,
+			"authorURL":    pullRequest.Author.URL,
+			"scope": func() string {
+				if len(pullRequest.Scopes) > 0 {
+					return pullRequest.Scopes[0]
+				}
+				return ""
+			}(),
+			"scopeURL": func() string {
+				if len(pullRequest.Scopes) > 0 {
+					return fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
+				}
+				return ""
+			}(),
+			"bodyHtml": helpers.RenderMarkdown(pullRequest.Body),
+			"refs":     helpers.PullRequestReferences(pullRequest.Body),
+		}
+	}}
 	<div
 		class="item pull-request box"
 		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
@@ -65,43 +77,47 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		}
 		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.pullRequestNumber), this.dataset)"
 	>
-		<div hidden class="pull-request-seed">@templ.JSONScript("", paneSeed)</div>
-        <div class="pull-request-header">
-            <div class="icon-container">
-                <i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
-            </div>
-            <div class="title-row">
-                <b class="item-title">@Markdown(pullRequest.Title)</b>
-            </div>
-            <div class="breadcrumb has-bullet-separator is-small">
-                <ul>
-                    <li>
-                        #{ pullRequest.Number }
-                    </li>
-                    <li>
-                        { pullRequest.State }
-                    </li>
-                    <li title="Discussion">
-                        <i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
-                    </li>
-                    <li title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
-                        @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
-                    </li>
-                    <li>
-                        <a href={ pullRequest.Author.URL }>
-                            if pullRequest.Author.AvatarURL != "" {
-                            <img class="avatar" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
-                            }
-                            { pullRequest.Author.Name }
-                        </a>
-                    </li>
-                    for _, scope := range pullRequest.Scopes {
-                        <li>
-                            <a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+		<div hidden class="pull-request-seed">
+			@templ.JSONScript("", paneSeed)
+		</div>
+		<div class="pull-request-header">
+			<div class="icon-container">
+				<i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
+			</div>
+			<div class="title-row">
+				<b class="item-title">
+					@Markdown(pullRequest.Title)
+				</b>
+			</div>
+			<div class="breadcrumb has-bullet-separator is-small">
+				<ul>
+					<li>
+						#{ pullRequest.Number }
+					</li>
+					<li>
+						{ pullRequest.State }
+					</li>
+					<li title="Discussion">
+						<i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
+					</li>
+					<li title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
+						@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
+					</li>
+					<li>
+						<a href={ pullRequest.Author.URL }>
+							if pullRequest.Author.AvatarURL != "" {
+								<img class="avatar" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
+							}
+							{ pullRequest.Author.Name }
+						</a>
+					</li>
+					for _, scope := range pullRequest.Scopes {
+						<li>
+							<a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
 	</div>
 }
