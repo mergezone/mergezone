@@ -1,5 +1,7 @@
 .PHONY: all build generate watch run clean fmt tidy
 
+NPM ?= pnpm
+
 all: generate build
 
 # Build final binary from Go files
@@ -10,17 +12,17 @@ build: templ css
 # NOTE See package.json for invocation details
 # TODO Remove npm dependency (added as Bulma dependency)
 css:
-	npm run build:css
+	$(NPM) run build:css
 
 # Generates _templ.go files for .templ components
-# TODO If using generated Go code, place command here
+# NOTE If using generated Go code, place command here
 templ:
 	go tool templ generate
 
 # Starts development server, refreshing when watched files are updated
 # TODO Does not auto-heal if .templ files fail to generate
 watch:
-	npm run watch:css &
+	$(NPM) run watch:css &
 	go tool templ generate --watch --proxy="http://localhost:8080" --cmd="go run ./cmd/merge"
 
 # Run the built executable
@@ -32,17 +34,15 @@ clean:
 	rm -f merge
 
 # Runs formatter commands
-# TODO Add Prettier, templ fmt etc.
 fmt:
 	go fmt ./...
 	go tool templ fmt .
-	npx prettier --write "**/*.{scss,css,js,html,json}" "!node_modules/**" "!vendor/**"
+	$(NPM) run format
 
 # Tidies go modules, updating imports and dependencies
 tidy:
 	go mod tidy
 
-# TODO Add deps target
 deps:
 	go mod download
-	npm ci
+	$(NPM) install --frozen-lockfile
