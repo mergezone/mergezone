@@ -6,6 +6,7 @@ public/main.css
 
 # Dependencies and build output
 node_modules/
+.pnpm-store/
 vendor/
 /merge
 /merge.exe

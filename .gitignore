@@ -2,3 +2,4 @@
 /merge
 /merge.exe
 node_modules/
+.pnpm-store/
