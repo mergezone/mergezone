@@ -14,7 +14,7 @@ import (
 	"merge/internal/views/layout"
 )
 
-func HomePage(baseURL, owner, repository string) templ.Component {
+func HomePage(baseURL, owner, repository, commit string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -55,7 +55,7 @@ func HomePage(baseURL, owner, repository string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<footer><span>Made by <a class=\"bold\" href=\"https://www.haydenheroux.com\">Hayden Heroux</a></span> <span>View on <a class=\"bold\" href=\"https://www.github.com/mergezone/mergezone\">GitHub</a></span> <span>View on <a class=\"bold\" href=\"https://www.merge.zone/mergezone/mergezone\">Merge Zone</a></span></footer></aside><section class=\"scroll home-scroll\"><div class=\"home-heading-group\"><h1>What's the state of your<br>pull requests?</h1><p class=\"text-secondary home-subtitle\">Enter a repository to see pull request freshness, merge activity,<br>and contributor patterns at a glance.</p></div><div><div class=\"section-heading\"><span>Finding a repository</span></div><div class=\"static-search-demo\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</aside><main class=\"scroll home-scroll\"><div class=\"home-heading-group\"><h1>What's the state of your<br>pull requests?</h1><p class=\"text-secondary home-subtitle\">Enter a repository to see pull request freshness, merge activity,<br>and contributor patterns at a glance.</p></div><div><div class=\"section-heading\"><span>Finding a repository</span></div><div class=\"static-search-demo\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -127,7 +127,15 @@ func HomePage(baseURL, owner, repository string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.StatusFooter(commit).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

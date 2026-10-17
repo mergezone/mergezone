@@ -56,7 +56,7 @@ func RepositoryLink(owner string, repository string, iconClass string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"main\" hx-push-url=\"true\" class=\"item icon-card box\"><div class=\"icon-container\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#page-shell\" hx-push-url=\"true\" class=\"item icon-card box\"><div class=\"icon-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

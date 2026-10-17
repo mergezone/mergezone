@@ -6,17 +6,12 @@ import (
 	"merge/internal/views/layout"
 )
 
-templ HomePage(baseURL, owner, repository string) {
+templ HomePage(baseURL, owner, repository, commit string) {
 	@layout.BaseDocument("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repository, "") {
 		<aside class="aside-column">
 			@components.RepositoryNavigation(owner, repository)
-			<footer>
-				<span>Made by <a class="bold" href="https://www.haydenheroux.com">Hayden Heroux</a></span>
-				<span>View on <a class="bold" href="https://www.github.com/mergezone/mergezone">GitHub</a></span>
-				<span>View on <a class="bold" href="https://www.merge.zone/mergezone/mergezone">Merge Zone</a></span>
-			</footer>
 		</aside>
-		<section class="scroll home-scroll">
+		<main class="scroll home-scroll">
 			<div class="home-heading-group">
 				<h1>What's the state of your<br/>pull requests?</h1>
 				<p class="text-secondary home-subtitle">
@@ -65,7 +60,8 @@ templ HomePage(baseURL, owner, repository string) {
 					@components.RepositoryLink("denoland", "deno", "fa-solid fa-diamond")
 				</div>
 			</div>
-		</section>
+			@components.StatusFooter(commit)
+		</main>
 		@components.MobileDock(false, model.RepositoryFilters{})
 	}
 }

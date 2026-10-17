@@ -7,7 +7,7 @@ templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel
 		<div
 			class={ "item stat box", templ.KV("active", isActive) }
 			hx-get={ templ.SafeURL(destinationURL) }
-			hx-target="main"
+			hx-target="#page-shell"
 			hx-push-url="true"
 		>
 			<p class="bold">{ statusLabel }</p>

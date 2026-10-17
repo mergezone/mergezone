@@ -20,9 +20,9 @@ templ BaseDocument(title, description, baseURL, owner, repository, scope string)
 			<meta property="og:description" content={ description }/>
 		</head>
 		<body class="repository-page" x-data x-init="$store.app.init()">
-			<main>
+			<div class="page-shell" id="page-shell">
 				{ children... }
-			</main>
+			</div>
 		</body>
 	</html>
 }

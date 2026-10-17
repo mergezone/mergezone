@@ -1,0 +1,33 @@
+@use "variables" as *;
+
+// Bulma's level provides the layout; keep the status metadata compact.
+footer.status-footer.level {
+  margin: 0;
+  padding: $spacing-1 $spacing-4;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: $pr-card-desc-font-size;
+  line-height: 1.2;
+
+  p {
+    font-size: inherit;
+  }
+}
+
+.status-footer .level-item {
+  min-width: 0;
+  padding: 0;
+}
+
+.status-footer.level.is-mobile {
+  gap: 0;
+}
+
+.status-footer .level-item p {
+  padding: 0;
+}
+
+.status-footer p {
+  margin: 0;
+}

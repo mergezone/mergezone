@@ -1,6 +1,46 @@
 let diffsLib = null;
 let diffsLibPromise = null;
 
+function formatServerDuration(milliseconds) {
+  if (!Number.isFinite(milliseconds)) return "—";
+  if (milliseconds < 1000) return `${Math.round(milliseconds)}ms`;
+  return `${(milliseconds / 1000).toFixed(3).replace(/0+$/, "").replace(/\.$/, "")}s`;
+}
+
+function applyStatusTimings(root) {
+  if (!root) return;
+  const payloads = root.querySelectorAll("[data-status-timings]");
+  payloads.forEach((payload) => {
+    const metrics = {
+      gather: Number(payload.dataset.gatherMs),
+      logic: Number(payload.dataset.logicMs),
+      template: Number(payload.dataset.templateMs),
+    };
+    for (const [name, duration] of Object.entries(metrics)) {
+      if (!Number.isFinite(duration)) continue;
+      const target = root.querySelector(`[data-status-${name}]`);
+      if (target) target.textContent = formatServerDuration(duration);
+    }
+    payload.remove();
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    () => applyStatusTimings(document),
+    {
+      once: true,
+    },
+  );
+} else {
+  applyStatusTimings(document);
+}
+
+document.addEventListener("htmx:afterSwap", (event) => {
+  applyStatusTimings(event.detail?.target || document);
+});
+
 async function ensureDiffsLib() {
   if (diffsLib) return diffsLib;
   if (diffsLibPromise) return diffsLibPromise;
@@ -1163,7 +1203,7 @@ document.addEventListener("alpine:init", () => {
       if (repository) {
         htmx.ajax("GET", `/${owner}/${repository}`, {
           source: document.querySelector(".search-input-row"),
-          target: "main",
+          target: "#page-shell",
           swap: "innerHTML",
         });
       }

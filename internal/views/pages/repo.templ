@@ -9,7 +9,7 @@ import (
 )
 
 // RepositoryDocument renders the complete repository HTML document, including its layout.
-templ RepositoryDocument(viewData model.RepositoryViewData, currentPath string) {
+templ RepositoryDocument(viewData model.RepositoryViewData, currentPath, commit string) {
 	@layout.BaseDocument(
 		fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository),
 		fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", viewData.OverallCounts.TotalPullRequests(), viewData.OverallCounts.FreshCount, viewData.OverallCounts.StaleCount, viewData.OverallCounts.ExpiredCount),
@@ -18,6 +18,6 @@ templ RepositoryDocument(viewData model.RepositoryViewData, currentPath string) 
 		viewData.Repository,
 		strings.Trim(strings.TrimPrefix(currentPath, fmt.Sprintf("/%s/%s", viewData.Owner, viewData.Repository)), "/"),
 	) {
-		@RepositoryMainView(viewData)
+		@RepositoryMainView(viewData, commit)
 	}
 }

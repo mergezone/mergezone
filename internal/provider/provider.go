@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"context"
+
 	"merge/internal/model"
 	"net/url"
 	"strconv"
@@ -65,7 +67,11 @@ type PullRequestPagination struct {
 	HasNext bool
 }
 
+type PullRequestTimings struct {
+	Gather time.Duration
+}
+
 type Provider interface {
-	GetPullRequests(query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, error)
-	GetPullRequestDiff(owner, repository string, pullRequestNumber int) (string, error)
+	GetPullRequests(ctx context.Context, query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, PullRequestTimings, error)
+	GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error)
 }

@@ -5,16 +5,16 @@ import (
 	"merge/internal/views/components"
 )
 
-templ RepositoryMainView(viewData model.RepositoryViewData) {
+templ RepositoryMainView(viewData model.RepositoryViewData, commit string) {
 	{{ filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status} }}
 	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort)
-	<section class="scroll">
+	<main class="scroll">
 		<div class="overview" id="overview-stats">
 			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage+1)
 		</div>
 		@components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore)
-		@components.SiteFooter("mobile-footer")
-	</section>
+		@components.StatusFooter(commit)
+	</main>
 	@components.RepositoryFilterPanel()
 	@components.ContextPane()
 	@components.MobileDock(true, filters)

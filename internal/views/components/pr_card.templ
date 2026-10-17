@@ -113,7 +113,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 					</li>
 					for _, scope := range pullRequest.Scopes {
 						<li>
-							<a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="main" hx-push-url="true">{ scope }</a>
+							<a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
 						</li>
 					}
 				</ul>

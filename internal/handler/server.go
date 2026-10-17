@@ -1,23 +1,31 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"sort"
 	"strconv"
+	"time"
 
 	"merge/internal/model"
 	"merge/internal/provider"
+	"merge/internal/telemetry"
 	"merge/internal/views/components"
 	"merge/internal/views/pages"
 
 	"github.com/gorilla/mux"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Server struct {
 	BaseURL  string
+	Commit   string
 	Port     int
 	Router   *mux.Router
 	Logger   *slog.Logger
@@ -26,9 +34,11 @@ type Server struct {
 
 func (s *Server) HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err := pages.HomePage(s.BaseURL, "", "").Render(r.Context(), w)
+	markRequestWorkComplete(r)
+	err := pages.HomePage(s.BaseURL, "", "", s.Commit).Render(r.Context(), w)
 	if err != nil {
 		s.Logger.Error(err.Error())
+		recordRequestError(r, err)
 	}
 }
 
@@ -56,7 +66,7 @@ func (s *Server) WithParsedRepositoryRequest(next RepositoryHandler) http.Handle
 }
 
 func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter, r *http.Request) {
-	pullRequests, _, err := request.Provider.GetPullRequests(request.Query, request.ListOptions)
+	pullRequests, _, _, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
 	if err != nil {
 		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -74,10 +84,10 @@ func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter
 	w.Write(encodedPullRequests)
 }
 
-func fetchPullRequestPages(request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, err error) {
+func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, err error) {
 	for page := 1; page <= upToPage; page++ {
 		listOptions := request.ListOptions.WithPage(page)
-		pullRequests, pagination, fetchErr := request.Provider.GetPullRequests(request.Query, listOptions)
+		pullRequests, pagination, _, fetchErr := request.Provider.GetPullRequests(ctx, request.Query, listOptions)
 		if fetchErr != nil {
 			return nil, nil, false, fetchErr
 		}
@@ -135,7 +145,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	// Load-more requests return the requested page of pull requests and updated aggregate summaries.
 	fragment := RepositoryFragment(r.URL.Query().Get("fragment"))
 	if fragment == "" && request.ListOptions.Page > 1 && isHTMXRequest(r) {
-		allPullRequests, currentPagePullRequests, hasNext, err := fetchPullRequestPages(request, request.ListOptions.Page)
+		allPullRequests, currentPagePullRequests, hasNext, err := fetchPullRequestPages(r.Context(), request, request.ListOptions.Page)
 		if err != nil {
 			request.Logger.Warn(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -167,12 +177,17 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		return
 	}
 
-	pullRequests, pagination, err := request.Provider.GetPullRequests(request.Query, request.ListOptions)
+	pullRequests, pagination, timings, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
 	if err != nil {
 		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	recordProviderTimings(r, timings)
+	_, logicSpan := telemetry.Tracer("merge/handler").Start(r.Context(), "repository.categorize",
+		trace.WithAttributes(attribute.Int("repository.pull_request_count", len(pullRequests))),
+	)
 
 	scopeSummaries := model.ScopeAges(pullRequests)
 
@@ -192,6 +207,8 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		CurrentPage:       1,
 		HasMore:           pagination.HasNext,
 	}
+	logicSpan.SetAttributes(attribute.Int("repository.scope_count", len(viewData.ScopeCounts)))
+	logicSpan.End()
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	switch fragment {
@@ -258,50 +275,86 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 			http.Error(w, "Unknown fragment", http.StatusBadRequest)
 			return
 		}
+		markRequestWorkComplete(r)
 		if isHTMXRequest(r) {
 			if ShouldPushURL(fragment, request.ListOptions.Page) {
 				w.Header().Set("HX-Push-Url", filters.URL())
 			}
-			err = pages.RepositoryMainView(viewData).Render(r.Context(), w)
+			err = pages.RepositoryMainView(viewData, request.Commit).Render(r.Context(), w)
 		} else {
-			err = pages.RepositoryDocument(viewData, r.URL.Path).Render(r.Context(), w)
+			err = pages.RepositoryDocument(viewData, r.URL.Path, request.Commit).Render(r.Context(), w)
 		}
 	}
 	if err != nil {
 		request.Logger.Error(err.Error())
+		recordRequestError(r, err)
 	}
 }
 
 func (s *Server) HandlePullRequestDiff(w http.ResponseWriter, r *http.Request) {
+	ctx, span := telemetry.Tracer("merge/handler").Start(r.Context(), "pull_request.diff")
+	defer span.End()
 	vars := mux.Vars(r)
 	owner := vars["owner"]
 	repository := vars["repo"]
 	pullRequestNumber, err := strconv.Atoi(vars["number"])
 	if err != nil {
+		span.SetAttributes(attribute.Int("http.response.status_code", http.StatusBadRequest))
+		span.SetStatus(codes.Error, "invalid pull request number")
 		http.Error(w, "invalid pull request number", http.StatusBadRequest)
 		return
 	}
 
-	diff, err := s.Provider.GetPullRequestDiff(owner, repository, pullRequestNumber)
+	diff, err := s.Provider.GetPullRequestDiff(ctx, owner, repository, pullRequestNumber)
 	if err != nil {
+		span.SetAttributes(attribute.Int("http.response.status_code", http.StatusInternalServerError))
+		telemetry.RecordError(span, err)
 		s.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	span.SetAttributes(attribute.Int("http.response.status_code", http.StatusOK))
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Write([]byte(diff))
 }
 
-func (s *Server) ListenAndServe() error {
+func (s *Server) ListenAndServe(ctx context.Context) error {
 	s.Router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
-	s.Router.HandleFunc("/", s.HandleHomePage)
+	s.Router.Handle("/", requestTimingMiddleware(http.HandlerFunc(s.HandleHomePage)))
 
 	s.Router.HandleFunc("/{owner}/{repo}/pull/{number}/diff", s.HandlePullRequestDiff)
-	s.Router.HandleFunc("/{owner}/{repo}", s.WithParsedRepositoryRequest(HandleRepository))
-	s.Router.HandleFunc("/{owner}/{repo}/", s.WithParsedRepositoryRequest(HandleRepository))
-	s.Router.HandleFunc("/{owner}/{repo}/{scope:.*}", s.WithParsedRepositoryRequest(HandleRepository))
+	repositoryHandler := s.WithParsedRepositoryRequest(HandleRepository)
+	s.Router.Handle("/{owner}/{repo}", requestTimingMiddleware(repositoryHandler))
+	s.Router.Handle("/{owner}/{repo}/", requestTimingMiddleware(repositoryHandler))
+	s.Router.Handle("/{owner}/{repo}/{scope:.*}", requestTimingMiddleware(repositoryHandler))
 
-	s.Logger.Info("starting HTTP server", "port", s.Port)
-	return http.ListenAndServe(fmt.Sprintf(":%d", s.Port), s.Router)
+	server := &http.Server{
+		Addr:    fmt.Sprintf(":%d", s.Port),
+		Handler: s.Router,
+	}
+	serverErrors := make(chan error, 1)
+	go func() {
+		s.Logger.Info("starting HTTP server", "port", s.Port)
+		serverErrors <- server.ListenAndServe()
+	}()
+
+	select {
+	case err := <-serverErrors:
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
+		}
+		return err
+	case <-ctx.Done():
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			_ = server.Close()
+			return err
+		}
+		if err := <-serverErrors; err != nil && !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+		return nil
+	}
 }

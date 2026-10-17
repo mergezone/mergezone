@@ -1,0 +1,19 @@
+package components
+
+// StatusFooter renders compact, Forgejo-style metadata with Bulma's level component.
+templ StatusFooter(commit string) {
+	<footer class="status-footer level is-mobile" aria-label="Application status">
+		<div class="level-item">
+			<p>Commit <strong>{ commit }</strong></p>
+		</div>
+		<div class="level-item">
+			<p>Gather <strong data-status-gather>—</strong></p>
+		</div>
+		<div class="level-item">
+			<p>Logic <strong data-status-logic>—</strong></p>
+		</div>
+		<div class="level-item">
+			<p>Template <strong data-status-template>—</strong></p>
+		</div>
+	</footer>
+}
