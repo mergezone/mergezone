@@ -84,20 +84,21 @@ func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter
 	w.Write(encodedPullRequests)
 }
 
-func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, err error) {
+func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, timings provider.PullRequestTimings, err error) {
 	for page := 1; page <= upToPage; page++ {
 		listOptions := request.ListOptions.WithPage(page)
-		pullRequests, pagination, _, fetchErr := request.Provider.GetPullRequests(ctx, request.Query, listOptions)
+		pullRequests, pagination, pageTimings, fetchErr := request.Provider.GetPullRequests(ctx, request.Query, listOptions)
 		if fetchErr != nil {
-			return nil, nil, false, fetchErr
+			return nil, nil, false, timings, fetchErr
 		}
+		timings.Gather += pageTimings.Gather
 		allPullRequests = append(allPullRequests, pullRequests...)
 		if page == upToPage {
 			currentPagePullRequests = pullRequests
 			hasNext = pagination.HasNext
 		}
 	}
-	return allPullRequests, currentPagePullRequests, hasNext, nil
+	return allPullRequests, currentPagePullRequests, hasNext, timings, nil
 }
 
 func optionalRepositoryFilterValue(value *string) string {
@@ -145,12 +146,13 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	// Load-more requests return the requested page of pull requests and updated aggregate summaries.
 	fragment := RepositoryFragment(r.URL.Query().Get("fragment"))
 	if fragment == "" && request.ListOptions.Page > 1 && isHTMXRequest(r) {
-		allPullRequests, currentPagePullRequests, hasNext, err := fetchPullRequestPages(r.Context(), request, request.ListOptions.Page)
+		allPullRequests, currentPagePullRequests, hasNext, timings, err := fetchPullRequestPages(r.Context(), request, request.ListOptions.Page)
 		if err != nil {
 			request.Logger.Warn(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		recordProviderTimings(r, timings)
 
 		nextPullRequestPage := request.ListOptions.Page + 1
 
@@ -159,6 +161,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 			scopes = append(scopes, scope)
 		}
 
+		markRequestWorkComplete(r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		err = pages.AppendPullRequestsResponse(
 			currentPagePullRequests,
@@ -220,12 +223,13 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		}
 		for _, pullRequest := range viewData.PullRequests {
 			if pullRequest.Number == pullRequestNumber {
-				comments, commentErr := request.getPullRequestComments(request.Query.Owner, request.Query.Repository, pullRequestNumber)
+				comments, commentErr := request.getPullRequestComments(r.Context(), request.Query.Owner, request.Query.Repository, pullRequestNumber)
 				if commentErr != nil {
 					request.Logger.Warn("could not load pull request discussion", "error", commentErr)
 					http.Error(w, "Could not load pull request discussion", http.StatusBadGateway)
 					return
 				}
+				markRequestWorkComplete(r)
 				err = components.PullRequestDiscussion(comments).Render(r.Context(), w)
 				if err != nil {
 					request.Logger.Error(err.Error())
@@ -243,6 +247,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		}
 		for _, pullRequest := range viewData.PullRequests {
 			if pullRequest.Number == pullRequestNumber {
+				markRequestWorkComplete(r)
 				err = components.PullRequestDetail(pullRequest).Render(r.Context(), w)
 				if err != nil {
 					request.Logger.Error(err.Error())
@@ -260,6 +265,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 				return contributorSummaries[i].TotalPullRequests() > contributorSummaries[j].TotalPullRequests()
 			})
 		}
+		markRequestWorkComplete(r)
 		err = components.ContributorSummaries(contributorSummaries, sortOrder, filters).Render(r.Context(), w)
 	case ScopesFragment:
 		sortOrder := r.URL.Query().Get("sort")
@@ -269,6 +275,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 				return scopeSummaries[i].TotalPullRequests() > scopeSummaries[j].TotalPullRequests()
 			})
 		}
+		markRequestWorkComplete(r)
 		err = components.ScopeSummaries(scopeSummaries, sortOrder, filters).Render(r.Context(), w)
 	default:
 		if fragment != "" {

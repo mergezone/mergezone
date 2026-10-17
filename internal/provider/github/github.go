@@ -24,8 +24,12 @@ type GitHub struct {
 	Logger *slog.Logger
 }
 
-func (g GitHub) GitHubToken() string {
-	return g.Token
+// githubHTTPClient is shared by every GitHub API call so that the
+// transport-level response cache and connection pool are reused across
+// requests. The cache transport wraps otelhttp so cache hits are visible in
+// traces without a corresponding network span.
+var githubHTTPClient = &http.Client{
+	Transport: newCachingTransport(otelhttp.NewTransport(http.DefaultTransport)),
 }
 
 func (g GitHub) configureAPIRequest(request *http.Request) {
@@ -50,9 +54,8 @@ func (g GitHub) getPullRequestsJSON(ctx context.Context, query provider.Reposito
 
 	g.configureAPIRequest(req)
 
-	client := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 	waitStarted := time.Now()
-	resp, err := client.Do(req)
+	resp, err := githubHTTPClient.Do(req)
 	if err != nil {
 		gatherWaits.add(waitStarted, time.Now())
 		return nil, pagination, err
@@ -194,8 +197,7 @@ func (g GitHub) GetPullRequestDiff(ctx context.Context, owner, repository string
 	req.Header.Set("Authorization", "Bearer "+g.Token)
 	req.Header.Set("X-GitHub-Api-Version", "2026-03-10")
 
-	client := &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
-	resp, err := client.Do(req)
+	resp, err := githubHTTPClient.Do(req)
 	if err != nil {
 		telemetry.RecordError(span, err)
 		return "", err

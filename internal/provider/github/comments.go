@@ -13,7 +13,6 @@ import (
 	"merge/internal/provider"
 	"merge/internal/telemetry"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -79,8 +78,7 @@ func (g GitHub) getPullRequestCommentCounts(ctx context.Context, owner, reposito
 	defer span.End()
 
 	waitStarted := time.Now()
-	client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
-	response, err := client.Do(request.WithContext(ctx))
+	response, err := githubHTTPClient.Do(request.WithContext(ctx))
 	if err != nil {
 		gatherWaits.add(waitStarted, time.Now())
 		telemetry.RecordError(span, err)
@@ -108,4 +106,56 @@ func (g GitHub) getPullRequestCommentCounts(ctx context.Context, owner, reposito
 		return pullRequestCommentCounts{}, err
 	}
 	return counts, nil
+}
+
+// GetPullRequestComments returns every discussion comment on a pull request,
+// following Link pagination until the final page.
+func (g GitHub) GetPullRequestComments(ctx context.Context, owner, repository string, pullRequestNumber int) ([]model.PullRequestComment, error) {
+	ctx, span := telemetry.Tracer("merge/github").Start(ctx, "github.pull_request_comments",
+		trace.WithAttributes(
+			attribute.String("github.owner", owner),
+			attribute.String("github.repository", repository),
+			attribute.Int("github.pull_request.number", pullRequestNumber),
+		),
+	)
+	defer span.End()
+
+	var comments []model.PullRequestComment
+	for page := 1; ; page++ {
+		requestURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/comments?per_page=100&page=%d", owner, repository, pullRequestNumber, page)
+		request, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
+		if err != nil {
+			telemetry.RecordError(span, err)
+			return nil, err
+		}
+		g.configureAPIRequest(request)
+
+		response, err := githubHTTPClient.Do(request)
+		if err != nil {
+			telemetry.RecordError(span, err)
+			return nil, err
+		}
+		span.SetAttributes(attribute.Int("http.response.status_code", response.StatusCode))
+		if response.StatusCode != http.StatusOK {
+			provider.LogRateLimitExceeded(g.Logger, response)
+			response.Body.Close()
+			err := fmt.Errorf("GitHub comments request failed with status: %s", response.Status)
+			telemetry.RecordError(span, err)
+			return nil, err
+		}
+
+		var pageComments []model.PullRequestComment
+		decodeErr := json.NewDecoder(io.LimitReader(response.Body, 5<<20)).Decode(&pageComments)
+		hasNext := responseHasNextPage(response)
+		response.Body.Close()
+		if decodeErr != nil {
+			telemetry.RecordError(span, decodeErr)
+			return nil, decodeErr
+		}
+
+		comments = append(comments, pageComments...)
+		if len(pageComments) < 100 || !hasNext {
+			return comments, nil
+		}
+	}
 }
