@@ -2,7 +2,7 @@ package components
 
 templ RepositoryLink(owner string, repository string, iconClass string) {
 	{{ repositoryPath := "/" + owner + "/" + repository }}
-	<a href={ templ.SafeURL(repositoryPath) } hx-get={ templ.SafeURL(repositoryPath) } hx-target="main" hx-push-url="true" class="item icon-card box">
+	<a href={ templ.SafeURL(repositoryPath) } hx-get={ templ.SafeURL(repositoryPath) } hx-target="#page-shell" hx-push-url="true" class="item icon-card box">
 		<div class="icon-container">
 			<i class={ iconClass }></i>
 		</div>

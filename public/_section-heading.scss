@@ -2,15 +2,6 @@
 @use "silver-link";
 @use "base";
 
-nav,
-section {
-  padding: $spacing-4;
-}
-
-section.filter-section {
-  padding: 0;
-}
-
 .section-heading {
   margin-inline: $spacing-1;
   margin-block: $spacing-2 $spacing-3;

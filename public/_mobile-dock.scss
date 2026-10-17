@@ -3,7 +3,7 @@
 
 // Mobile bottom dock. On small screens the repository search input is relocated
 // here from the nav, next to a button that opens the filter bottom sheet. The
-// dock is fixed to the viewport bottom and `main` reserves its height, so the
+// dock is fixed to the viewport bottom and the page shell reserves its height, so the
 // filter sheet and the context pane open above the dock rather than covering
 // it.
 .mobile-dock {
@@ -12,7 +12,7 @@
 
 @media (max-width: $breakpoint-desktop) {
   // The home and repository pages both render the dock on mobile.
-  main:has(#mobile-dock) {
+  #page-shell:has(#mobile-dock) {
     box-sizing: border-box;
     // Reserve the dock's height so bottom sheets stop above it.
     padding-bottom: calc(

@@ -43,7 +43,7 @@ body.pane-resizing * {
   user-select: none !important;
 }
 
-main {
+.page-shell {
   display: flex;
   flex-direction: column;
   gap: $main-mobile-gap;
@@ -83,7 +83,12 @@ main {
   }
 }
 
-section.home-scroll {
+#page-shell > main.scroll {
+  // The scrollable page region owns its own gutter.
+  padding: $spacing-4;
+}
+
+#page-shell > main.home-scroll {
   gap: 2.5rem !important;
 }
 
@@ -93,32 +98,13 @@ section.home-scroll {
   }
 }
 
-footer {
-  margin-top: auto;
-  padding: $spacing-4;
-  color: var(--color-text-muted);
-  border-top: $border-width-normal solid $color-700;
-  display: flex;
-  gap: $spacing-4;
-  font-size: $footer-font-size;
-
-  span {
-    display: flex;
-    flex-direction: column;
-  }
-
-  a {
-    color: $color-950;
-  }
-}
-
 .avatar-wrapper {
   width: $spacing-6;
   height: $spacing-6;
   border-radius: 0.5rem;
 }
 
-.repository-page main {
+.repository-page .page-shell {
   display: flex;
   flex-direction: column;
 }
@@ -150,15 +136,11 @@ footer {
     overflow: hidden;
   }
 
-  .repository-page main {
+  .repository-page .page-shell {
     flex: 1;
     min-height: 0;
     overflow: hidden;
     flex-direction: row;
-  }
-
-  .mobile-footer {
-    display: none;
   }
 
   .aside-column {
@@ -187,11 +169,11 @@ footer {
     left: 0;
   }
 
-  main {
+  .page-shell {
     gap: 0;
   }
 
-  main > .scroll {
+  #page-shell > main.scroll {
     @include base.scrollable-flex-child;
     min-width: 0;
     display: flex;
@@ -200,32 +182,23 @@ footer {
     transition: flex $transition-pane-fast;
   }
 
-  main > .scroll h1 {
+  #page-shell > main.scroll h1 {
     margin-top: $spacing-4;
   }
 }
 
 @media (max-width: $breakpoint-desktop) {
-  .aside-column > .sidebar-footer {
-    display: none;
-  }
-
-  main > .scroll > .mobile-footer {
-    display: flex;
-    margin-top: $spacing-4;
-  }
-
   .aside-column .scroll {
     display: none;
   }
 
-  main {
+  .page-shell {
     height: 100vh;
     overflow: hidden;
     gap: 0;
   }
 
-  main > .scroll {
+  #page-shell > main.scroll {
     flex: 1 1 0;
     min-height: 0;
   }

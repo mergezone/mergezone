@@ -28,3 +28,13 @@ architecture-beta
     templ:B -- T:server
     server:L -- R:github
 ```
+
+## OpenTelemetry traces with Jaeger
+
+`make dev` and `make watch` start a local Jaeger all-in-one container and configure Merge to export traces to it. Docker is required. Open <http://localhost:16686> to search traces. Use `make jaeger-down` to remove the container when finished.
+
+For a non-local collector, override `OTEL_EXPORTER_OTLP_ENDPOINT`, for example:
+
+```sh
+OTEL_EXPORTER_OTLP_ENDPOINT=https://otel-collector.example.com make dev
+```

@@ -14,7 +14,7 @@
   }
 }
 
-body.filter-pane-open main > .scroll {
+body.filter-pane-open #page-shell > main.scroll {
   flex: 0 0 $filter-pane-ratio-scroll;
 }
 

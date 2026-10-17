@@ -101,7 +101,7 @@ func ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"main\" hx-push-url=\"true\"><span class=\"panel-icon sidebar-panel-icon\" aria-hidden=\"true\"><i class=\"fa-solid fa-diagram-project\"></i></span> <span class=\"sidebar-panel-content\"><span class=\"sidebar-panel-title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"panel-icon sidebar-panel-icon\" aria-hidden=\"true\"><i class=\"fa-solid fa-diagram-project\"></i></span> <span class=\"sidebar-panel-content\"><span class=\"sidebar-panel-title\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -245,7 +245,7 @@ func ContributorCard(contributor model.ContributorInfo, filters model.Repository
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"main\" hx-push-url=\"true\"><span class=\"panel-icon sidebar-panel-icon img-skeleton-wrapper avatar-wrapper\"><img class=\"avatar\" data-src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"panel-icon sidebar-panel-icon img-skeleton-wrapper avatar-wrapper\"><img class=\"avatar\" data-src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

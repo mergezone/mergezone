@@ -1,6 +1,8 @@
 @use "variables" as *;
 
 #nav {
+  // The nav is a top-level page region and owns its own gutter.
+  padding: $spacing-4;
   padding-inline: $nav-padding-inline;
   box-sizing: border-box;
   transition: background-color $transition-normal;
