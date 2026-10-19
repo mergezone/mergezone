@@ -7,7 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"slices"
 	"strings"
 	"time"
 
@@ -120,55 +119,7 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 	// TODO(hayden): Implement `Mappable` interface
 	stampedPullRequests := model.StampNow(pullRequests)
 
-	filteredPullRequests := stampedPullRequests
-	if query.Scope != nil {
-		inScope := make([]model.StampedPullRequest, 0, len(stampedPullRequests))
-		for _, pr := range stampedPullRequests {
-			for _, scope := range pr.Scopes {
-				if slices.Contains(query.Scope, scope) {
-					inScope = append(inScope, pr)
-				}
-			}
-		}
-		filteredPullRequests = inScope
-	}
-
-	if query.Contributor != nil {
-		byContributor := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
-		for _, pr := range filteredPullRequests {
-			if slices.Contains(query.Contributor, pr.Author.Name) {
-				byContributor = append(byContributor, pr)
-			}
-		}
-		filteredPullRequests = byContributor
-	}
-
-	if query.Status != nil {
-		matchesStatus := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
-		for _, status := range query.Status {
-			// TODO Subtle bug: ExpiryStatus and State both extend string, so no warning is thrown
-			var flag model.ExpiryStatus
-			switch status {
-			case "merged":
-				flag = model.Merged
-			case "fresh":
-				flag = model.Fresh
-			case "stale":
-				flag = model.Stale
-			case "expired":
-				flag = model.Expired
-			}
-
-			for _, pr := range filteredPullRequests {
-				merged := flag == model.Merged && pr.State == model.Merged
-				if merged || pr.ExpiryStatus == flag {
-					matchesStatus = append(matchesStatus, pr)
-				}
-			}
-		}
-		filteredPullRequests = matchesStatus
-	}
-
+	filteredPullRequests := filterPullRequests(stampedPullRequests, query)
 	logicSpan.SetAttributes(attribute.Int("github.filtered_pull_request_count", len(filteredPullRequests)))
 	logicSpan.End()
 	return filteredPullRequests, hasNext, pullRequestTimings(operationStarted, gatherWaits), nil
