@@ -144,18 +144,26 @@ func extractColonScopes(title string) []string {
 	return split(matches[1])
 }
 
-func (pr *PullRequest) Scopes() []string {
+func splitSubscopes(scopes []string) []string {
 	result := make([]string, 0)
-	for _, s := range extractConventionalCommitScopes(pr.Title) {
-		result = append(result, s)
-	}
-	for _, s := range extractSquareBracketScopes(pr.Title) {
-		result = append(result, s)
-	}
-	for _, s := range extractColonScopes(pr.Title) {
-		result = append(result, s)
+	for _, scope := range scopes {
+		result = append(result, strings.Split(scope, "/")...)
 	}
 	return result
+}
+
+func (pr *PullRequest) Scopes() []string {
+	scopes := make([]string, 0)
+	for _, s := range extractConventionalCommitScopes(pr.Title) {
+		scopes = append(scopes, s)
+	}
+	for _, s := range extractSquareBracketScopes(pr.Title) {
+		scopes = append(scopes, s)
+	}
+	for _, s := range extractColonScopes(pr.Title) {
+		scopes = append(scopes, s)
+	}
+	return splitSubscopes(scopes)
 }
 
 func (pr *PullRequest) Contributors() []string {
