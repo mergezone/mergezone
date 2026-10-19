@@ -9,14 +9,14 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"strings"
+	"slices"
 	"unicode"
 
 	"merge/internal/model"
 )
 
 func repositoryStatusURL(filters model.RepositoryFilters, targetStatus string) string {
-	if filters.Status == targetStatus {
+	if slices.Contains(filters.Status, targetStatus) {
 		return filters.WithStatus("").URL()
 	}
 	return filters.WithStatus(targetStatus).URL()
@@ -29,23 +29,6 @@ func titleCaseFirst(value string) string {
 	}
 	runes[0] = unicode.ToTitle(runes[0])
 	return string(runes)
-}
-
-func repositoryFilterLabel(filters model.RepositoryFilters) string {
-	parts := []string{}
-	if filters.Scope != "" {
-		parts = append(parts, titleCaseFirst(filters.Scope))
-	}
-	if filters.Status != "" {
-		parts = append(parts, titleCaseFirst(filters.Status))
-	}
-	if filters.Contributor != "" {
-		parts = append(parts, titleCaseFirst(filters.Contributor))
-	}
-	if len(parts) == 0 {
-		return "Filters"
-	}
-	return "Filters: " + strings.Join(parts, ", ")
 }
 
 // PullRequestCounts renders the repository's status summaries and filter controls.
@@ -74,7 +57,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +65,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -90,7 +73,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -98,7 +81,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

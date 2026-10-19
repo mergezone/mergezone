@@ -101,13 +101,6 @@ func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upTo
 	return allPullRequests, currentPagePullRequests, hasNext, timings, nil
 }
 
-func optionalRepositoryFilterValue(value *string) string {
-	if value == nil {
-		return ""
-	}
-	return *value
-}
-
 // RepositoryFragment identifies a rendered repository fragment requested through
 // the fragment query parameter. An empty value selects a document or main-view response.
 type RepositoryFragment string
@@ -138,9 +131,9 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	filters := model.RepositoryFilters{
 		Owner:       request.Query.Owner,
 		Repository:  request.Query.Repository,
-		Scope:       optionalRepositoryFilterValue(request.Query.Scope),
-		Contributor: optionalRepositoryFilterValue(request.Query.Contributor),
-		Status:      optionalRepositoryFilterValue(request.Query.Status),
+		Scope:       request.Query.Scope,
+		Contributor: request.Query.Contributor,
+		Status:      request.Query.Status,
 	}
 
 	// Load-more requests return the requested page of pull requests and updated aggregate summaries.

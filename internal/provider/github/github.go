@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -124,7 +125,7 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 		inScope := make([]model.StampedPullRequest, 0, len(stampedPullRequests))
 		for _, pr := range stampedPullRequests {
 			for _, scope := range pr.Scopes {
-				if scope == *query.Scope {
+				if slices.Contains(query.Scope, scope) {
 					inScope = append(inScope, pr)
 				}
 			}
@@ -135,7 +136,7 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 	if query.Contributor != nil {
 		byContributor := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
 		for _, pr := range filteredPullRequests {
-			if pr.Author.Name == *query.Contributor {
+			if slices.Contains(query.Contributor, pr.Author.Name) {
 				byContributor = append(byContributor, pr)
 			}
 		}
@@ -143,33 +144,29 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 	}
 
 	if query.Status != nil {
-		byStatus := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
-		for _, pr := range filteredPullRequests {
-			switch *query.Status {
+		matchesStatus := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
+		for _, status := range query.Status {
+			// TODO Subtle bug: ExpiryStatus and State both extend string, so no warning is thrown
+			var flag model.ExpiryStatus
+			switch status {
 			case "merged":
-				if pr.State == model.Merged {
-					byStatus = append(byStatus, pr)
-				}
-			default:
-				if pr.State != model.Merged {
-					switch *query.Status {
-					case "fresh":
-						if pr.ExpiryStatus == model.Fresh {
-							byStatus = append(byStatus, pr)
-						}
-					case "stale":
-						if pr.ExpiryStatus == model.Stale {
-							byStatus = append(byStatus, pr)
-						}
-					case "expired":
-						if pr.ExpiryStatus == model.Expired {
-							byStatus = append(byStatus, pr)
-						}
-					}
+				flag = model.Merged
+			case "fresh":
+				flag = model.Fresh
+			case "stale":
+				flag = model.Stale
+			case "expired":
+				flag = model.Expired
+			}
+
+			for _, pr := range filteredPullRequests {
+				merged := flag == model.Merged && pr.State == model.Merged
+				if merged || pr.ExpiryStatus == flag {
+					matchesStatus = append(matchesStatus, pr)
 				}
 			}
 		}
-		filteredPullRequests = byStatus
+		filteredPullRequests = matchesStatus
 	}
 
 	logicSpan.SetAttributes(attribute.Int("github.filtered_pull_request_count", len(filteredPullRequests)))

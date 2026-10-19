@@ -42,22 +42,12 @@ func MobileDock(showFilters bool, filters model.RepositoryFilters) templ.Compone
 			return templ_7745c5c3_Err
 		}
 		if showFilters {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"button mobile-dock-filter\" type=\"button\" aria-label=\"Filters\" title=\"Filters\" @click.stop=\"$store.filterPanel.toggle()\"><i class=\"fa-solid\" :class=\"$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'\" aria-hidden=\"true\"></i> <span>Filters</span> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if filters.Scope != "" || filters.Status != "" || filters.Contributor != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<i class=\"fa-solid fa-circle mobile-dock-active\" aria-hidden=\"true\"></i>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"button mobile-dock-filter\" type=\"button\" aria-label=\"Filters\" title=\"Filters\" @click.stop=\"$store.filterPanel.toggle()\"><i class=\"fa-solid\" :class=\"$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'\" aria-hidden=\"true\"></i> <span>Filters</span></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

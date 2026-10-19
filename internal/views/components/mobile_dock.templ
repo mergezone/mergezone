@@ -21,9 +21,6 @@ templ MobileDock(showFilters bool, filters model.RepositoryFilters) {
 			>
 				<i class="fa-solid" :class="$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'" aria-hidden="true"></i>
 				<span>Filters</span>
-				if filters.Scope != "" || filters.Status != "" || filters.Contributor != "" {
-					<i class="fa-solid fa-circle mobile-dock-active" aria-hidden="true"></i>
-				}
 			</button>
 		}
 	</div>

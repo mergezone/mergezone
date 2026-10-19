@@ -39,7 +39,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(scopeSummaries) > 0 || filters.Scope != "" {
+		if len(scopeSummaries) > 0 || len(filters.Scope) > 0 {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"section-actions\"><i id=\"scopes-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort scopes by recency\" title=\"Sort by recency\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

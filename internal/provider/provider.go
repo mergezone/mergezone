@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"merge/internal/model"
 	"net/url"
@@ -13,9 +14,10 @@ type RepositoryQuery struct {
 	Owner       string
 	Repository  string
 	AsOf        time.Time
-	Scope       *string
-	Contributor *string
-	Status      *string
+	Scope       []string
+	Contributor []string
+	// TODO Permit only values of Status enum
+	Status []string
 }
 
 type PullRequestListOptions struct {
@@ -46,13 +48,13 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 		AsOf: time.Now(),
 	}
 	if scope := queryValues.Get("scope"); scope != "" {
-		repositoryQuery.Scope = &scope
+		repositoryQuery.Scope = strings.Split(scope, ",")
 	}
 	if contributor := queryValues.Get("contributor"); contributor != "" {
-		repositoryQuery.Contributor = &contributor
+		repositoryQuery.Contributor = strings.Split(contributor, ",")
 	}
 	if status := queryValues.Get("status"); status != "" {
-		repositoryQuery.Status = &status
+		repositoryQuery.Status = strings.Split(status, ",")
 	}
 
 	options := PullRequestListOptions{

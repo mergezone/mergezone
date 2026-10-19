@@ -1,14 +1,14 @@
 package components
 
 import (
-	"strings"
+	"slices"
 	"unicode"
 
 	"merge/internal/model"
 )
 
 func repositoryStatusURL(filters model.RepositoryFilters, targetStatus string) string {
-	if filters.Status == targetStatus {
+	if slices.Contains(filters.Status, targetStatus) {
 		return filters.WithStatus("").URL()
 	}
 	return filters.WithStatus(targetStatus).URL()
@@ -23,23 +23,6 @@ func titleCaseFirst(value string) string {
 	return string(runes)
 }
 
-func repositoryFilterLabel(filters model.RepositoryFilters) string {
-	parts := []string{}
-	if filters.Scope != "" {
-		parts = append(parts, titleCaseFirst(filters.Scope))
-	}
-	if filters.Status != "" {
-		parts = append(parts, titleCaseFirst(filters.Status))
-	}
-	if filters.Contributor != "" {
-		parts = append(parts, titleCaseFirst(filters.Contributor))
-	}
-	if len(parts) == 0 {
-		return "Filters"
-	}
-	return "Filters: " + strings.Join(parts, ", ")
-}
-
 // PullRequestCounts renders the repository's status summaries and filter controls.
 templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool, filters model.RepositoryFilters, nextPullRequestPage int) {
 	<div class="stats">
@@ -48,16 +31,16 @@ templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests boo
 		</div>
 		<div class="level is-mobile stats-tiles">
 			<div class="level-item">
-				@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), filters.Status == "fresh")
+				@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh"))
 			</div>
 			<div class="level-item">
-				@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), filters.Status == "stale")
+				@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale"))
 			</div>
 			<div class="level-item">
-				@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), filters.Status == "expired")
+				@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired"))
 			</div>
 			<div class="level-item">
-				@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), filters.Status == "merged")
+				@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged"))
 			</div>
 		</div>
 	</div>
