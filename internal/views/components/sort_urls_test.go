@@ -23,7 +23,7 @@ func renderSortFragmentURLs(t *testing.T, component interface {
 
 func TestScopeSortButtonsPreserveCurrentFilters(t *testing.T) {
 	filters := model.RepositoryFilters{
-		Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale",
+		Owner: "octocat", Repository: "hello-world", Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
 	}
 	output := renderSortFragmentURLs(t, ScopeSummaries(nil, "recent", filters))
 	for _, sortOrder := range []string{"recent", "top"} {
@@ -36,7 +36,7 @@ func TestScopeSortButtonsPreserveCurrentFilters(t *testing.T) {
 
 func TestContributorSortButtonsPreserveCurrentFilters(t *testing.T) {
 	filters := model.RepositoryFilters{
-		Owner: "octocat", Repository: "hello-world", Scope: "backend", Contributor: "alice", Status: "stale",
+		Owner: "octocat", Repository: "hello-world", Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
 	}
 	output := renderSortFragmentURLs(t, ContributorSummaries(nil, "recent", filters))
 	for _, sortOrder := range []string{"recent", "top"} {
