@@ -420,3 +420,124 @@ func TestRepositoryFilters_ContributorLink_AddsToCurrentSelection(t *testing.T) 
 		t.Errorf("contributor link URL = %q, want %q", got, want)
 	}
 }
+
+func TestRepositoryFilters_URL_MultipleSelections(t *testing.T) {
+	tests := []struct {
+		name    string
+		filters RepositoryFilters
+		want    string
+	}{
+		{
+			name:    "multiple scopes",
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: []string{"backend", "frontend"}},
+			want:    "/octocat/hello-world?scope=backend,frontend",
+		},
+		{
+			name:    "multiple contributors",
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: []string{"alice", "bob"}},
+			want:    "/octocat/hello-world?contributor=alice,bob",
+		},
+		{
+			name:    "multiple statuses",
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Status: []string{"fresh", "stale"}},
+			want:    "/octocat/hello-world?status=fresh,stale",
+		},
+		{
+			name:    "multiple selections in one filter with a single selection in another",
+			filters: RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: []string{"backend", "frontend"}, Status: []string{"stale"}},
+			want:    "/octocat/hello-world?scope=backend,frontend&status=stale",
+		},
+		{
+			name: "multiple selections across every filter",
+			filters: RepositoryFilters{
+				Owner: "octocat", Repository: "hello-world",
+				Scope:       []string{"backend", "frontend", "infra"},
+				Contributor: []string{"alice", "bob"},
+				Status:      []string{"fresh", "stale", "expired"},
+			},
+			want: "/octocat/hello-world?scope=backend,frontend,infra&contributor=alice,bob&status=fresh,stale,expired",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.filters.URL()
+			if !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.URL() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRepositoryFilters_PageURL_MultipleSelections(t *testing.T) {
+	filters := RepositoryFilters{
+		Owner: "octocat", Repository: "hello-world",
+		Scope:       []string{"backend", "frontend"},
+		Contributor: []string{"alice", "bob"},
+		Status:      []string{"fresh", "stale"},
+	}
+
+	tests := []struct {
+		name string
+		page int
+		want string
+	}{
+		{
+			name: "page 1 keeps multi-selection filters without a page param",
+			page: 1,
+			want: "/octocat/hello-world?scope=backend,frontend&contributor=alice,bob&status=fresh,stale",
+		},
+		{
+			name: "page 5 adds the page param alongside multi-selection filters",
+			page: 5,
+			want: "/octocat/hello-world?scope=backend,frontend&contributor=alice,bob&status=fresh,stale&page=5",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := filters.PageURL(tt.page)
+			if !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.PageURL(%d) = %q, want %q", tt.page, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRepositoryFilters_FragmentURL_MultipleSelections(t *testing.T) {
+	filters := RepositoryFilters{
+		Owner: "octocat", Repository: "hello-world",
+		Scope:       []string{"backend", "frontend"},
+		Contributor: []string{"alice", "bob"},
+		Status:      []string{"fresh", "stale"},
+	}
+
+	tests := []struct {
+		name     string
+		fragment string
+		sort     string
+		want     string
+	}{
+		{
+			name:     "scopes fragment with multi-selection filters",
+			fragment: "scopes",
+			sort:     "recent",
+			want:     "/octocat/hello-world?fragment=scopes&sort=recent&scope=backend,frontend&contributor=alice,bob&status=fresh,stale",
+		},
+		{
+			name:     "contributors fragment with multi-selection filters",
+			fragment: "contributors",
+			sort:     "top",
+			want:     "/octocat/hello-world?fragment=contributors&sort=top&scope=backend,frontend&contributor=alice,bob&status=fresh,stale",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := filters.FragmentURL(tt.fragment, tt.sort)
+			if !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.FragmentURL(%q, %q) = %q, want %q", tt.fragment, tt.sort, got, tt.want)
+			}
+		})
+	}
+}
