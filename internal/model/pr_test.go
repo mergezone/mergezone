@@ -27,6 +27,20 @@ func TestColonScopeExtractionSupportsCommaSeparatedScopes(t *testing.T) {
 	}
 }
 
+func TestSubscopesParsedIntoMultiScope(t *testing.T) {
+	pr := PullRequest{Title: "terminal/kitty: accept shared memory names without a leading slash"}
+	got := pr.Scopes()
+	want := []string{"terminal", "kitty"}
+	if len(got) != len(want) {
+		t.Fatalf("Scopes() = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("Scopes()[%d] = %q, want %q", i, got[i], want[i])
+		}
+	}
+}
+
 func TestStampAppliesScopeSupersession(t *testing.T) {
 	createdAt := func(day int) *time.Time {
 		value := time.Date(2025, time.January, day, 0, 0, 0, 0, time.UTC)
