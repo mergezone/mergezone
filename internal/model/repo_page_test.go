@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"net/url"
 	"slices"
 	"strings"
 	"testing"
@@ -49,33 +48,33 @@ func oldBuildStatusURL(owner, repo, scope, contributor, currentStatus, targetSta
 	return base
 }
 
-// parseURL splits a URL string into path and sorted query params for order-agnostic comparison.
-func parseURL(raw string) (path string, params url.Values) {
-	params = url.Values{}
-	if idx := strings.Index(raw, "?"); idx != -1 {
-		path = raw[:idx]
-		params, _ = url.ParseQuery(raw[idx+1:])
-	} else {
-		path = raw
+// parseURL splits a URL string into its path and its raw query components.
+// It deliberately does not percent-decode: a want value written with a
+// literal "," must only match a URL that actually contains a literal ",".
+func parseURL(raw string) (path string, components []string) {
+	idx := strings.Index(raw, "?")
+	if idx == -1 {
+		return raw, nil
 	}
-	return path, params
+	path = raw[:idx]
+	if q := raw[idx+1:]; q != "" {
+		components = strings.Split(q, "&")
+	}
+	return path, components
 }
 
+// urlsEqual reports whether two URLs have the same path and the same raw
+// query components. Component order is ignored because url.Values.Encode
+// sorts keys while want strings are written in readability order.
 func urlsEqual(a, b string) bool {
-	aPath, aParams := parseURL(a)
-	bPath, bParams := parseURL(b)
-	if aPath != bPath {
+	aPath, aComponents := parseURL(a)
+	bPath, bComponents := parseURL(b)
+	if aPath != bPath || len(aComponents) != len(bComponents) {
 		return false
 	}
-	if len(aParams) != len(bParams) {
-		return false
-	}
-	for k := range aParams {
-		if aParams.Get(k) != bParams.Get(k) {
-			return false
-		}
-	}
-	return true
+	slices.Sort(aComponents)
+	slices.Sort(bComponents)
+	return slices.Equal(aComponents, bComponents)
 }
 
 func TestRepositoryFilters_URL(t *testing.T) {
@@ -462,6 +461,9 @@ func TestRepositoryFilters_URL_MultipleSelections(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.filters.URL()
+			if strings.Contains(got, "%2C") {
+				t.Errorf("RepositoryFilters.URL() percent-escaped the separator: %q", got)
+			}
 			if !urlsEqual(got, tt.want) {
 				t.Errorf("RepositoryFilters.URL() = %q, want %q", got, tt.want)
 			}

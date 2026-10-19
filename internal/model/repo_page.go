@@ -18,7 +18,7 @@ type RepositoryFilters struct {
 func (f RepositoryFilters) URL() string {
 	u := url.URL{Path: f.basePath()}
 	if q := f.queryValues(); len(q) > 0 {
-		u.RawQuery = q.Encode()
+		u.RawQuery = encodeQueryValues(q)
 	}
 	return u.String()
 }
@@ -28,7 +28,7 @@ func (f RepositoryFilters) FragmentURL(fragment, sortOrder string) string {
 	q := f.queryValues()
 	q.Set("fragment", fragment)
 	q.Set("sort", sortOrder)
-	u.RawQuery = q.Encode()
+	u.RawQuery = encodeQueryValues(q)
 	return u.String()
 }
 
@@ -39,13 +39,23 @@ func (f RepositoryFilters) PageURL(page int) string {
 	u := url.URL{Path: f.basePath()}
 	q := f.queryValues()
 	q.Set("page", strconv.Itoa(page))
-	u.RawQuery = q.Encode()
+	u.RawQuery = encodeQueryValues(q)
 	return u.String()
 }
 
 func (f RepositoryFilters) basePath() string {
 	p := "/" + f.Owner + "/" + f.Repository
 	return p
+}
+
+// encodeQueryValues encodes q as a URL query string, keeping the commas that
+// join multi-selection values literal instead of percent-escaping them as %2C.
+// Commas are the only separator this URL scheme uses, and no separator
+// character survives url.Values.Encode unescaped — only the unreserved
+// characters A–Z a–z 0–9 and - _ . ~ pass through literally — so the encoding
+// is corrected for commas rather than substituting a different separator.
+func encodeQueryValues(q url.Values) string {
+	return strings.ReplaceAll(q.Encode(), "%2C", ",")
 }
 
 func (f RepositoryFilters) queryValues() url.Values {
