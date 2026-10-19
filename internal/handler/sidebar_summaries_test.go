@@ -15,12 +15,13 @@ import (
 
 // sidebarStamped builds a stamped pull request with one scope and one
 // contributor, used to exercise the unfiltered sidebar summaries.
-func sidebarStamped(number int, author string, updated time.Time, scope string) model.StampedPullRequest {
+func sidebarStamped(number int, author string, created time.Time, scope string) model.StampedPullRequest {
 	return model.StampedPullRequest{
 		PullRequest: model.PullRequest{
 			Number:    number,
 			Author:    model.User{Name: author},
-			UpdatedAt: &updated,
+			CreatedAt: &created,
+			UpdatedAt: &created,
 		},
 		Scopes:       []string{scope},
 		Contributors: []string{author},

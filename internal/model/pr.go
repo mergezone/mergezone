@@ -429,8 +429,10 @@ func ScopeAges(prs []StampedPullRequest) []ScopeInfo {
 				scopeMap[scope] = &scopeData{}
 			}
 			scopeMap[scope].prs = append(scopeMap[scope].prs, pr)
-			if pr.UpdatedAt != nil && (scopeMap[scope].newestTime.IsZero() || pr.UpdatedAt.After(scopeMap[scope].newestTime)) {
-				scopeMap[scope].newestTime = *pr.UpdatedAt
+			// Recency is the newest creation time so the scope's displayed age
+			// (time since the newest pull request was opened) matches its rank.
+			if pr.CreatedAt != nil && (scopeMap[scope].newestTime.IsZero() || pr.CreatedAt.After(scopeMap[scope].newestTime)) {
+				scopeMap[scope].newestTime = *pr.CreatedAt
 			}
 		}
 	}
@@ -447,7 +449,7 @@ func ScopeAges(prs []StampedPullRequest) []ScopeInfo {
 		counts := PullRequestExpiryCounts(data.prs)
 		ageStr := ""
 		for _, pr := range data.prs {
-			if pr.UpdatedAt != nil && pr.UpdatedAt.Equal(data.newestTime) {
+			if pr.CreatedAt != nil && pr.CreatedAt.Equal(data.newestTime) {
 				ageStr = TimeAgo(pr.TimeOpen, pr.DaysOpen)
 				break
 			}
@@ -461,7 +463,11 @@ func ScopeAges(prs []StampedPullRequest) []ScopeInfo {
 	}
 
 	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].newestTime.After(entries[j].newestTime)
+		if !entries[i].newestTime.Equal(entries[j].newestTime) {
+			return entries[i].newestTime.After(entries[j].newestTime)
+		}
+		// Break ties by name so equal recency does not shuffle between requests.
+		return entries[i].name < entries[j].name
 	})
 
 	result := make([]ScopeInfo, len(entries))
@@ -510,8 +516,10 @@ func ContributorActivity(prs []StampedPullRequest) []ContributorInfo {
 				m[name] = c
 			}
 			c.prs = append(c.prs, pr)
-			if pr.UpdatedAt != nil && pr.UpdatedAt.After(c.newestTime) {
-				c.newestTime = *pr.UpdatedAt
+			// Match ScopeAges: recency is the newest creation time so the
+			// contributor's displayed age matches their rank.
+			if pr.CreatedAt != nil && pr.CreatedAt.After(c.newestTime) {
+				c.newestTime = *pr.CreatedAt
 				c.NewestPRAge = TimeAgo(pr.TimeOpen, pr.DaysOpen)
 			}
 		}
@@ -524,7 +532,11 @@ func ContributorActivity(prs []StampedPullRequest) []ContributorInfo {
 	}
 
 	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].newestTime.After(entries[j].newestTime)
+		if !entries[i].newestTime.Equal(entries[j].newestTime) {
+			return entries[i].newestTime.After(entries[j].newestTime)
+		}
+		// Break ties by name so equal recency does not shuffle between requests.
+		return entries[i].Name < entries[j].Name
 	})
 
 	result := make([]ContributorInfo, len(entries))
