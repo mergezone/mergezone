@@ -66,12 +66,14 @@ func (s *Server) WithParsedRepositoryRequest(next RepositoryHandler) http.Handle
 }
 
 func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter, r *http.Request) {
-	pullRequests, _, _, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
+	allPullRequests, _, _, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
 	if err != nil {
 		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	pullRequests := provider.FilterPullRequests(allPullRequests, request.Query)
 
 	encodedPullRequests, err := json.Marshal(pullRequests)
 	if err != nil {
@@ -84,7 +86,7 @@ func HandlePullRequestListJSON(request *RepositoryRequest, w http.ResponseWriter
 	w.Write(encodedPullRequests)
 }
 
-func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upToPage int) (allPullRequests, currentPagePullRequests []model.StampedPullRequest, hasNext bool, timings provider.PullRequestTimings, err error) {
+func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upToPage int) (allPullRequests, pagePullRequests []model.StampedPullRequest, hasNext bool, timings provider.PullRequestTimings, err error) {
 	for page := 1; page <= upToPage; page++ {
 		listOptions := request.ListOptions.WithPage(page)
 		pullRequests, pagination, pageTimings, fetchErr := request.Provider.GetPullRequests(ctx, request.Query, listOptions)
@@ -94,11 +96,26 @@ func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upTo
 		timings.Gather += pageTimings.Gather
 		allPullRequests = append(allPullRequests, pullRequests...)
 		if page == upToPage {
-			currentPagePullRequests = pullRequests
+			pagePullRequests = pullRequests
 			hasNext = pagination.HasNext
 		}
 	}
-	return allPullRequests, currentPagePullRequests, hasNext, timings, nil
+	return allPullRequests, pagePullRequests, hasNext, timings, nil
+}
+
+// sidebarSummaries derives the sidebar's scope and contributor lists from the
+// unfiltered pull requests. Each list ignores its own dimension's selection so
+// that the filtered-out values stay visible for multi-selection, while the
+// other dimensions continue to narrow the list.
+func sidebarSummaries(allPullRequests []model.StampedPullRequest, query provider.RepositoryQuery) ([]model.ScopeInfo, []model.ContributorInfo) {
+	scopeQuery := query
+	scopeQuery.Scope = nil
+
+	contributorQuery := query
+	contributorQuery.Contributor = nil
+
+	return model.ScopeAges(provider.FilterPullRequests(allPullRequests, scopeQuery)),
+		model.ContributorActivity(provider.FilterPullRequests(allPullRequests, contributorQuery))
 }
 
 // RepositoryFragment identifies a rendered repository fragment requested through
@@ -139,7 +156,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	// Load-more requests return the requested page of pull requests and updated aggregate summaries.
 	fragment := RepositoryFragment(r.URL.Query().Get("fragment"))
 	if fragment == "" && request.ListOptions.Page > 1 && isHTMXRequest(r) {
-		allPullRequests, currentPagePullRequests, hasNext, timings, err := fetchPullRequestPages(r.Context(), request, request.ListOptions.Page)
+		allPullRequests, pagePullRequests, hasNext, timings, err := fetchPullRequestPages(r.Context(), request, request.ListOptions.Page)
 		if err != nil {
 			request.Logger.Warn(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -148,23 +165,19 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		recordProviderTimings(r, timings)
 
 		nextPullRequestPage := request.ListOptions.Page + 1
-
-		scopes := make([]model.ScopeInfo, 0)
-		for _, scope := range model.ScopeAges(allPullRequests) {
-			scopes = append(scopes, scope)
-		}
+		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, request.Query)
 
 		markRequestWorkComplete(r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		err = pages.AppendPullRequestsResponse(
-			currentPagePullRequests,
+			provider.FilterPullRequests(pagePullRequests, request.Query),
 			filters,
 			nextPullRequestPage,
 			hasNext,
-			model.PullRequestExpiryCounts(allPullRequests),
-			scopes,
+			model.PullRequestExpiryCounts(provider.FilterPullRequests(allPullRequests, request.Query)),
+			scopeSummaries,
 			"recent",
-			model.ContributorActivity(allPullRequests),
+			contributorSummaries,
 			"recent",
 		).Render(r.Context(), w)
 		if err != nil {
@@ -173,7 +186,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		return
 	}
 
-	pullRequests, pagination, timings, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
+	allPullRequests, pagination, timings, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
 	if err != nil {
 		request.Logger.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -181,11 +194,12 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	}
 
 	recordProviderTimings(r, timings)
+	pullRequests := provider.FilterPullRequests(allPullRequests, request.Query)
 	_, logicSpan := telemetry.Tracer("merge/handler").Start(r.Context(), "repository.categorize",
 		trace.WithAttributes(attribute.Int("repository.pull_request_count", len(pullRequests))),
 	)
 
-	scopeSummaries := model.ScopeAges(pullRequests)
+	scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, request.Query)
 
 	viewData := model.RepositoryViewData{
 		BaseURL:           request.BaseURL,
@@ -198,7 +212,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		OverallCounts:     model.PullRequestExpiryCounts(pullRequests),
 		ScopeCounts:       scopeSummaries,
 		ScopeSort:         "recent",
-		ContributorCounts: model.ContributorActivity(pullRequests),
+		ContributorCounts: contributorSummaries,
 		ContributorSort:   "recent",
 		CurrentPage:       1,
 		HasMore:           pagination.HasNext,

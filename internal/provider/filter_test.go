@@ -1,11 +1,10 @@
-package github
+package provider
 
 import (
 	"slices"
 	"testing"
 
 	"merge/internal/model"
-	"merge/internal/provider"
 )
 
 // stamped builds a minimal StampedPullRequest for filter tests.
@@ -37,57 +36,57 @@ func TestFilterPullRequests_MultipleSelections(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		query provider.RepositoryQuery
+		query RepositoryQuery
 		want  []int
 	}{
 		{
 			name:  "nil query keeps every pull request",
-			query: provider.RepositoryQuery{},
+			query: RepositoryQuery{},
 			want:  []int{1, 2, 3, 4, 5},
 		},
 		{
 			name:  "multiple scopes keep any pull request matching a selected scope",
-			query: provider.RepositoryQuery{Scope: []string{"backend", "frontend"}},
+			query: RepositoryQuery{Scope: []string{"backend", "frontend"}},
 			want:  []int{1, 2, 3, 5},
 		},
 		{
 			name:  "single scope excludes the other scopes",
-			query: provider.RepositoryQuery{Scope: []string{"docs"}},
+			query: RepositoryQuery{Scope: []string{"docs"}},
 			want:  []int{4},
 		},
 		{
 			name:  "scope with no matches yields an empty result",
-			query: provider.RepositoryQuery{Scope: []string{"infra"}},
+			query: RepositoryQuery{Scope: []string{"infra"}},
 			want:  []int{},
 		},
 		{
 			name:  "multiple contributors keep any pull request by a selected author",
-			query: provider.RepositoryQuery{Contributor: []string{"alice", "bob"}},
+			query: RepositoryQuery{Contributor: []string{"alice", "bob"}},
 			want:  []int{1, 2, 3, 5},
 		},
 		{
 			name:  "single contributor excludes the other authors",
-			query: provider.RepositoryQuery{Contributor: []string{"carol"}},
+			query: RepositoryQuery{Contributor: []string{"carol"}},
 			want:  []int{4},
 		},
 		{
 			name:  "multiple statuses keep any pull request with a selected status",
-			query: provider.RepositoryQuery{Status: []string{"fresh", "expired"}},
+			query: RepositoryQuery{Status: []string{"fresh", "expired"}},
 			want:  []int{1, 4, 3},
 		},
 		{
 			name:  "merged status matches merged pull request state",
-			query: provider.RepositoryQuery{Status: []string{"merged"}},
+			query: RepositoryQuery{Status: []string{"merged"}},
 			want:  []int{4, 5},
 		},
 		{
 			name:  "merged and stale statuses keep a merged stale pull request once",
-			query: provider.RepositoryQuery{Status: []string{"merged", "stale"}},
+			query: RepositoryQuery{Status: []string{"merged", "stale"}},
 			want:  []int{4, 5, 2},
 		},
 		{
 			name: "dimensions combine with AND",
-			query: provider.RepositoryQuery{
+			query: RepositoryQuery{
 				Scope:       []string{"backend", "frontend"},
 				Contributor: []string{"alice"},
 				Status:      []string{"expired"},
@@ -96,7 +95,7 @@ func TestFilterPullRequests_MultipleSelections(t *testing.T) {
 		},
 		{
 			name: "multi-selection in every dimension keeps a pull request once",
-			query: provider.RepositoryQuery{
+			query: RepositoryQuery{
 				Scope:       []string{"backend"},
 				Contributor: []string{"bob"},
 				Status:      []string{"merged", "stale"},
@@ -107,9 +106,9 @@ func TestFilterPullRequests_MultipleSelections(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := numbers(filterPullRequests(all, tt.query))
+			got := numbers(FilterPullRequests(all, tt.query))
 			if !slices.Equal(got, tt.want) {
-				t.Errorf("filterPullRequests() = %v, want %v", got, tt.want)
+				t.Errorf("FilterPullRequests() = %v, want %v", got, tt.want)
 			}
 		})
 	}

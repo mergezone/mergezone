@@ -113,16 +113,15 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 		return nil, hasNext, pullRequestTimings(operationStarted, gatherWaits), err
 	}
 
-	_, logicSpan := telemetry.Tracer("merge/github").Start(ctx, "github.filter_and_categorize",
+	_, logicSpan := telemetry.Tracer("merge/github").Start(ctx, "github.stamp_pull_requests",
 		trace.WithAttributes(attribute.Int("github.pull_request_count", len(pullRequests))),
 	)
 	// TODO(hayden): Implement `Mappable` interface
 	stampedPullRequests := model.StampNow(pullRequests)
 
-	filteredPullRequests := filterPullRequests(stampedPullRequests, query)
-	logicSpan.SetAttributes(attribute.Int("github.filtered_pull_request_count", len(filteredPullRequests)))
+	logicSpan.SetAttributes(attribute.Int("github.stamped_pull_request_count", len(stampedPullRequests)))
 	logicSpan.End()
-	return filteredPullRequests, hasNext, pullRequestTimings(operationStarted, gatherWaits), nil
+	return stampedPullRequests, hasNext, pullRequestTimings(operationStarted, gatherWaits), nil
 }
 
 func (g GitHub) GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error) {

@@ -1,16 +1,15 @@
-package github
+package provider
 
 import (
 	"slices"
 
 	"merge/internal/model"
-	"merge/internal/provider"
 )
 
-// filterPullRequests applies the query's scope, contributor, and status
+// FilterPullRequests applies the query's scope, contributor, and status
 // selections to stampedPullRequests. Values within one dimension are OR-ed
 // together; the dimensions combine with AND.
-func filterPullRequests(stampedPullRequests []model.StampedPullRequest, query provider.RepositoryQuery) []model.StampedPullRequest {
+func FilterPullRequests(stampedPullRequests []model.StampedPullRequest, query RepositoryQuery) []model.StampedPullRequest {
 	filteredPullRequests := stampedPullRequests
 	if query.Scope != nil {
 		inScope := make([]model.StampedPullRequest, 0, len(stampedPullRequests))

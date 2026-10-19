@@ -62,7 +62,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 		</div>
 		<div class="filter-section-content" x-show="!$data.collapsed">
 			if len(scopeSummaries) > 0 {
-				for _, scope := range scopeSummaries {
+				for _, scope := range selectedScopesFirst(scopeSummaries, filters.Scope) {
 					@ScopeCard(scope, filters)
 				}
 			}

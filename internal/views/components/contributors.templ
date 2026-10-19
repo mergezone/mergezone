@@ -60,7 +60,7 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 		</div>
 		<div class="filter-section-content" x-show="!$data.collapsed">
 			if len(contributorSummaries) > 0 {
-				for _, contributor := range contributorSummaries {
+				for _, contributor := range selectedContributorsFirst(contributorSummaries, filters.Contributor) {
 					@ContributorCard(contributor, filters)
 				}
 			}

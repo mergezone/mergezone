@@ -32,16 +32,12 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 			<span class="sidebar-panel-title">{ scope.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing">
-			if isCurrent {
-				<span class="sidebar-panel-clear-icon" title="Clear scope filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
-			} else {
-				<span class="sidebar-panel-meta">
-					<span class="age">
-						<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)
-					</span>
-					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", scope.TotalPullRequests()) }</span>
-				</span>
-			}
+            <span class="sidebar-panel-meta">
+                <span class="age">
+                    <i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)
+                </span>
+                <span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", scope.TotalPullRequests()) }</span>
+            </span>
 		</span>
 	</a>
 }
@@ -73,16 +69,12 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 			<span class="sidebar-panel-title">{ contributor.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing">
-			if isCurrent {
-				<span class="sidebar-panel-clear-icon" title="Clear contributor filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
-			} else {
-				<span class="sidebar-panel-meta">
-					<span class="age">
-						<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)
-					</span>
-					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", contributor.TotalPullRequests()) }</span>
-				</span>
-			}
+            <span class="sidebar-panel-meta">
+                <span class="age">
+                    <i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)
+                </span>
+                <span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", contributor.TotalPullRequests()) }</span>
+            </span>
 		</span>
 	</a>
 }

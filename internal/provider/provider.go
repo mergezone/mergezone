@@ -74,6 +74,11 @@ type PullRequestTimings struct {
 }
 
 type Provider interface {
+	// GetPullRequests returns a page of the repository's pull requests without
+	// applying the query's scope, contributor, or status selections. The query
+	// still identifies the repository and is the natural place to carry the
+	// selections, so callers pick the pull requests they want with
+	// FilterPullRequests once the unfiltered set is available.
 	GetPullRequests(ctx context.Context, query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, PullRequestTimings, error)
 	GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error)
 	GetPullRequestComments(ctx context.Context, owner, repository string, pullRequestNumber int) ([]model.PullRequestComment, error)
