@@ -74,4 +74,5 @@ type PullRequestTimings struct {
 type Provider interface {
 	GetPullRequests(ctx context.Context, query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, PullRequestTimings, error)
 	GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error)
+	GetPullRequestComments(ctx context.Context, owner, repository string, pullRequestNumber int) ([]model.PullRequestComment, error)
 }

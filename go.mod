@@ -7,6 +7,7 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20260417124207-7d523f7318df
 	github.com/gorilla/mux v1.8.1
 	github.com/microcosm-cc/bluemonday v1.0.27
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.38.0
