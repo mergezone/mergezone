@@ -506,40 +506,91 @@ func TestRepositoryFilters_PageURL_MultipleSelections(t *testing.T) {
 	}
 }
 
-func TestRepositoryFilters_FragmentURL_MultipleSelections(t *testing.T) {
+func TestRepositoryFilters_SortsRoundTripThroughTheURL(t *testing.T) {
 	filters := RepositoryFilters{
 		Owner: "octocat", Repository: "hello-world",
-		Scope:       []string{"backend", "frontend"},
-		Contributor: []string{"alice", "bob"},
-		Status:      []string{"fresh", "stale"},
+		Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
 	}
 
 	tests := []struct {
-		name     string
-		fragment string
-		sort     string
-		want     string
+		name   string
+		filter RepositoryFilters
+		want   string
 	}{
 		{
-			name:     "scopes fragment with multi-selection filters",
-			fragment: "scopes",
-			sort:     "recent",
-			want:     "/octocat/hello-world?fragment=scopes&sort=recent&scope=backend,frontend&contributor=alice,bob&status=fresh,stale",
+			name:   "recency is the default and stays out of the URL",
+			filter: filters.WithScopeSort("top").WithScopeSort("recent").WithContributorSort("nonsense"),
+			want:   "/octocat/hello-world?scope=backend&contributor=alice&status=stale",
 		},
 		{
-			name:     "contributors fragment with multi-selection filters",
-			fragment: "contributors",
-			sort:     "top",
-			want:     "/octocat/hello-world?fragment=contributors&sort=top&scope=backend,frontend&contributor=alice,bob&status=fresh,stale",
+			name:   "top scope sort is kept alongside the filters",
+			filter: filters.WithScopeSort("top"),
+			want:   "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top",
+		},
+		{
+			name:   "top contributor sort is kept alongside the filters",
+			filter: filters.WithContributorSort("top"),
+			want:   "/octocat/hello-world?scope=backend&contributor=alice&status=stale&contributor_sort=top",
+		},
+		{
+			name:   "both sorts are kept alongside the filters",
+			filter: filters.WithScopeSort("top").WithContributorSort("top"),
+			want:   "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := filters.FragmentURL(tt.fragment, tt.sort)
-			if !urlsEqual(got, tt.want) {
-				t.Errorf("RepositoryFilters.FragmentURL(%q, %q) = %q, want %q", tt.fragment, tt.sort, got, tt.want)
+			if got := tt.filter.URL(); !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.URL() = %q, want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestRepositoryFilters_FragmentURLCarriesFiltersAndSorts(t *testing.T) {
+	filters := RepositoryFilters{
+		Owner: "octocat", Repository: "hello-world",
+		Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
+		ScopeSort: SortTop, ContributorSort: SortTop,
+	}
+
+	tests := []struct {
+		name     string
+		fragment string
+		want     string
+	}{
+		{
+			name:     "scopes fragment keeps both sorts and adds the fragment name",
+			fragment: "scopes",
+			want:     "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top&fragment=scopes",
+		},
+		{
+			name:     "contributors fragment keeps both sorts",
+			fragment: "contributors",
+			want:     "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top&fragment=contributors",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := filters.FragmentURL(tt.fragment); !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.FragmentURL(%q) = %q, want %q", tt.fragment, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNormalizeSortOrder(t *testing.T) {
+	tests := map[string]string{
+		"":        SortRecent,
+		"recent":  SortRecent,
+		"top":     SortTop,
+		"unknown": SortRecent,
+	}
+	for input, want := range tests {
+		if got := NormalizeSortOrder(input); got != want {
+			t.Errorf("NormalizeSortOrder(%q) = %q, want %q", input, got, want)
+		}
 	}
 }

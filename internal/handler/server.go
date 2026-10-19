@@ -106,9 +106,24 @@ func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upTo
 // sidebarSummaries derives the sidebar's scope and contributor lists from the
 // unfiltered pull requests. Every value stays visible with its overall counts
 // regardless of the active filters, so selecting one filter never trims another
-// facet; the active filters only narrow the pull request list itself.
-func sidebarSummaries(allPullRequests []model.StampedPullRequest) ([]model.ScopeInfo, []model.ContributorInfo) {
-	return model.ScopeAges(allPullRequests), model.ContributorActivity(allPullRequests)
+// facet; the active filters only narrow the pull request list itself. The lists
+// arrive in recency order and are re-sorted when a top-count order is requested.
+func sidebarSummaries(allPullRequests []model.StampedPullRequest, scopeSortOrder, contributorSortOrder string) ([]model.ScopeInfo, []model.ContributorInfo) {
+	scopes := model.ScopeAges(allPullRequests)
+	contributors := model.ContributorActivity(allPullRequests)
+
+	if scopeSortOrder == model.SortTop {
+		sort.SliceStable(scopes, func(i, j int) bool {
+			return scopes[i].TotalPullRequests() > scopes[j].TotalPullRequests()
+		})
+	}
+	if contributorSortOrder == model.SortTop {
+		sort.SliceStable(contributors, func(i, j int) bool {
+			return contributors[i].TotalPullRequests() > contributors[j].TotalPullRequests()
+		})
+	}
+
+	return scopes, contributors
 }
 
 // RepositoryFragment identifies a rendered repository fragment requested through
@@ -129,7 +144,7 @@ func isHTMXRequest(r *http.Request) bool {
 // ShouldPushURL reports whether a repository response is a page-level navigation
 // whose filters should be reflected in the browser URL. Fragment responses and
 // paginated load-more responses are rendered in place and must not push a URL,
-// because fragment, sort, and page are request-local rather than page state.
+// because fragment and page are request-local rather than page state.
 func ShouldPushURL(fragment RepositoryFragment, page int) bool {
 	return fragment == "" && page <= 1
 }
@@ -139,11 +154,13 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 	// precedence; otherwise HX-Request=true returns the repository main view, while
 	// direct navigation returns the complete HTML document.
 	filters := model.RepositoryFilters{
-		Owner:       request.Query.Owner,
-		Repository:  request.Query.Repository,
-		Scope:       request.Query.Scope,
-		Contributor: request.Query.Contributor,
-		Status:      request.Query.Status,
+		Owner:           request.Query.Owner,
+		Repository:      request.Query.Repository,
+		Scope:           request.Query.Scope,
+		Contributor:     request.Query.Contributor,
+		Status:          request.Query.Status,
+		ScopeSort:       model.NormalizeSortOrder(r.URL.Query().Get("scope_sort")),
+		ContributorSort: model.NormalizeSortOrder(r.URL.Query().Get("contributor_sort")),
 	}
 
 	// Load-more requests return the requested page of pull requests and updated aggregate summaries.
@@ -158,7 +175,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		recordProviderTimings(r, timings)
 
 		nextPullRequestPage := request.ListOptions.Page + 1
-		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests)
+		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, filters.ScopeSort, filters.ContributorSort)
 
 		markRequestWorkComplete(r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -169,9 +186,9 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 			hasNext,
 			model.PullRequestExpiryCounts(allPullRequests),
 			scopeSummaries,
-			"recent",
+			filters.ScopeSort,
 			contributorSummaries,
-			"recent",
+			filters.ContributorSort,
 		).Render(r.Context(), w)
 		if err != nil {
 			request.Logger.Error(err.Error())
@@ -192,7 +209,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		trace.WithAttributes(attribute.Int("repository.pull_request_count", len(pullRequests))),
 	)
 
-	scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests)
+	scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, filters.ScopeSort, filters.ContributorSort)
 
 	viewData := model.RepositoryViewData{
 		BaseURL:           request.BaseURL,
@@ -204,9 +221,9 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		PullRequests:      pullRequests,
 		OverallCounts:     model.PullRequestExpiryCounts(allPullRequests),
 		ScopeCounts:       scopeSummaries,
-		ScopeSort:         "recent",
+		ScopeSort:         filters.ScopeSort,
 		ContributorCounts: contributorSummaries,
-		ContributorSort:   "recent",
+		ContributorSort:   filters.ContributorSort,
 		CurrentPage:       1,
 		HasMore:           pagination.HasNext,
 	}
@@ -258,25 +275,29 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		http.Error(w, "Pull request not found", http.StatusNotFound)
 		return
 	case ContributorsFragment:
-		sortOrder := r.URL.Query().Get("sort")
-		contributorSummaries := viewData.ContributorCounts
-		if sortOrder == "top" {
-			sort.SliceStable(contributorSummaries, func(i, j int) bool {
-				return contributorSummaries[i].TotalPullRequests() > contributorSummaries[j].TotalPullRequests()
-			})
-		}
 		markRequestWorkComplete(r)
-		err = components.ContributorSummaries(contributorSummaries, sortOrder, filters).Render(r.Context(), w)
+		err = components.SortContributorsResponse(
+			viewData.ScopeCounts,
+			viewData.ScopeSort,
+			viewData.ContributorCounts,
+			viewData.ContributorSort,
+			viewData.OverallCounts,
+			viewData.HasMore,
+			filters,
+			viewData.CurrentPage+1,
+		).Render(r.Context(), w)
 	case ScopesFragment:
-		sortOrder := r.URL.Query().Get("sort")
-		scopeSummaries := viewData.ScopeCounts
-		if sortOrder == "top" {
-			sort.SliceStable(scopeSummaries, func(i, j int) bool {
-				return scopeSummaries[i].TotalPullRequests() > scopeSummaries[j].TotalPullRequests()
-			})
-		}
 		markRequestWorkComplete(r)
-		err = components.ScopeSummaries(scopeSummaries, sortOrder, filters).Render(r.Context(), w)
+		err = components.SortScopesResponse(
+			viewData.ScopeCounts,
+			viewData.ScopeSort,
+			viewData.ContributorCounts,
+			viewData.ContributorSort,
+			viewData.OverallCounts,
+			viewData.HasMore,
+			filters,
+			viewData.CurrentPage+1,
+		).Render(r.Context(), w)
 	default:
 		if fragment != "" {
 			http.Error(w, "Unknown fragment", http.StatusBadRequest)

@@ -6,13 +6,33 @@ import (
 	"strings"
 )
 
-// RepositoryFilters contains the URL-addressable filters for a repository view.
+// Sidebar sort orders for the scope and contributor lists. The sort is part of
+// the URL-addressable view state so it survives the main-view navigations that
+// selecting a filter triggers.
+const (
+	SortRecent = "recent"
+	SortTop    = "top"
+)
+
+// NormalizeSortOrder maps an empty or unknown sort order to the default
+// recency ordering.
+func NormalizeSortOrder(sortOrder string) string {
+	if sortOrder == SortTop {
+		return SortTop
+	}
+	return SortRecent
+}
+
+// RepositoryFilters contains the URL-addressable filters and sidebar sort
+// orders for a repository view.
 type RepositoryFilters struct {
-	Owner       string
-	Repository  string
-	Scope       []string
-	Contributor []string
-	Status      []string
+	Owner           string
+	Repository      string
+	Scope           []string
+	Contributor     []string
+	Status          []string
+	ScopeSort       string
+	ContributorSort string
 }
 
 func (f RepositoryFilters) URL() string {
@@ -23,11 +43,14 @@ func (f RepositoryFilters) URL() string {
 	return u.String()
 }
 
-func (f RepositoryFilters) FragmentURL(fragment, sortOrder string) string {
+// FragmentURL builds the URL for an in-place fragment response. It keeps the
+// current filters and sort orders (so the fragment handler can refresh the
+// other sidebar section and the surrounding controls) and adds the fragment
+// name that selects the response.
+func (f RepositoryFilters) FragmentURL(fragment string) string {
 	u := url.URL{Path: f.basePath()}
 	q := f.queryValues()
 	q.Set("fragment", fragment)
-	q.Set("sort", sortOrder)
 	u.RawQuery = encodeQueryValues(q)
 	return u.String()
 }
@@ -69,6 +92,13 @@ func (f RepositoryFilters) queryValues() url.Values {
 	if len(f.Status) > 0 {
 		q.Set("status", strings.Join(f.Status, ","))
 	}
+	// Recency is the default sort, so it is omitted to keep the common URL clean.
+	if f.ScopeSort == SortTop {
+		q.Set("scope_sort", f.ScopeSort)
+	}
+	if f.ContributorSort == SortTop {
+		q.Set("contributor_sort", f.ContributorSort)
+	}
 	return q
 }
 
@@ -105,6 +135,16 @@ func (f RepositoryFilters) WithContributor(contributor string) RepositoryFilters
 
 func (f RepositoryFilters) WithStatus(status string) RepositoryFilters {
 	f.Status = toggleString(f.Status, status)
+	return f
+}
+
+func (f RepositoryFilters) WithScopeSort(sortOrder string) RepositoryFilters {
+	f.ScopeSort = NormalizeSortOrder(sortOrder)
+	return f
+}
+
+func (f RepositoryFilters) WithContributorSort(sortOrder string) RepositoryFilters {
+	f.ContributorSort = NormalizeSortOrder(sortOrder)
 	return f
 }
 

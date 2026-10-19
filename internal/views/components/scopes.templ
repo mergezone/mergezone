@@ -38,8 +38,9 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						if activeSortOrder == "recent" {
 							data-active-sort="true"
 						}
-						hx-get={ filters.FragmentURL("scopes", "recent") }
+						hx-get={ filters.WithScopeSort("recent").FragmentURL("scopes") }
 						hx-target="#scopes-section"
+						hx-push-url={ filters.WithScopeSort("recent").URL() }
 						hx-indicator="#scopes-sort-indicator"
 					>
 						<i class="fa-solid fa-clock" aria-hidden="true"></i>
@@ -51,8 +52,9 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						if activeSortOrder == "top" {
 							data-active-sort="true"
 						}
-						hx-get={ filters.FragmentURL("scopes", "top") }
+						hx-get={ filters.WithScopeSort("top").FragmentURL("scopes") }
 						hx-target="#scopes-section"
+						hx-push-url={ filters.WithScopeSort("top").URL() }
 						hx-indicator="#scopes-sort-indicator"
 					>
 						<i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>

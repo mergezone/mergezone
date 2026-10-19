@@ -1,0 +1,59 @@
+package components
+
+import "merge/internal/model"
+
+// SortScopesResponse is the sidebar-only response for a scope sort change. It
+// swaps the scopes section in place, which preserves its collapse state, and
+// then out-of-band refreshes the contributors section, the overview tiles, and
+// the load-more control. Those controls build their links from the filters, so
+// refreshing them keeps the new sort from being dropped by a later click. The
+// pull request list itself is left untouched.
+templ SortScopesResponse(
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
+	overallCounts model.ExpiryCounts,
+	hasMorePullRequests bool,
+	filters model.RepositoryFilters,
+	nextPullRequestPage int,
+) {
+	@ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
+	<div hx-swap-oob="innerHTML:#contributors-section">
+		@ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
+	</div>
+	@sortResponseControls(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
+}
+
+// SortContributorsResponse is the contributors-list counterpart of
+// SortScopesResponse.
+templ SortContributorsResponse(
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
+	overallCounts model.ExpiryCounts,
+	hasMorePullRequests bool,
+	filters model.RepositoryFilters,
+	nextPullRequestPage int,
+) {
+	@ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
+	<div hx-swap-oob="innerHTML:#scopes-section">
+		@ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
+	</div>
+	@sortResponseControls(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
+}
+
+// sortResponseControls refreshes the controls outside the sidebar whose links
+// must carry the active sort.
+templ sortResponseControls(
+	overallCounts model.ExpiryCounts,
+	hasMorePullRequests bool,
+	filters model.RepositoryFilters,
+	nextPullRequestPage int,
+) {
+	<div id="overview-stats" hx-swap-oob="true">
+		@PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
+	</div>
+	@PullRequestLoadMoreControl(filters, nextPullRequestPage, hasMorePullRequests, true)
+}
