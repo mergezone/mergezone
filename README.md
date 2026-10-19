@@ -16,8 +16,9 @@ architecture-beta
 
     group backend(server)[Backend]
 
+    service cache(server)[go-cache] in backend
     service server(server)[Go Server] in backend
-    service templ(server)[Templ Components] in backend
+    service templ(server)[templ Components] in backend
 
     group api(cloud)[APIs]
 
@@ -26,7 +27,8 @@ architecture-beta
     pages:L -- R:templ
     serverInteraction:L -- R:server
     templ:B -- T:server
-    server:L -- R:github
+    server:L -- R:cache
+    cache:L -- R:github
 ```
 
 ## OpenTelemetry traces with Jaeger
