@@ -104,18 +104,11 @@ func fetchPullRequestPages(ctx context.Context, request *RepositoryRequest, upTo
 }
 
 // sidebarSummaries derives the sidebar's scope and contributor lists from the
-// unfiltered pull requests. Each list ignores its own dimension's selection so
-// that the filtered-out values stay visible for multi-selection, while the
-// other dimensions continue to narrow the list.
-func sidebarSummaries(allPullRequests []model.StampedPullRequest, query provider.RepositoryQuery) ([]model.ScopeInfo, []model.ContributorInfo) {
-	scopeQuery := query
-	scopeQuery.Scope = nil
-
-	contributorQuery := query
-	contributorQuery.Contributor = nil
-
-	return model.ScopeAges(provider.FilterPullRequests(allPullRequests, scopeQuery)),
-		model.ContributorActivity(provider.FilterPullRequests(allPullRequests, contributorQuery))
+// unfiltered pull requests. Every value stays visible with its overall counts
+// regardless of the active filters, so selecting one filter never trims another
+// facet; the active filters only narrow the pull request list itself.
+func sidebarSummaries(allPullRequests []model.StampedPullRequest) ([]model.ScopeInfo, []model.ContributorInfo) {
+	return model.ScopeAges(allPullRequests), model.ContributorActivity(allPullRequests)
 }
 
 // RepositoryFragment identifies a rendered repository fragment requested through
@@ -165,7 +158,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		recordProviderTimings(r, timings)
 
 		nextPullRequestPage := request.ListOptions.Page + 1
-		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, request.Query)
+		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests)
 
 		markRequestWorkComplete(r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -174,7 +167,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 			filters,
 			nextPullRequestPage,
 			hasNext,
-			model.PullRequestExpiryCounts(provider.FilterPullRequests(allPullRequests, request.Query)),
+			model.PullRequestExpiryCounts(allPullRequests),
 			scopeSummaries,
 			"recent",
 			contributorSummaries,
@@ -199,7 +192,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		trace.WithAttributes(attribute.Int("repository.pull_request_count", len(pullRequests))),
 	)
 
-	scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, request.Query)
+	scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests)
 
 	viewData := model.RepositoryViewData{
 		BaseURL:           request.BaseURL,
@@ -209,7 +202,7 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		Contributor:       filters.Contributor,
 		Status:            filters.Status,
 		PullRequests:      pullRequests,
-		OverallCounts:     model.PullRequestExpiryCounts(pullRequests),
+		OverallCounts:     model.PullRequestExpiryCounts(allPullRequests),
 		ScopeCounts:       scopeSummaries,
 		ScopeSort:         "recent",
 		ContributorCounts: contributorSummaries,

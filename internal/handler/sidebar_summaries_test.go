@@ -4,6 +4,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"regexp"
 	"slices"
 	"strings"
 	"testing"
@@ -14,7 +15,7 @@ import (
 )
 
 // sidebarStamped builds a stamped pull request with one scope and one
-// contributor, used to exercise the unfiltered sidebar summaries.
+// contributor, used to exercise the sidebar summaries.
 func sidebarStamped(number int, author string, created time.Time, scope string) model.StampedPullRequest {
 	return model.StampedPullRequest{
 		PullRequest: model.PullRequest{
@@ -23,6 +24,7 @@ func sidebarStamped(number int, author string, created time.Time, scope string) 
 			CreatedAt: &created,
 			UpdatedAt: &created,
 		},
+		ExpiryStatus: model.Fresh,
 		Scopes:       []string{scope},
 		Contributors: []string{author},
 	}
@@ -47,72 +49,79 @@ func summaryContributorNames(summaries []model.ContributorInfo) []string {
 func sidebarTestPullRequests() []model.StampedPullRequest {
 	base := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	return []model.StampedPullRequest{
-		sidebarStamped(1, "alice", base.Add(3*time.Hour), "backend"),
+		sidebarStamped(1, "alice", base.Add(time.Hour), "backend"),
 		sidebarStamped(2, "bob", base.Add(2*time.Hour), "frontend"),
-		sidebarStamped(3, "carol", base.Add(time.Hour), "docs"),
+		sidebarStamped(3, "carol", base.Add(3*time.Hour), "docs"),
 	}
 }
 
-func TestSidebarSummariesKeepUnselectedValues(t *testing.T) {
-	all := sidebarTestPullRequests()
+// The sidebar derives its values from the unfiltered pull requests, so every
+// scope and contributor is listed regardless of the active query.
+func TestSidebarSummariesListEveryValue(t *testing.T) {
+	scopes, contributors := sidebarSummaries(sidebarTestPullRequests())
 
-	t.Run("a selected scope does not hide the other scopes", func(t *testing.T) {
-		scopes, _ := sidebarSummaries(all, provider.RepositoryQuery{Scope: []string{"backend"}})
-		want := []string{"backend", "frontend", "docs"}
-		if got := summaryScopeNames(scopes); !slices.Equal(got, want) {
-			t.Errorf("scope summaries = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("a selected contributor does not hide the other contributors", func(t *testing.T) {
-		_, contributors := sidebarSummaries(all, provider.RepositoryQuery{Contributor: []string{"alice"}})
-		want := []string{"alice", "bob", "carol"}
-		if got := summaryContributorNames(contributors); !slices.Equal(got, want) {
-			t.Errorf("contributor summaries = %v, want %v", got, want)
-		}
-	})
-
-	t.Run("other dimensions still narrow the list", func(t *testing.T) {
-		scopes, contributors := sidebarSummaries(all, provider.RepositoryQuery{
-			Scope:       []string{"backend"},
-			Contributor: []string{"alice"},
-		})
-		if got, want := summaryScopeNames(scopes), []string{"backend"}; !slices.Equal(got, want) {
-			t.Errorf("scope summaries = %v, want %v", got, want)
-		}
-		if got, want := summaryContributorNames(contributors), []string{"alice"}; !slices.Equal(got, want) {
-			t.Errorf("contributor summaries = %v, want %v", got, want)
-		}
-	})
+	if got, want := summaryScopeNames(scopes), []string{"docs", "frontend", "backend"}; !slices.Equal(got, want) {
+		t.Errorf("scope summaries = %v, want %v", got, want)
+	}
+	if got, want := summaryContributorNames(contributors), []string{"carol", "bob", "alice"}; !slices.Equal(got, want) {
+		t.Errorf("contributor summaries = %v, want %v", got, want)
+	}
 }
 
-func TestRepositorySidebarShowsUnselectedScopes(t *testing.T) {
-	stub := &stubProvider{pullRequests: sidebarTestPullRequests()}
-	server := &Server{
-		Provider: stub,
-		Logger:   slog.New(slog.NewTextHandler(io.Discard, nil)),
+// statusCountPattern captures the value shown on an overview status tile, e.g.
+// `class="bold">Fresh</p> ... <b>3</b>`.
+var statusCountPattern = regexp.MustCompile(`(?s)class="bold">([A-Za-z]+)</p>.*?<b>(\d+)</b>`)
+
+func overviewStatusCounts(body string) map[string]string {
+	counts := map[string]string{}
+	for _, match := range statusCountPattern.FindAllStringSubmatch(body, -1) {
+		counts[match[1]] = match[2]
 	}
+	return counts
+}
+
+func renderSidebar(t *testing.T, query provider.RepositoryQuery) string {
+	t.Helper()
 	request := &RepositoryRequest{
-		Server: server,
-		Query:  provider.RepositoryQuery{Owner: "ghostty-org", Repository: "ghostty", Scope: []string{"backend"}},
-		ListOptions: provider.PullRequestListOptions{
-			PerPage: 20,
-			Page:    1,
+		Server: &Server{
+			Provider: &stubProvider{pullRequests: sidebarTestPullRequests()},
+			Logger:   slog.New(slog.NewTextHandler(io.Discard, nil)),
 		},
+		Query:       query,
+		ListOptions: provider.PullRequestListOptions{PerPage: 20, Page: 1},
 	}
 	handler := requestTimingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		HandleRepository(request, w, r)
 	}))
+	return serveHTMX(t, handler, "/ghostty-org/ghostty").Body.String()
+}
 
-	body := serveHTMX(t, handler, "/ghostty-org/ghostty?scope=backend").Body.String()
-
-	selected := strings.Index(body, "Clear scope filter backend")
-	frontend := strings.Index(body, "Filter pull requests by scope frontend")
-	docs := strings.Index(body, "Filter pull requests by scope docs")
-	if selected < 0 || frontend < 0 || docs < 0 {
-		t.Fatalf("sidebar missing scope cards (selected=%d frontend=%d docs=%d): %q", selected, frontend, docs, body)
+// Selecting one filter must not trim another facet: the scopes, contributors,
+// and overview counts stay fixed so the menu never shifts under the cursor.
+func TestRepositoryFiltersDoNotTrimTheSidebar(t *testing.T) {
+	cases := []struct {
+		name  string
+		query provider.RepositoryQuery
+	}{
+		{"no filters", provider.RepositoryQuery{Owner: "ghostty-org", Repository: "ghostty"}},
+		{"scope selected", provider.RepositoryQuery{Owner: "ghostty-org", Repository: "ghostty", Scope: []string{"backend"}}},
+		{"contributor selected", provider.RepositoryQuery{Owner: "ghostty-org", Repository: "ghostty", Contributor: []string{"alice"}}},
+		{"status selected", provider.RepositoryQuery{Owner: "ghostty-org", Repository: "ghostty", Status: []string{"fresh"}}},
 	}
-	if !(selected < frontend && frontend < docs) {
-		t.Errorf("expected selected scope first, then frontend then docs; got positions selected=%d frontend=%d docs=%d", selected, frontend, docs)
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			body := renderSidebar(t, tt.query)
+
+			if got := strings.Count(body, "sidebar-panel-item scope"); got != 3 {
+				t.Errorf("scope cards = %d, want 3 (all scopes stay visible)", got)
+			}
+			if got := strings.Count(body, "sidebar-panel-item contributor"); got != 3 {
+				t.Errorf("contributor cards = %d, want 3 (all contributors stay visible)", got)
+			}
+			if got := overviewStatusCounts(body)["Fresh"]; got != "3" {
+				t.Errorf("Fresh overview count = %q, want 3 (counted across every pull request)", got)
+			}
+		})
 	}
 }
