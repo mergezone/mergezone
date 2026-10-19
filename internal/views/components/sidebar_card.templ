@@ -14,7 +14,6 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 		ariaLabel := fmt.Sprintf("Filter pull requests by scope %s", scope.Name)
 		isCurrent := slices.Contains(filters.Scope, scope.Name)
 		if isCurrent {
-			targetFilters = filters.WithScope("")
 			ariaLabel = fmt.Sprintf("Clear scope filter %s", scope.Name)
 		}
 	}}
@@ -54,7 +53,6 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 		ariaLabel := fmt.Sprintf("Filter pull requests by contributor %s", contributor.Name)
 		isCurrent := slices.Contains(filters.Contributor, contributor.Name)
 		if isCurrent {
-			targetFilters = filters.WithScope("")
 			ariaLabel = fmt.Sprintf("Clear contributor filter %s", contributor.Name)
 		}
 	}}

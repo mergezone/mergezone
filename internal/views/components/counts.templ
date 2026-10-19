@@ -7,10 +7,9 @@ import (
 	"merge/internal/model"
 )
 
+// repositoryStatusURL toggles targetStatus in the current selection: clicking
+// a selected status removes only that status, clicking an unselected one adds it.
 func repositoryStatusURL(filters model.RepositoryFilters, targetStatus string) string {
-	if slices.Contains(filters.Status, targetStatus) {
-		return filters.WithStatus("").URL()
-	}
 	return filters.WithStatus(targetStatus).URL()
 }
 

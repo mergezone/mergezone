@@ -63,9 +63,20 @@ func (f RepositoryFilters) queryValues() url.Values {
 }
 
 func toggleString(slice []string, value string) []string {
+	// An empty filter value is an invalid state; ignore it.
+	if value == "" {
+		return slice
+	}
+
 	for i, item := range slice {
 		if item == value {
-			return append(slice[:i], slice[i+1:]...)
+			// Copy rather than append(slice[:i], slice[i+1:]...) so the removal
+			// cannot overwrite elements visible to other slices sharing the
+			// backing array (RepositoryFilters copies share them).
+			toggled := make([]string, 0, len(slice)-1)
+			toggled = append(toggled, slice[:i]...)
+			toggled = append(toggled, slice[i+1:]...)
+			return toggled
 		}
 	}
 
