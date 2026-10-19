@@ -96,7 +96,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			return templ_7745c5c3_Err
 		}
 		if len(scopeSummaries) > 0 {
-			for _, scope := range selectedScopesFirst(scopeSummaries, filters.Scope) {
+			for _, scope := range scopeSummaries {
 				templ_7745c5c3_Err = ScopeCard(scope, filters).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

@@ -86,7 +86,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			return templ_7745c5c3_Err
 		}
 		if len(contributorSummaries) > 0 {
-			for _, contributor := range selectedContributorsFirst(contributorSummaries, filters.Contributor) {
+			for _, contributor := range contributorSummaries {
 				templ_7745c5c3_Err = ContributorCard(contributor, filters).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
