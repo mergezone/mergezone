@@ -18,7 +18,9 @@ function applyStatusTimings(root) {
     };
     for (const [name, duration] of Object.entries(metrics)) {
       if (!Number.isFinite(duration)) continue;
-      const target = root.querySelector(`[data-status-${name}]`);
+      // The footer sits outside fragment targets (sidebar, load more, detail),
+      // so look it up document-wide instead of within the swapped subtree.
+      const target = document.querySelector(`[data-status-${name}]`);
       if (target) target.textContent = formatServerDuration(duration);
     }
     payload.remove();
