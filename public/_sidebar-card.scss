@@ -132,14 +132,10 @@ section.filter-section {
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  width: 0;
   gap: $spacing-2;
-  margin-left: 0;
-  overflow: hidden;
+  margin-left: $spacing-2;
   color: var(--color-text-secondary);
   font-size: $pr-card-desc-font-size;
-  opacity: 0;
-  transition: none;
   white-space: nowrap;
 
   i {
@@ -147,14 +143,6 @@ section.filter-section {
     font-size: $text-xxs;
     margin-right: $spacing-1;
   }
-}
-
-.sidebar-panel-item:hover .sidebar-panel-meta,
-.sidebar-panel-item:focus-visible .sidebar-panel-meta,
-.sidebar-panel-item:focus-within .sidebar-panel-meta {
-  width: min(var(--sidebar-meta-width, 0px), 12rem);
-  margin-left: $spacing-2;
-  opacity: 1;
 }
 
 .sidebar-panel-clear-icon {

@@ -444,12 +444,6 @@ document.addEventListener("alpine:init", () => {
       this._paneResize = null;
     },
 
-    measureSidebarMeta(row) {
-      const meta = row?.querySelector(".sidebar-panel-meta");
-      if (!meta) return;
-      row.style.setProperty("--sidebar-meta-width", `${meta.scrollWidth}px`);
-    },
-
     _loadAvatars() {
       const sidebar = document.querySelector(".aside-column");
       if (!sidebar) return;

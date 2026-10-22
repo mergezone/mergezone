@@ -20,8 +20,6 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 	<a
 		class={ "panel-block sidebar-panel-item scope", templ.KV("is-current", isCurrent) }
 		aria-label={ ariaLabel }
-		@mouseenter="$store.app.measureSidebarMeta($el)"
-		@focusin="$store.app.measureSidebarMeta($el)"
 		href={ templ.SafeURL(scopeURL) }
 		hx-get={ templ.SafeURL(scopeURL) }
 		hx-target="#page-shell"
@@ -55,8 +53,6 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 	<a
 		class={ "panel-block sidebar-panel-item contributor", templ.KV("is-current", isCurrent) }
 		aria-label={ ariaLabel }
-		@mouseenter="$store.app.measureSidebarMeta($el)"
-		@focusin="$store.app.measureSidebarMeta($el)"
 		href={ templ.SafeURL(contributorURL) }
 		hx-get={ templ.SafeURL(contributorURL) }
 		hx-target="#page-shell"
