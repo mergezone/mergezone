@@ -70,9 +70,29 @@ func TestFilterPullRequests_MultipleSelections(t *testing.T) {
 			want:  []int{4},
 		},
 		{
-			name:  "multiple statuses keep any pull request with a selected status",
+			name:  "multiple statuses keep any open pull request with a selected status",
 			query: RepositoryQuery{Status: []string{"fresh", "expired"}},
-			want:  []int{1, 4, 3},
+			want:  []int{1, 3},
+		},
+		{
+			name:  "fresh excludes merged pull requests",
+			query: RepositoryQuery{Status: []string{"fresh"}},
+			want:  []int{1},
+		},
+		{
+			name:  "stale excludes merged pull requests",
+			query: RepositoryQuery{Status: []string{"stale"}},
+			want:  []int{2},
+		},
+		{
+			name:  "expired excludes merged pull requests",
+			query: RepositoryQuery{Status: []string{"expired"}},
+			want:  []int{3},
+		},
+		{
+			name:  "unknown status yields an empty result",
+			query: RepositoryQuery{Status: []string{"bogus"}},
+			want:  []int{},
 		},
 		{
 			name:  "merged status matches merged pull request state",

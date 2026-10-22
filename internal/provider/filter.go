@@ -39,30 +39,44 @@ func FilterPullRequests(stampedPullRequests []model.StampedPullRequest, query Re
 	if query.Status != nil {
 		matchesStatus := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
 		matched := make([]bool, len(filteredPullRequests))
+		// A pull request matches the status dimension once, even when several
+		// of its statuses are selected.
+		match := func(i int) {
+			if matched[i] {
+				return
+			}
+			matchesStatus = append(matchesStatus, filteredPullRequests[i])
+			matched[i] = true
+		}
+
 		for _, status := range query.Status {
-			// TODO Subtle bug: ExpiryStatus and State both extend string, so no warning is thrown
-			var flag model.ExpiryStatus
+			if status == "merged" {
+				for i, pr := range filteredPullRequests {
+					if pr.State == model.Merged {
+						match(i)
+					}
+				}
+				continue
+			}
+
+			var expiryStatus model.ExpiryStatus
 			switch status {
-			case "merged":
-				flag = model.Merged
 			case "fresh":
-				flag = model.Fresh
+				expiryStatus = model.Fresh
 			case "stale":
-				flag = model.Stale
+				expiryStatus = model.Stale
 			case "expired":
-				flag = model.Expired
+				expiryStatus = model.Expired
+			default:
+				continue
 			}
 
 			for i, pr := range filteredPullRequests {
-				if matched[i] {
-					continue
-				}
-				merged := flag == model.Merged && pr.State == model.Merged
-				if merged || pr.ExpiryStatus == flag {
-					matchesStatus = append(matchesStatus, pr)
-					// A pull request matches the status dimension once, even
-					// when several of its statuses are selected.
-					matched[i] = true
+				// Merged pull requests are their own status; fresh, stale, and
+				// expired describe open ones. Excluding merged here keeps a
+				// status filter in step with the overview tile counts.
+				if pr.State != model.Merged && pr.ExpiryStatus == expiryStatus {
+					match(i)
 				}
 			}
 		}
