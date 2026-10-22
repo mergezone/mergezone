@@ -68,13 +68,7 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 		// TODO(hayden): Move this to options for historical slicing?
 		AsOf: time.Now(),
 	}
-	// A scope can arrive as a query selection or as the path segment used by
-	// the pull request card's scope chips; an explicit query selection wins.
-	if scope := parseFilterValues(queryValues.Get("scope")); len(scope) > 0 {
-		repositoryQuery.Scope = scope
-	} else if pathScope := strings.Trim(routeVariables["scope"], "/"); pathScope != "" {
-		repositoryQuery.Scope = parseFilterValues(pathScope)
-	}
+	repositoryQuery.Scope = parseFilterValues(queryValues.Get("scope"))
 	repositoryQuery.Contributor = parseFilterValues(queryValues.Get("contributor"))
 	repositoryQuery.Status = parseFilterValues(queryValues.Get("status"))
 

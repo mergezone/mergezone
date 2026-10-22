@@ -2,9 +2,9 @@ package components
 
 import "merge/internal/model"
 
-templ PullRequestScrollItems(pullRequests []model.StampedPullRequest, owner string, repository string) {
+templ PullRequestScrollItems(pullRequests []model.StampedPullRequest, filters model.RepositoryFilters) {
 	for _, pullRequest := range pullRequests {
-		@PullRequestCard(pullRequest, owner, repository)
+		@PullRequestCard(pullRequest, filters)
 	}
 }
 
@@ -33,7 +33,7 @@ templ PullRequestScrollSection(pullRequests []model.StampedPullRequest, filters 
 		<span>Pull Requests</span>
 	</div>
 	<div class="scroll-content" id="scroll-content">
-		@PullRequestScrollItems(pullRequests, filters.Owner, filters.Repository)
+		@PullRequestScrollItems(pullRequests, filters)
 	</div>
 	@PullRequestLoadMoreControl(filters, currentPage+1, hasMorePullRequests, false)
 }

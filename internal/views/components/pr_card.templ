@@ -7,12 +7,12 @@ import (
 	"merge/internal/views/helpers"
 )
 
-templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) {
+templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.RepositoryFilters) {
 	{{
 		paneSeed := map[string]any{
 			"number":          pullRequest.Number,
-			"owner":           owner,
-			"repository":      repository,
+			"owner":           filters.Owner,
+			"repository":      filters.Repository,
 			"title":           pullRequest.Title,
 			"titleHtml":       helpers.RenderMarkdownInline(pullRequest.Title),
 			"state":           pullRequest.State,
@@ -43,7 +43,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 			}(),
 			"scopeURL": func() string {
 				if len(pullRequest.Scopes) > 0 {
-					return fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
+					return filters.WithScope(pullRequest.Scopes[0]).URL()
 				}
 				return ""
 			}(),
@@ -73,7 +73,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 		data-pull-request-author-url={ pullRequest.Author.URL }
 		if len(pullRequest.Scopes) > 0 {
 			data-pull-request-scope={ pullRequest.Scopes[0] }
-			data-pull-request-scope-url={ fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0]) }
+			data-pull-request-scope-url={ filters.WithScope(pullRequest.Scopes[0]).URL() }
 		}
 		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.pullRequestNumber), this.dataset)"
 	>
@@ -112,8 +112,9 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, owner, repository st
 						</a>
 					</li>
 					for _, scope := range pullRequest.Scopes {
+						{{ scopeURL := filters.WithScope(scope).URL() }}
 						<li>
-							<a href={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-get={ fmt.Sprintf("/%s/%s/%s", owner, repository, scope) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
+							<a href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
 						</li>
 					}
 				</ul>

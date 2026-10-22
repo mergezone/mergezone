@@ -15,7 +15,7 @@ import (
 	"merge/internal/views/helpers"
 )
 
-func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository string) templ.Component {
+func PullRequestCard(pullRequest model.StampedPullRequest, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -38,8 +38,8 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 		ctx = templ.ClearChildren(ctx)
 		paneSeed := map[string]any{
 			"number":          pullRequest.Number,
-			"owner":           owner,
-			"repository":      repository,
+			"owner":           filters.Owner,
+			"repository":      filters.Repository,
 			"title":           pullRequest.Title,
 			"titleHtml":       helpers.RenderMarkdownInline(pullRequest.Title),
 			"state":           pullRequest.State,
@@ -70,7 +70,7 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 			}(),
 			"scopeURL": func() string {
 				if len(pullRequest.Scopes) > 0 {
-					return fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0])
+					return filters.WithScope(pullRequest.Scopes[0]).URL()
 				}
 				return ""
 			}(),
@@ -318,9 +318,9 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/%s/%s/%s", owner, repository, pullRequest.Scopes[0]))
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScope(pullRequest.Scopes[0]).URL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 76, Col: 99}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 76, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 			if templ_7745c5c3_Err != nil {
@@ -492,14 +492,15 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 			return templ_7745c5c3_Err
 		}
 		for _, scope := range pullRequest.Scopes {
+			scopeURL := filters.WithScope(scope).URL()
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<li><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 templ.SafeURL
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/%s/%s/%s", owner, repository, scope))
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 116, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 117, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -510,9 +511,9 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var31 string
-			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("/%s/%s/%s", owner, repository, scope))
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(scopeURL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 116, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 117, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 			if templ_7745c5c3_Err != nil {
@@ -525,7 +526,7 @@ func PullRequestCard(pullRequest model.StampedPullRequest, owner, repository str
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(scope)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 116, Col: 182}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/pr_card.templ`, Line: 117, Col: 128}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
