@@ -41,6 +41,55 @@ document.addEventListener("htmx:afterSwap", (event) => {
   applyStatusTimings(event.detail?.target || document);
 });
 
+// A sidebar sort only re-renders the sidebar, so links rendered before the
+// sort keep the old query string. When one of those links navigates, copy the
+// current sort onto the same-page request. Sort requests are skipped because
+// they clear a sort by omitting it.
+const SORT_QUERY_PARAMETERS = ["scope_sort", "contributor_sort"];
+const SORT_FRAGMENTS = new Set(["scopes", "contributors"]);
+
+function withoutTrailingSlash(pathname) {
+  return pathname.replace(/\/+$/, "") || "/";
+}
+
+function withCurrentSort(rawURL) {
+  const url = new URL(rawURL, window.location.href);
+  if (url.origin !== window.location.origin) return null;
+  if (
+    withoutTrailingSlash(url.pathname) !==
+    withoutTrailingSlash(window.location.pathname)
+  ) {
+    return null;
+  }
+  if (SORT_FRAGMENTS.has(url.searchParams.get("fragment"))) return null;
+
+  const current = new URLSearchParams(window.location.search);
+  let search = url.search;
+  for (const name of SORT_QUERY_PARAMETERS) {
+    if (url.searchParams.has(name)) continue;
+    const value = current.get(name);
+    if (!value) continue;
+    search += `${search ? "&" : "?"}${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+  }
+  return search === url.search ? null : url.pathname + search + url.hash;
+}
+
+document.addEventListener("htmx:configRequest", (event) => {
+  if (!event.detail?.path) return;
+  const url = withCurrentSort(event.detail.path);
+  if (url) event.detail.path = url;
+});
+
+document.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0) return;
+  const anchor = event.target.closest?.("a[href]");
+  if (!anchor) return;
+  const href = anchor.getAttribute("href");
+  if (!href || href.startsWith("#")) return;
+  const url = withCurrentSort(anchor.href);
+  if (url) anchor.setAttribute("href", url);
+});
+
 async function ensureDiffsLib() {
   if (diffsLib) return diffsLib;
   if (diffsLibPromise) return diffsLibPromise;
