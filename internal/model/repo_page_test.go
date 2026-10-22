@@ -590,6 +590,29 @@ func TestRepositoryFilters_FragmentURLCarriesFiltersAndSorts(t *testing.T) {
 	}
 }
 
+func TestRepositoryFilters_Label(t *testing.T) {
+	tests := []struct {
+		name    string
+		filters RepositoryFilters
+		want    string
+	}{
+		{name: "no filters", filters: RepositoryFilters{}, want: ""},
+		{
+			name:    "every selected value is listed in filter order",
+			filters: RepositoryFilters{Scope: []string{"backend", "frontend"}, Contributor: []string{"alice"}, Status: []string{"stale"}},
+			want:    "backend, frontend, alice, stale",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.filters.Label(); got != tt.want {
+				t.Errorf("RepositoryFilters.Label() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestNormalizeSortOrder(t *testing.T) {
 	tests := map[string]string{
 		"":        SortRecent,

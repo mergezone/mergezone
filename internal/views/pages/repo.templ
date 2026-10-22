@@ -10,9 +10,17 @@ import (
 
 // RepositoryDocument renders the complete repository HTML document, including its layout.
 templ RepositoryDocument(viewData model.RepositoryViewData, currentPath, commit string) {
+	{{
+		filters := model.RepositoryFilters{Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status}
+		title := fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository)
+		if filterLabel := filters.Label(); filterLabel != "" {
+			title = fmt.Sprintf("%s — %s", title, filterLabel)
+		}
+		counts := model.PullRequestExpiryCounts(viewData.PullRequests)
+	}}
 	@layout.BaseDocument(
-		fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository),
-		fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", viewData.OverallCounts.TotalPullRequests(), viewData.OverallCounts.FreshCount, viewData.OverallCounts.StaleCount, viewData.OverallCounts.ExpiredCount),
+		title,
+		fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", counts.TotalPullRequests(), counts.FreshCount, counts.StaleCount, counts.ExpiredCount),
 		viewData.BaseURL,
 		viewData.Owner,
 		viewData.Repository,

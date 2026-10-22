@@ -58,6 +58,16 @@ func (f RepositoryFilters) FragmentURL(fragment string, page int) string {
 	return u.String()
 }
 
+// Label summarizes the active filter values for display, or returns an empty
+// string when no filter is selected.
+func (f RepositoryFilters) Label() string {
+	values := make([]string, 0, len(f.Scope)+len(f.Contributor)+len(f.Status))
+	values = append(values, f.Scope...)
+	values = append(values, f.Contributor...)
+	values = append(values, f.Status...)
+	return strings.Join(values, ", ")
+}
+
 func (f RepositoryFilters) PageURL(page int) string {
 	if page <= 1 {
 		return f.URL()
