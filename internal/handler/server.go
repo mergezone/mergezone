@@ -196,6 +196,52 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		return
 	}
 
+	// Sort changes refresh only the sidebar. Rebuild both sections from every
+	// loaded page so sorting never shrinks the summaries, and leave the pull
+	// request list and its controls untouched.
+	if fragment == ScopesFragment || fragment == ContributorsFragment {
+		upToPage := request.ListOptions.Page
+		if upToPage < 1 {
+			upToPage = 1
+		}
+		allPullRequests, _, _, timings, err := fetchPullRequestPages(r.Context(), request, upToPage)
+		if err != nil {
+			request.Logger.Warn(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		recordProviderTimings(r, timings)
+
+		scopeSummaries, contributorSummaries := sidebarSummaries(allPullRequests, filters.ScopeSort, filters.ContributorSort)
+
+		markRequestWorkComplete(r)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if fragment == ScopesFragment {
+			err = components.SortScopesResponse(
+				scopeSummaries,
+				filters.ScopeSort,
+				contributorSummaries,
+				filters.ContributorSort,
+				filters,
+				upToPage,
+			).Render(r.Context(), w)
+		} else {
+			err = components.SortContributorsResponse(
+				scopeSummaries,
+				filters.ScopeSort,
+				contributorSummaries,
+				filters.ContributorSort,
+				filters,
+				upToPage,
+			).Render(r.Context(), w)
+		}
+		if err != nil {
+			request.Logger.Error(err.Error())
+			recordRequestError(r, err)
+		}
+		return
+	}
+
 	allPullRequests, pagination, timings, err := request.Provider.GetPullRequests(r.Context(), request.Query, request.ListOptions)
 	if err != nil {
 		request.Logger.Warn(err.Error())
@@ -274,30 +320,6 @@ func HandleRepository(request *RepositoryRequest, w http.ResponseWriter, r *http
 		}
 		http.Error(w, "Pull request not found", http.StatusNotFound)
 		return
-	case ContributorsFragment:
-		markRequestWorkComplete(r)
-		err = components.SortContributorsResponse(
-			viewData.ScopeCounts,
-			viewData.ScopeSort,
-			viewData.ContributorCounts,
-			viewData.ContributorSort,
-			viewData.OverallCounts,
-			viewData.HasMore,
-			filters,
-			viewData.CurrentPage+1,
-		).Render(r.Context(), w)
-	case ScopesFragment:
-		markRequestWorkComplete(r)
-		err = components.SortScopesResponse(
-			viewData.ScopeCounts,
-			viewData.ScopeSort,
-			viewData.ContributorCounts,
-			viewData.ContributorSort,
-			viewData.OverallCounts,
-			viewData.HasMore,
-			filters,
-			viewData.CurrentPage+1,
-		).Render(r.Context(), w)
 	default:
 		if fragment != "" {
 			http.Error(w, "Unknown fragment", http.StatusBadRequest)

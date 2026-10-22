@@ -14,7 +14,7 @@ func TestScopeSummariesKeepSelectionInSortedOrder(t *testing.T) {
 	filters := model.RepositoryFilters{Owner: "octocat", Repository: "hello-world", Scope: []string{"backend"}}
 	summaries := []model.ScopeInfo{{Name: "docs"}, {Name: "frontend"}, {Name: "backend"}}
 
-	output := renderSortFragmentURLs(t, ScopeSummaries(summaries, "recent", filters))
+	output := renderSortFragmentURLs(t, ScopeSummaries(summaries, "recent", filters, 1))
 
 	docs := strings.Index(output, "Filter pull requests by scope docs")
 	frontend := strings.Index(output, "Filter pull requests by scope frontend")
@@ -31,7 +31,7 @@ func TestContributorSummariesKeepSelectionInSortedOrder(t *testing.T) {
 	filters := model.RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: []string{"alice"}}
 	summaries := []model.ContributorInfo{{Name: "carol"}, {Name: "bob"}, {Name: "alice"}}
 
-	output := renderSortFragmentURLs(t, ContributorSummaries(summaries, "recent", filters))
+	output := renderSortFragmentURLs(t, ContributorSummaries(summaries, "recent", filters, 1))
 
 	carol := strings.Index(output, "Filter pull requests by contributor carol")
 	bob := strings.Index(output, "Filter pull requests by contributor bob")

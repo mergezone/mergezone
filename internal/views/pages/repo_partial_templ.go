@@ -35,7 +35,7 @@ func RepositoryMainView(viewData model.RepositoryViewData, commit string) templ.
 		}
 		ctx = templ.ClearChildren(ctx)
 		filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status, ScopeSort: viewData.ScopeSort, ContributorSort: viewData.ContributorSort}
-		templ_7745c5c3_Err = components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort, viewData.CurrentPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -14,7 +14,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "merge/internal/model"
 
-func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters) templ.Component {
+func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters, currentPage int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -55,9 +55,9 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("recent").FragmentURL("scopes"))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("recent").FragmentURL("scopes", currentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 41, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 41, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 			if templ_7745c5c3_Err != nil {
@@ -91,9 +91,9 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("top").FragmentURL("scopes"))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("top").FragmentURL("scopes", currentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 55, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 55, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {

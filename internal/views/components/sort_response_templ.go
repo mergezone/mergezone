@@ -12,19 +12,16 @@ import "merge/internal/model"
 
 // SortScopesResponse is the sidebar-only response for a scope sort change. It
 // swaps the scopes section in place, which preserves its collapse state, and
-// then out-of-band refreshes the contributors section, the overview tiles, and
-// the load-more control. Those controls build their links from the filters, so
-// refreshing them keeps the new sort from being dropped by a later click. The
-// pull request list itself is left untouched.
+// then out-of-band refreshes the contributors section so its links carry the
+// active sort orders too. Nothing outside the sidebar is touched: sorting only
+// changes the order of the sidebar, not the pull request list or its controls.
 func SortScopesResponse(
 	scopeSummaries []model.ScopeInfo,
 	scopeSortOrder string,
 	contributorSummaries []model.ContributorInfo,
 	contributorSortOrder string,
-	overallCounts model.ExpiryCounts,
-	hasMorePullRequests bool,
 	filters model.RepositoryFilters,
-	nextPullRequestPage int,
+	currentPage int,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -46,7 +43,7 @@ func SortScopesResponse(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = ScopeSummaries(scopeSummaries, scopeSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -54,15 +51,11 @@ func SortScopesResponse(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ContributorSummaries(contributorSummaries, contributorSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = sortResponseControls(overallCounts, hasMorePullRequests, filters, nextPullRequestPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -77,10 +70,8 @@ func SortContributorsResponse(
 	scopeSortOrder string,
 	contributorSummaries []model.ContributorInfo,
 	contributorSortOrder string,
-	overallCounts model.ExpiryCounts,
-	hasMorePullRequests bool,
 	filters model.RepositoryFilters,
-	nextPullRequestPage int,
+	currentPage int,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -102,7 +93,7 @@ func SortContributorsResponse(
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = ContributorSummaries(contributorSummaries, contributorSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,63 +101,11 @@ func SortContributorsResponse(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ScopeSummaries(scopeSummaries, scopeSortOrder, filters).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = sortResponseControls(overallCounts, hasMorePullRequests, filters, nextPullRequestPage).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// sortResponseControls refreshes the controls outside the sidebar whose links
-// must carry the active sort.
-func sortResponseControls(
-	overallCounts model.ExpiryCounts,
-	hasMorePullRequests bool,
-	filters model.RepositoryFilters,
-	nextPullRequestPage int,
-) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"overview-stats\" hx-swap-oob=\"true\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = PullRequestLoadMoreControl(filters, nextPullRequestPage, hasMorePullRequests, true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

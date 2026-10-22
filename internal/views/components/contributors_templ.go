@@ -14,7 +14,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "merge/internal/model"
 
-func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) templ.Component {
+func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters, currentPage int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -50,9 +50,9 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("recent").FragmentURL("contributors"))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("recent").FragmentURL("contributors", currentPage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 40, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 40, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -86,9 +86,9 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("top").FragmentURL("contributors"))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("top").FragmentURL("contributors", currentPage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 54, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 54, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {

@@ -558,24 +558,33 @@ func TestRepositoryFilters_FragmentURLCarriesFiltersAndSorts(t *testing.T) {
 	tests := []struct {
 		name     string
 		fragment string
+		page     int
 		want     string
 	}{
 		{
 			name:     "scopes fragment keeps both sorts and adds the fragment name",
 			fragment: "scopes",
+			page:     1,
 			want:     "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top&fragment=scopes",
 		},
 		{
 			name:     "contributors fragment keeps both sorts",
 			fragment: "contributors",
+			page:     1,
 			want:     "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top&fragment=contributors",
+		},
+		{
+			name:     "a loaded page is kept so the fragment rebuilds the same summaries",
+			fragment: "scopes",
+			page:     3,
+			want:     "/octocat/hello-world?scope=backend&contributor=alice&status=stale&scope_sort=top&contributor_sort=top&page=3&fragment=scopes",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := filters.FragmentURL(tt.fragment); !urlsEqual(got, tt.want) {
-				t.Errorf("RepositoryFilters.FragmentURL(%q) = %q, want %q", tt.fragment, got, tt.want)
+			if got := filters.FragmentURL(tt.fragment, tt.page); !urlsEqual(got, tt.want) {
+				t.Errorf("RepositoryFilters.FragmentURL(%q, %d) = %q, want %q", tt.fragment, tt.page, got, tt.want)
 			}
 		})
 	}

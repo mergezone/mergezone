@@ -29,9 +29,9 @@ func TestScopeSortButtonsPreserveCurrentFilters(t *testing.T) {
 		Owner: "octocat", Repository: "hello-world", Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
 		ScopeSort: model.SortTop, ContributorSort: model.SortTop,
 	}
-	output := renderSortFragmentURLs(t, ScopeSummaries(nil, model.SortTop, filters))
+	output := renderSortFragmentURLs(t, ScopeSummaries(nil, model.SortTop, filters, 1))
 	for _, sortOrder := range []string{model.SortRecent, model.SortTop} {
-		fragment := filters.WithScopeSort(sortOrder).FragmentURL("scopes")
+		fragment := filters.WithScopeSort(sortOrder).FragmentURL("scopes", 1)
 		if !strings.Contains(output, `hx-get="`+fragment+`"`) {
 			t.Errorf("scope sort %q fragment URL missing; want hx-get=%q", sortOrder, fragment)
 		}
@@ -50,9 +50,9 @@ func TestContributorSortButtonsPreserveCurrentFilters(t *testing.T) {
 		Owner: "octocat", Repository: "hello-world", Scope: []string{"backend"}, Contributor: []string{"alice"}, Status: []string{"stale"},
 		ScopeSort: model.SortTop, ContributorSort: model.SortTop,
 	}
-	output := renderSortFragmentURLs(t, ContributorSummaries(nil, model.SortTop, filters))
+	output := renderSortFragmentURLs(t, ContributorSummaries(nil, model.SortTop, filters, 1))
 	for _, sortOrder := range []string{model.SortRecent, model.SortTop} {
-		fragment := filters.WithContributorSort(sortOrder).FragmentURL("contributors")
+		fragment := filters.WithContributorSort(sortOrder).FragmentURL("contributors", 1)
 		if !strings.Contains(output, `hx-get="`+fragment+`"`) {
 			t.Errorf("contributor sort %q fragment URL missing; want hx-get=%q", sortOrder, fragment)
 		}
@@ -63,5 +63,29 @@ func TestContributorSortButtonsPreserveCurrentFilters(t *testing.T) {
 	}
 	if !strings.Contains(output, `hx-target="#contributors-section"`) {
 		t.Errorf("contributor sort buttons do not target #contributors-section: %q", output)
+	}
+}
+
+// Sorting after loading more pages must rebuild the same summaries, so the sort
+// fragment URL carries the loaded page instead of resetting to the first one.
+func TestScopeSortButtonsCarryTheLoadedPage(t *testing.T) {
+	filters := model.RepositoryFilters{Owner: "octocat", Repository: "hello-world"}
+	output := renderSortFragmentURLs(t, ScopeSummaries([]model.ScopeInfo{{Name: "backend"}}, model.SortTop, filters, 3))
+	for _, sortOrder := range []string{model.SortRecent, model.SortTop} {
+		fragment := filters.WithScopeSort(sortOrder).FragmentURL("scopes", 3)
+		if !strings.Contains(output, `hx-get="`+fragment+`"`) {
+			t.Errorf("scope sort %q does not carry page 3; want hx-get=%q", sortOrder, fragment)
+		}
+	}
+}
+
+func TestContributorSortButtonsCarryTheLoadedPage(t *testing.T) {
+	filters := model.RepositoryFilters{Owner: "octocat", Repository: "hello-world"}
+	output := renderSortFragmentURLs(t, ContributorSummaries([]model.ContributorInfo{{Name: "alice"}}, model.SortTop, filters, 3))
+	for _, sortOrder := range []string{model.SortRecent, model.SortTop} {
+		fragment := filters.WithContributorSort(sortOrder).FragmentURL("contributors", 3)
+		if !strings.Contains(output, `hx-get="`+fragment+`"`) {
+			t.Errorf("contributor sort %q does not carry page 3; want hx-get=%q", sortOrder, fragment)
+		}
 	}
 }

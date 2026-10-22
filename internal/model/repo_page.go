@@ -44,12 +44,15 @@ func (f RepositoryFilters) URL() string {
 }
 
 // FragmentURL builds the URL for an in-place fragment response. It keeps the
-// current filters and sort orders (so the fragment handler can refresh the
-// other sidebar section and the surrounding controls) and adds the fragment
-// name that selects the response.
-func (f RepositoryFilters) FragmentURL(fragment string) string {
+// current filters and sort orders and, once the view has loaded past the first
+// page, the page range, so the fragment response can rebuild the same
+// summaries. The fragment name selects the response.
+func (f RepositoryFilters) FragmentURL(fragment string, page int) string {
 	u := url.URL{Path: f.basePath()}
 	q := f.queryValues()
+	if page > 1 {
+		q.Set("page", strconv.Itoa(page))
+	}
 	q.Set("fragment", fragment)
 	u.RawQuery = encodeQueryValues(q)
 	return u.String()

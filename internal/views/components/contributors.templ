@@ -4,7 +4,7 @@ package components
 
 import "merge/internal/model"
 
-templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters) {
+templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSortOrder string, filters model.RepositoryFilters, currentPage int) {
 	<section class="panel contributors filter-section">
 		<div
 			class="panel-heading section-heading filter-section-heading"
@@ -37,7 +37,7 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 					if activeSortOrder == "recent" {
 						data-active-sort="true"
 					}
-					hx-get={ filters.WithContributorSort("recent").FragmentURL("contributors") }
+					hx-get={ filters.WithContributorSort("recent").FragmentURL("contributors", currentPage) }
 					hx-target="#contributors-section"
 					hx-push-url={ filters.WithContributorSort("recent").URL() }
 					hx-indicator="#contributors-sort-indicator"
@@ -51,7 +51,7 @@ templ ContributorSummaries(contributorSummaries []model.ContributorInfo, activeS
 					if activeSortOrder == "top" {
 						data-active-sort="true"
 					}
-					hx-get={ filters.WithContributorSort("top").FragmentURL("contributors") }
+					hx-get={ filters.WithContributorSort("top").FragmentURL("contributors", currentPage) }
 					hx-target="#contributors-section"
 					hx-push-url={ filters.WithContributorSort("top").URL() }
 					hx-indicator="#contributors-sort-indicator"
