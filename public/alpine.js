@@ -43,6 +43,26 @@ document.addEventListener("htmx:afterSwap", (event) => {
   applyStatusTimings(event.detail?.target || document);
 });
 
+// Repository navigation replaces the whole view. Close the context pane and
+// forget its pull request so the next card click opens fresh instead of
+// toggling stale state (which looked like a double click).
+function resetContextPaneForNavigation() {
+  const contextPane = window.Alpine?.store("contextPane");
+  if (!contextPane) return;
+  if (contextPane.open) contextPane.closePane();
+  contextPane.pullRequestNumber = null;
+}
+
+document.addEventListener("htmx:beforeSwap", (event) => {
+  if (event.detail?.target?.id === "page-shell") {
+    resetContextPaneForNavigation();
+  }
+});
+
+document.addEventListener("htmx:historyRestore", () => {
+  resetContextPaneForNavigation();
+});
+
 // A sidebar sort only re-renders the sidebar, so links rendered before the
 // sort keep the old query string. When one of those links navigates, copy the
 // current sort onto the same-page request. Sort requests are skipped because
