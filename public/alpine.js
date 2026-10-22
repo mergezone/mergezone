@@ -171,13 +171,13 @@ async function attachZoom(selector) {
 }
 
 function discussionErrorHtml() {
-  return '<p class="context-pane-error">Discussion could not be loaded. <a href="#" data-discussion-retry>Try again</a>.</p>';
+  return '<p class="text-sm text-error">Discussion could not be loaded. <a class="link link-hover font-medium" href="#" data-discussion-retry>Try again</a>.</p>';
 }
 
 function discussionSkeletonHtml() {
-  return `<div class="discussion-comment discussion-comment-skeleton" aria-hidden="true">
-    <div class="discussion-skeleton-block skeleton-block"></div>
-    <div class="discussion-skeleton-block skeleton-block"></div>
+  return `<div class="discussion-comment discussion-comment-skeleton border-0 p-0" aria-hidden="true">
+    <div class="skeleton mb-3 h-28 w-full rounded-md"></div>
+    <div class="skeleton mb-3 h-28 w-full rounded-md"></div>
   </div>`;
 }
 
@@ -218,7 +218,7 @@ function enhanceContextPaneImages() {
 }
 
 function getDiffTheme() {
-  return document.documentElement.classList.contains("dark")
+  return document.documentElement.dataset.theme === "dark"
     ? "pierre-dark"
     : "pierre-light";
 }
@@ -323,7 +323,7 @@ document.addEventListener("alpine:init", () => {
           ? "dark"
           : "light";
       }
-      document.documentElement.className = this.theme;
+      document.documentElement.dataset.theme = this.theme;
       localStorage.setItem("theme", this.theme);
 
       const rootStyle = getComputedStyle(document.documentElement);
@@ -362,7 +362,7 @@ document.addEventListener("alpine:init", () => {
       const wasDark = this.theme === "dark";
       this.theme = wasDark ? "light" : "dark";
       const isDark = this.theme === "dark";
-      document.documentElement.className = this.theme;
+      document.documentElement.dataset.theme = this.theme;
       localStorage.setItem("theme", this.theme);
 
       if (wasDark !== isDark) {
@@ -629,9 +629,11 @@ document.addEventListener("alpine:init", () => {
 
       this.open = true;
 
-      const selected = document.querySelector(".pull-request.selected");
-      if (selected) selected.classList.remove("selected");
-      card?.classList.add("selected");
+      const selected = document.querySelector(
+        '.pull-request[data-selected="true"]',
+      );
+      if (selected) selected.dataset.selected = "false";
+      if (card) card.dataset.selected = "true";
 
       setTimeout(enhanceContextPaneImages, 0);
     },
@@ -814,8 +816,10 @@ document.addEventListener("alpine:init", () => {
           .forEach((el) => el.remove());
       }
 
-      const selected = document.querySelector(".pull-request.selected");
-      if (selected) selected.classList.remove("selected");
+      const selected = document.querySelector(
+        '.pull-request[data-selected="true"]',
+      );
+      if (selected) selected.dataset.selected = "false";
     },
 
     async rerenderDiffs() {
@@ -1057,18 +1061,13 @@ document.addEventListener("alpine:init", () => {
     _showDiffSkeleton(container) {
       if (!container) return;
       const skeleton = document.createElement("div");
-      skeleton.className = "diff-skeleton skeleton";
-      skeleton.style.cssText =
-        "display: flex; flex-direction: column; gap: 0.75rem;";
+      skeleton.className = "diff-skeleton flex flex-col gap-3";
 
       const heights = [100, 140, 80, 120, 160];
       for (const h of heights) {
         const block = document.createElement("div");
-        block.className = "skeleton-line is-skeleton";
-        block.style.cssText = `
-          width: 100%;
-          height: ${h}px;
-        `;
+        block.className = "skeleton w-full rounded-md";
+        block.style.height = `${h}px`;
         skeleton.appendChild(block);
       }
       container.appendChild(skeleton);
@@ -1087,12 +1086,10 @@ document.addEventListener("alpine:init", () => {
     openPanel() {
       this._moveFiltersToPanel();
       this.open = true;
-      document.body.classList.add("filter-pane-open");
     },
 
     close() {
       this.open = false;
-      document.body.classList.remove("filter-pane-open");
     },
 
     _moveFiltersToPanel() {

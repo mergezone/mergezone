@@ -3,9 +3,9 @@ package components
 import "merge/internal/model"
 
 templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.ScopeInfo, scopeSortOrder string, contributorSummaries []model.ContributorInfo, contributorSortOrder string, currentPage int) {
-	<aside class="aside-column">
+	<aside class="aside-column relative flex shrink-0 flex-col bg-base-200 lg:w-[var(--filter-sidebar-width)] lg:border-r lg:border-base-300">
 		@RepositoryNavigation(filters.Owner, filters.Repository)
-		<div class="scroll">
+		<div class="scroll hidden min-h-0 flex-1 overflow-y-auto py-2 scrollbar-slim lg:block">
 			<div id="scopes-section" x-data="{ collapsed: false }">
 				@ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage)
 			</div>
@@ -13,6 +13,6 @@ templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.
 				@ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage)
 			</div>
 		</div>
-		<div class="pane-resize-handle sidebar-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize filters sidebar" :aria-valuemin="$store.app.filterSidebarMinWidth" :aria-valuemax="$store.app.filterSidebarMaxWidth" :aria-valuenow="$store.app.filterSidebarWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('filter', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('filter', -16)" @keydown.right.prevent="$store.app.adjustPaneWidth('filter', 16)"></div>
+		<div class="pane-resize-handle sidebar-resize-handle -right-1 hidden lg:block" role="separator" aria-orientation="vertical" aria-label="Resize filters sidebar" :aria-valuemin="$store.app.filterSidebarMinWidth" :aria-valuemax="$store.app.filterSidebarMaxWidth" :aria-valuenow="$store.app.filterSidebarWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('filter', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('filter', -16)" @keydown.right.prevent="$store.app.adjustPaneWidth('filter', 16)"></div>
 	</aside>
 }

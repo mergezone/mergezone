@@ -8,46 +8,50 @@ import (
 
 templ HomePage(baseURL, owner, repository, commit string) {
 	@layout.BaseDocument("Merge Zone", "Pull request analytics for any public GitHub repository — freshness, merge rates, scope hotspots, and contributor activity.", baseURL, owner, repository, "") {
-		<aside class="aside-column">
+		<aside class="aside-column relative flex shrink-0 flex-col bg-base-200 lg:w-[var(--filter-sidebar-width)] lg:border-r lg:border-base-300">
 			@components.RepositoryNavigation(owner, repository)
 		</aside>
-		<main class="scroll home-scroll">
-			<div class="home-heading-group">
-				<h1>What's the state of your<br/>pull requests?</h1>
-				<p class="text-secondary home-subtitle">
-					Enter a repository to see pull request freshness, merge activity,
+		<main class="scroll home-scroll flex min-h-0 flex-1 flex-col gap-10 overflow-y-auto p-4 scrollbar-slim">
+			<div class="flex flex-col gap-4 py-8">
+				<h1 class="text-4xl leading-[1.1] font-bold tracking-tight lg:text-5xl">
+					What's the state of your
 					<br/>
+					pull requests?
+				</h1>
+				<p class="max-w-2xl text-base-content/70 lg:text-lg">
+					Enter a repository to see pull request freshness, merge activity,
+					<br class="hidden lg:block"/>
 					and contributor patterns at a glance.
 				</p>
 			</div>
 			<div>
-				<div class="section-heading">
+				<div class="my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70">
 					<span>Finding a repository</span>
 				</div>
-				<div class="static-search-demo">
+				<div class="pointer-events-none [&_.title-input]:cursor-default [&_.title-input]:no-underline">
 					@components.RepositorySearchInput("", "", "owner", "repository", false, false)
 				</div>
-				<p class="text-secondary home-explainer">
-					<strong>owner</strong> / <strong>repository</strong> points to any public GitHub repository.
-					The <strong>scope</strong> narrows results to a specific area of the codebase.
+				<p class="mt-3 text-sm leading-relaxed text-base-content/70">
+					<strong class="font-semibold text-base-content">owner</strong> / <strong class="font-semibold text-base-content">repository</strong> points to any public GitHub repository.
+					The <strong class="font-semibold text-base-content">scope</strong> narrows results to a specific area of the codebase.
 				</p>
 			</div>
 			<div>
-				<div class="section-heading">
+				<div class="my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70">
 					<span>Features</span>
 				</div>
-				<div class="scroll-content features-grid">
-					@components.IconRow("fa-solid fa-seedling", "ok", "Fresh, stale, and expired", "Each pull request is tagged by how long it's been open so you know what to triage")
-					@components.IconRow("fa-solid fa-code-merge", "special", "Merge rates per contributor", "See who's consistently getting their changes merged")
-					@components.IconRow("fa-solid fa-folder-tree", "warn", "Scope hotspots", "Which parts of the codebase attract the most activity")
-					@components.IconRow("fa-solid fa-users", "error", "Contributor histories", "Each contributor's pull request history, success rate, and areas of focus")
+				<div class="flex flex-col gap-2 xl:grid xl:grid-cols-2">
+					@components.IconRow("fa-solid fa-seedling", "text-success", "Fresh, stale, and expired", "Each pull request is tagged by how long it's been open so you know what to triage")
+					@components.IconRow("fa-solid fa-code-merge", "text-accent", "Merge rates per contributor", "See who's consistently getting their changes merged")
+					@components.IconRow("fa-solid fa-folder-tree", "text-warning", "Scope hotspots", "Which parts of the codebase attract the most activity")
+					@components.IconRow("fa-solid fa-users", "text-error", "Contributor histories", "Each contributor's pull request history, success rate, and areas of focus")
 				</div>
 			</div>
 			<div>
-				<div class="section-heading">
+				<div class="my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70">
 					<span>Example repositories</span>
 				</div>
-				<div class="scroll-content item-group home-repos">
+				<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 					@components.RepositoryLink("mergezone", "mergezone", "fa-solid fa-code-merge")
 					@components.RepositoryLink("ghostty-org", "ghostty", "fa-solid fa-terminal")
 					@components.RepositoryLink("kubernetes", "kubernetes", "fa-solid fa-dharmachakra")

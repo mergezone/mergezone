@@ -39,7 +39,7 @@ func RepositoryMainView(viewData model.RepositoryViewData, commit string) templ.
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"scroll\"><div class=\"overview\" id=\"overview-stats\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"scroll flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4 scrollbar-slim\"><div class=\"flex flex-col gap-4\" id=\"overview-stats\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

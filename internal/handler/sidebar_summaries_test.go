@@ -90,8 +90,8 @@ func TestSidebarSummariesSortByTopCount(t *testing.T) {
 }
 
 // statusCountPattern captures the value shown on an overview status tile, e.g.
-// `class="bold">Fresh</p> ... <b>3</b>`.
-var statusCountPattern = regexp.MustCompile(`(?s)class="bold">([A-Za-z]+)</p>.*?<b>(\d+)</b>`)
+// `<p ...>Fresh</p> ... <b ...>3</b>`.
+var statusCountPattern = regexp.MustCompile(`(?s)<p[^>]*>([A-Za-z]+)</p>.*?<b[^>]*>(\d+)</b>`)
 
 func overviewStatusCounts(body string) map[string]string {
 	counts := map[string]string{}

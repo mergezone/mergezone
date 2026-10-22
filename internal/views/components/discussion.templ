@@ -8,24 +8,24 @@ import (
 
 // PullRequestDiscussion renders the comment list for a pull request's discussion.
 templ PullRequestDiscussion(comments []model.PullRequestComment) {
-	<div class="discussion-comments" data-loaded="true">
+	<div class="discussion-comments flex flex-col" data-loaded="true">
 		if len(comments) == 0 {
-			<p class="discussion-empty">No comments yet.</p>
+			<p class="text-xs text-base-content/60">No comments yet.</p>
 		} else {
 			for _, comment := range comments {
-				<article class="discussion-comment">
-					<div class="discussion-comment-header">
-						<div class="discussion-comment-author">
+				<article class="discussion-comment border-t border-base-300 py-3 first:border-t-0">
+					<div class="discussion-comment-header mb-2 flex items-center justify-between gap-3 text-xs">
+						<div class="discussion-comment-author inline-flex min-w-0 items-center gap-2">
 							if comment.User.AvatarURL != "" {
-								<img class="discussion-avatar" src={ templ.SafeURL(comment.User.AvatarURL) } alt={ comment.User.Login + "'s profile picture" } loading="lazy"/>
+								<img class="discussion-avatar size-6 shrink-0 rounded-lg object-cover" src={ templ.SafeURL(comment.User.AvatarURL) } alt={ comment.User.Login + "'s profile picture" } loading="lazy"/>
 							}
-							<a class="meta-link" href={ templ.SafeURL(comment.User.HTMLURL) }>{ comment.User.Login }</a>
+							<a class="meta-link link link-hover font-medium" href={ templ.SafeURL(comment.User.HTMLURL) }>{ comment.User.Login }</a>
 						</div>
 						if createdAt, err := time.Parse(time.RFC3339, comment.CreatedAt); err == nil {
-							<time datetime={ comment.CreatedAt }>{ createdAt.Format("Jan 2, 2006 3:04 PM") }</time>
+							<time class="text-right text-base-content/60" datetime={ comment.CreatedAt }>{ createdAt.Format("Jan 2, 2006 3:04 PM") }</time>
 						}
 					</div>
-					<div class="content discussion-comment-content">
+					<div class="content discussion-comment-content prose prose-sm max-w-none dark:prose-invert [&_iframe]:my-4 [&_iframe]:aspect-video [&_iframe]:w-full [&_iframe]:rounded-md [&_iframe]:border-0 [&_img]:rounded-md [&_video]:my-4 [&_video]:w-full [&_video]:rounded-md">
 						@templ.Raw(comment.BodyHTML)
 					</div>
 				</article>

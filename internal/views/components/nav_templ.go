@@ -29,7 +29,7 @@ func RepositoryNavigation(owner, repository string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\"><div><h4 class=\"bold site-brand\"><a href=\"/\">Merge Zone</a></h4><button id=\"theme-toggle\" class=\"button is-ghost\" @click=\"$store.app.cycleTheme()\" aria-label=\"Toggle light and dark theme\"><i class=\"fa-solid\" :class=\"{\n                    'fa-sun': $store.app.theme === 'light',\n                    'fa-moon': $store.app.theme === 'dark'\n                }\" aria-hidden=\"true\"></i></button></div><div id=\"nav-search-slot\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\" class=\"flex flex-col gap-4 border-b border-base-300 p-4\"><div class=\"flex items-center justify-between gap-4\"><div class=\"text-xl font-bold tracking-tight\"><a class=\"text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4\" href=\"/\">Merge Zone</a></div><button id=\"theme-toggle\" class=\"btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-base-content\" @click=\"$store.app.cycleTheme()\" aria-label=\"Toggle light and dark theme\"><i class=\"fa-solid\" :class=\"{\n                    'fa-sun': $store.app.theme === 'light',\n                    'fa-moon': $store.app.theme === 'dark'\n                }\" aria-hidden=\"true\"></i></button></div><div id=\"nav-search-slot\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

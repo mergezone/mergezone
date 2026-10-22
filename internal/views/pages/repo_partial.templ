@@ -8,8 +8,8 @@ import (
 templ RepositoryMainView(viewData model.RepositoryViewData, commit string) {
 	{{ filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status, ScopeSort: viewData.ScopeSort, ContributorSort: viewData.ContributorSort} }}
 	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort, viewData.CurrentPage)
-	<main class="scroll">
-		<div class="overview" id="overview-stats">
+	<main class="scroll flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4 scrollbar-slim">
+		<div class="flex flex-col gap-4" id="overview-stats">
 			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage+1)
 		</div>
 		@components.PullRequestScrollSection(viewData.PullRequests, filters, viewData.CurrentPage, viewData.HasMore)

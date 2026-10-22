@@ -52,7 +52,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 		}
 	}}
 	<div
-		class="item pull-request box"
+		class="item pull-request group min-h-16 cursor-pointer rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200 data-[selected=true]:bg-base-200"
 		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
 		data-pull-request-number={ fmt.Sprintf("%d", pullRequest.Number) }
 		data-pull-request-title={ pullRequest.Title }
@@ -61,6 +61,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 		data-pull-request-expiry-status={ helpers.ExpiryLabel(pullRequest) }
 		data-pull-request-expiry-icon-class={ helpers.StatusIconClass(pullRequest) }
 		data-pull-request-expiry-reason={ helpers.ExpiryReason(pullRequest) }
+		data-selected="false"
 		if pullRequest.SupersededBy != nil {
 			data-pull-request-superseded-by-number={ fmt.Sprintf("%d", pullRequest.SupersededBy.Number) }
 			data-pull-request-superseded-by-url={ pullRequest.SupersededBy.URL }
@@ -80,33 +81,33 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 		<div hidden class="pull-request-seed">
 			@templ.JSONScript("", paneSeed)
 		</div>
-		<div class="pull-request-header">
-			<div class="icon-container">
-				<i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
+		<div class="pull-request-header grid grid-cols-[auto_1fr] grid-rows-[auto_auto] gap-x-3 gap-y-1">
+			<div class="flex items-center justify-center">
+				<i class={ fmt.Sprintf("status-icon fa-solid text-lg %s", helpers.GetStatusClass(pullRequest)) }></i>
 			</div>
-			<div class="title-row">
-				<b class="item-title">
+			<div class="flex items-start text-base-content">
+				<b class="item-title block text-base leading-snug font-semibold [&_p]:m-0">
 					@Markdown(pullRequest.Title)
 				</b>
 			</div>
-			<div class="breadcrumb has-bullet-separator is-small">
-				<ul>
+			<div class="col-start-2 flex min-w-0 text-xs text-base-content/60">
+				<ul class="flex flex-wrap items-center gap-y-1 [&>li+li]:before:px-2 [&>li+li]:before:content-['·']">
 					<li>
 						#{ pullRequest.Number }
 					</li>
-					<li>
+					<li class="capitalize">
 						{ pullRequest.State }
 					</li>
 					<li title="Discussion">
-						<i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
+						<i class="fa-regular fa-comments mr-1" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
 					</li>
 					<li title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
 						@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
 					</li>
 					<li>
-						<a href={ pullRequest.Author.URL }>
+						<a class="inline-flex items-center gap-1 hover:underline hover:decoration-2" href={ pullRequest.Author.URL }>
 							if pullRequest.Author.AvatarURL != "" {
-								<img class="avatar" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
+								<img class="size-4 rounded-md object-cover" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
 							}
 							{ pullRequest.Author.Name }
 						</a>
@@ -114,7 +115,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 					for _, scope := range pullRequest.Scopes {
 						{{ scopeURL := filters.WithScope(scope).URL() }}
 						<li>
-							<a href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
+							<a class="hover:underline hover:decoration-2" href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
 						</li>
 					}
 				</ul>

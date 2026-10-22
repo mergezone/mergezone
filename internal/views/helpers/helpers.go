@@ -8,19 +8,19 @@ import (
 func GetStatusClass(pr model.StampedPullRequest) string {
 	switch pr.State {
 	case model.Merged:
-		return "fa-code-merge special"
+		return "fa-code-merge text-accent"
 	case model.Closed:
 		return "fa-ban"
 	}
 	switch pr.ExpiryStatus {
 	case model.Expired:
-		return "fa-skull error"
+		return "fa-skull text-error"
 	case model.Stale:
-		return "fa-leaf warn"
+		return "fa-leaf text-warning"
 	case model.Fresh:
-		return "fa-seedling ok"
+		return "fa-seedling text-success"
 	default:
-		return "fa-eye-slash"
+		return "fa-eye-slash text-base-content/50"
 	}
 }
 
@@ -42,7 +42,7 @@ func StatusIconClass(pr model.StampedPullRequest) string {
 	case model.Fresh:
 		return "fa-seedling"
 	default:
-		return "fa-eye-slash"
+		return "fa-eye-slash text-base-content/50"
 	}
 }
 

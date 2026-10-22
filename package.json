@@ -5,13 +5,15 @@
   "packageManager": "pnpm@9.12.3",
   "description": "Pull request analytics for public GitHub repositories.",
   "scripts": {
-    "build:css": "sass --no-source-map --style=compressed --quiet-deps --load-path=node_modules public/main.scss public/main.css",
-    "watch:css": "sass --watch --no-source-map --style=compressed --quiet-deps --load-path=node_modules public/main.scss public/main.css",
-    "format": "prettier --write \"**/*.{scss,css,js,html,json}\""
+    "build:css": "tailwindcss -i internal/views/styles/app.css -o public/main.css --minify",
+    "watch:css": "tailwindcss -i internal/views/styles/app.css -o public/main.css --watch",
+    "format": "prettier --write \"**/*.{css,js,html,json}\""
   },
   "devDependencies": {
-    "bulma": "1.0.4",
+    "@tailwindcss/cli": "^4.3.3",
+    "@tailwindcss/typography": "^0.5.20",
+    "daisyui": "^5.7.50",
     "prettier": "^3.9.10",
-    "sass": "1.105.1"
+    "tailwindcss": "^4.3.3"
   }
 }

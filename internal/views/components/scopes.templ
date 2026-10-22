@@ -5,18 +5,20 @@ package components
 import "merge/internal/model"
 
 templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters, currentPage int) {
-	<section class="panel scopes filter-section">
+	<section class="panel scopes filter-section flex min-h-0 flex-1 flex-col overflow-hidden">
 		<div
-			class="panel-heading section-heading filter-section-heading"
+			class="filter-section-heading group/section flex cursor-pointer items-center justify-between gap-2 bg-base-200 px-4 py-3 text-base-content transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
+			role="button"
+			tabindex="0"
 			@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
 			@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
 			@keydown.space.prevent="$data.collapsed = !$data.collapsed"
 		>
-			<span class="section-heading-label">
-				<span class="section-heading-control">
-					<i class="fa-solid fa-folder-tree section-heading-icon" aria-hidden="true"></i>
+			<span class="section-heading-label flex min-w-0 items-center gap-2 text-sm font-semibold">
+				<span class="section-heading-control relative inline-flex h-8 w-6 flex-none items-center justify-center">
+					<i class="fa-solid fa-folder-tree section-heading-icon text-base-content/60 transition-opacity group-hover/section:opacity-0 group-focus-within/section:opacity-0 pointer-coarse:opacity-0" aria-hidden="true"></i>
 					<button
-						class="link-button collapse-section-button"
+						class="link-button collapse-section-button absolute inset-y-0 left-0 inline-flex w-6 items-center justify-center rounded-md border-0 bg-transparent text-xs leading-none text-base-content/60 opacity-0 pointer-events-none transition-opacity hover:bg-base-content/10 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100"
 						type="button"
 						:aria-expanded="!$data.collapsed"
 						:aria-label="$data.collapsed ? 'Expand scopes' : 'Collapse scopes'"
@@ -29,10 +31,10 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 				<span>Scopes</span>
 			</span>
 			if len(scopeSummaries) > 0 || len(filters.Scope) > 0 {
-				<span class="section-actions">
-					<i id="scopes-sort-indicator" class="fa-solid fa-circle-notch fa-spin htmx-indicator" aria-hidden="true"></i>
+				<span class="section-actions flex items-center gap-1 opacity-0 pointer-events-none transition-opacity group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
+					<span id="scopes-sort-indicator" class="loading loading-spinner loading-xs htmx-indicator text-base-content/50" aria-hidden="true"></span>
 					<button
-						class="link-button sort-control"
+						class="link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content"
 						aria-label="Sort scopes by recency"
 						title="Sort by recency"
 						if activeSortOrder == "recent" {
@@ -46,7 +48,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						<i class="fa-solid fa-clock" aria-hidden="true"></i>
 					</button>
 					<button
-						class="link-button sort-control"
+						class="link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content"
 						aria-label="Sort scopes by pull request count"
 						title="Sort by pull request count"
 						if activeSortOrder == "top" {
@@ -62,7 +64,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 				</span>
 			}
 		</div>
-		<div class="filter-section-content" x-show="!$data.collapsed">
+		<div class="filter-section-content flex flex-col gap-1" x-show="!$data.collapsed">
 			if len(scopeSummaries) > 0 {
 				for _, scope := range scopeSummaries {
 					@ScopeCard(scope, filters)

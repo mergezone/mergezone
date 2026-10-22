@@ -29,7 +29,7 @@ func RepositoryFilterPanel() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"filter-panel bottom-sheet\" id=\"filter-panel\" :class=\"{ 'open': $store.filterPanel.open }\" @keydown.escape.window=\"$store.filterPanel.close()\" @click.away=\"if($store.filterPanel.open && !$event.target.closest('.context-pane') && !$event.target.closest('.mobile-dock'))$store.filterPanel.close()\"><div class=\"filter-panel-body\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"filter-panel z-30 hidden min-h-0 flex-col overflow-hidden bg-base-200 max-lg:data-[open=true]:fixed max-lg:data-[open=true]:inset-x-0 max-lg:data-[open=true]:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-lg:data-[open=true]:flex max-lg:data-[open=true]:h-[65dvh] max-lg:data-[open=true]:border-t max-lg:data-[open=true]:border-base-300 max-lg:data-[open=true]:pb-4 lg:hidden\" id=\"filter-panel\" :data-open=\"$store.filterPanel.open ? 'true' : 'false'\" @keydown.escape.window=\"$store.filterPanel.close()\" @click.away=\"if($store.filterPanel.open && !$event.target.closest('.context-pane') && !$event.target.closest('.mobile-dock'))$store.filterPanel.close()\"><div class=\"filter-panel-body scrollbar-slim flex-1 overflow-y-auto\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -29,7 +29,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"light\"><head><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';document.documentElement.className=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})()</script><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link rel=\"stylesheet\" href=\"/public/main.css\"><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><script defer src=\"/public/alpine.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><meta name=\"description\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';var theme=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);})()</script><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link rel=\"stylesheet\" href=\"/public/main.css\"><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><script defer src=\"/public/alpine.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><meta name=\"description\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,7 +94,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"repository-page\" x-data x-init=\"$store.app.init()\"><div class=\"page-shell\" id=\"page-shell\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"repository-page h-dvh overflow-hidden bg-base-200 text-base-content\" x-data x-init=\"$store.app.init()\"><div class=\"page-shell box-border flex h-full min-h-0 w-full flex-col gap-6 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:flex-row lg:gap-0 lg:pb-0\" id=\"page-shell\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

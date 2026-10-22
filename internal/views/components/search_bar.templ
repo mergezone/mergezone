@@ -12,48 +12,48 @@ templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repos
 		}
 	}}
 	if interactive {
-		<nav class="breadcrumb search-input-row" aria-label="Repository" hx-indicator="#search-loading-indicator">
-			<ul>
-				<li>
+		<nav class="search-input-row flex items-center gap-1 text-base" aria-label="Repository" hx-indicator="#search-loading-indicator">
+			<ul class="flex min-w-0 flex-nowrap items-center [&>li+li]:before:px-2 [&>li+li]:before:text-base-content/30 [&>li+li]:before:content-['/']">
+				<li class="flex min-w-0 items-center gap-3">
 					if showIcon {
-						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+						<i class="fa-solid fa-magnifying-glass text-sm text-base-content/50" aria-hidden="true"></i>
 					}
-					<div class="owner-search">
-						<button class="button is-ghost owner-avatar-trigger" type="button" x-show="!ownerEditing" @click="startOwnerEdit()" @focus="startOwnerEdit()" aria-label="Edit repository owner">
+					<div class="owner-search inline-flex min-w-0 items-center">
+						<button class="owner-avatar-trigger btn btn-ghost btn-circle h-6 min-h-0 w-6 flex-none overflow-hidden border-0 bg-transparent p-0 hover:bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" type="button" x-show="!ownerEditing" @click="startOwnerEdit()" @focus="startOwnerEdit()" aria-label="Edit repository owner">
 							if ownerValue != "" {
-								<img class="owner-avatar" src={ templ.SafeURL("https://github.com/" + ownerValue + ".png") } alt={ ownerValue + " profile picture" }/>
+								<img class="owner-avatar block h-full w-full rounded-lg object-cover" src={ templ.SafeURL("https://github.com/" + ownerValue + ".png") } alt={ ownerValue + " profile picture" }/>
 							} else {
-								<span class="owner-avatar owner-avatar-placeholder" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+								<span class="owner-avatar owner-avatar-placeholder inline-flex h-full w-full items-center justify-center rounded-lg bg-base-300 text-xs text-base-content/60" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
 							}
 						</button>
-						<span class="input-pill" x-show="ownerEditing" x-cloak>
-							<input id="repository-owner" x-ref="ownerInput" class="input title-input" type="text" data-part="owner" value={ ownerValue } placeholder={ ownerPlaceholder } autocomplete="off"/>
+						<span class="relative inline-flex items-center" x-show="ownerEditing" x-cloak>
+							<input id="repository-owner" x-ref="ownerInput" class="title-input w-auto min-w-[1ch] border-0 bg-transparent p-0 text-xl leading-tight font-semibold text-base-content underline decoration-base-300 decoration-2 underline-offset-4 outline-none hover:no-underline focus:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" type="text" data-part="owner" value={ ownerValue } placeholder={ ownerPlaceholder } autocomplete="off"/>
 						</span>
 					</div>
 				</li>
-				<li class="is-active">
-					<div class="repository-search">
-						<button class="button is-ghost repository-label" type="button" x-show="!repositoryEditing" @click="startRepositoryEdit()" @focus="startRepositoryEdit()" aria-label="Edit repository">{ repositoryLabel }</button>
-						<span class="input-pill" x-show="repositoryEditing" x-cloak>
-							<input class="input title-input" type="text" data-part="repository" x-ref="repositoryInput" value={ repositoryValue } placeholder={ repositoryPlaceholder } autocomplete="off"/>
+				<li class="flex min-w-0 items-center">
+					<div class="repository-search inline-flex min-w-0 items-center">
+						<button class="repository-label btn btn-ghost h-auto min-h-0 border-0 bg-transparent p-0 text-xl leading-tight font-semibold text-base-content underline decoration-base-300 decoration-2 underline-offset-4 hover:bg-transparent hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" type="button" x-show="!repositoryEditing" @click="startRepositoryEdit()" @focus="startRepositoryEdit()" aria-label="Edit repository">{ repositoryLabel }</button>
+						<span class="relative inline-flex items-center" x-show="repositoryEditing" x-cloak>
+							<input class="title-input w-auto min-w-[1ch] border-0 bg-transparent p-0 text-xl leading-tight font-semibold text-base-content underline decoration-base-300 decoration-2 underline-offset-4 outline-none hover:no-underline focus:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" type="text" data-part="repository" x-ref="repositoryInput" value={ repositoryValue } placeholder={ repositoryPlaceholder } autocomplete="off"/>
 						</span>
 					</div>
 				</li>
 			</ul>
-			<span id="search-loading-indicator" class="icon search-loading-indicator htmx-indicator" role="status" aria-label="Loading">
-				<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
+			<span id="search-loading-indicator" class="htmx-indicator ml-1 text-base-content/50" role="status" aria-label="Loading">
+				<span class="loading loading-spinner loading-xs"></span>
 			</span>
 		</nav>
 	} else {
-		<nav class="breadcrumb search-input-row" aria-label="Repository">
-			<ul>
-				<li>
+		<nav class="search-input-row flex items-center gap-1 text-base" aria-label="Repository">
+			<ul class="flex min-w-0 flex-nowrap items-center [&>li+li]:before:px-2 [&>li+li]:before:text-base-content/30 [&>li+li]:before:content-['/']">
+				<li class="flex min-w-0 items-center gap-3">
 					if showIcon {
-						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+						<i class="fa-solid fa-magnifying-glass text-sm text-base-content/50" aria-hidden="true"></i>
 					}
-					<span class="static-owner">{ ownerLabel }</span>
+					<span class="static-owner font-semibold">{ ownerLabel }</span>
 				</li>
-				<li class="is-active"><span class="static-repository">{ repositoryLabel }</span></li>
+				<li class="flex min-w-0 items-center"><span class="static-repository font-semibold text-base-content">{ repositoryLabel }</span></li>
 			</ul>
 		</nav>
 	}

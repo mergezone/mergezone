@@ -11,28 +11,29 @@ templ PullRequestScrollItems(pullRequests []model.StampedPullRequest, filters mo
 templ PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequestPage int, hasMorePullRequests bool, replaceOutOfBandContent bool) {
 	<div
 		id="load-more-card"
+		class="mt-2"
 		if replaceOutOfBandContent {
 			hx-swap-oob="true"
 		}
 	>
 		<div
-			class="item load-more box"
+			class="item load-more flex min-h-16 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-base-300 bg-base-100 text-base-content/60 transition-colors hover:bg-base-200"
 			hx-get={ filters.PageURL(nextPullRequestPage) }
 			hx-target="#scroll-content"
 			hx-swap="beforeend"
 		>
-			<i class="fa-solid fa-plus"></i>
-			<span>Load more</span>
-			<i class="fa-solid fa-circle-notch fa-spin htmx-indicator"></i>
+			<i class="fa-solid fa-plus text-sm"></i>
+			<span class="text-sm">Load more</span>
+			<span class="loading loading-spinner loading-xs htmx-indicator"></span>
 		</div>
 	</div>
 }
 
 templ PullRequestScrollSection(pullRequests []model.StampedPullRequest, filters model.RepositoryFilters, currentPage int, hasMorePullRequests bool) {
-	<div class="section-heading">
+	<div class="mt-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70">
 		<span>Pull Requests</span>
 	</div>
-	<div class="scroll-content" id="scroll-content">
+	<div class="mt-2 flex flex-col gap-2" id="scroll-content">
 		@PullRequestScrollItems(pullRequests, filters)
 	</div>
 	@PullRequestLoadMoreControl(filters, currentPage+1, hasMorePullRequests, false)

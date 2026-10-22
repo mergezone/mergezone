@@ -35,7 +35,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel contributors filter-section\"><div class=\"panel-heading section-heading filter-section-heading\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-users section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" :title=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Contributors</span></span> <span class=\"section-actions\"><i id=\"contributors-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by recency\" title=\"Sort by recency\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel contributors filter-section flex min-h-0 flex-1 flex-col overflow-hidden\"><div class=\"filter-section-heading group/section flex cursor-pointer items-center justify-between gap-2 bg-base-200 px-4 py-3 text-base-content transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary\" role=\"button\" tabindex=\"0\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label flex min-w-0 items-center gap-2 text-sm font-semibold\"><span class=\"section-heading-control relative inline-flex h-8 w-6 flex-none items-center justify-center\"><i class=\"fa-solid fa-users section-heading-icon text-base-content/60 transition-opacity group-hover/section:opacity-0 group-focus-within/section:opacity-0 pointer-coarse:opacity-0\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button absolute inset-y-0 left-0 inline-flex w-6 items-center justify-center rounded-md border-0 bg-transparent text-xs leading-none text-base-content/60 opacity-0 pointer-events-none transition-opacity hover:bg-base-content/10 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" :title=\"$data.collapsed ? 'Expand contributors' : 'Collapse contributors'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Contributors</span></span> <span class=\"section-actions flex items-center gap-1 opacity-0 pointer-events-none transition-opacity group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100\"><span id=\"contributors-sort-indicator\" class=\"loading loading-spinner loading-xs htmx-indicator text-base-content/50\" aria-hidden=\"true\"></span> <button class=\"link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content\" aria-label=\"Sort contributors by recency\" title=\"Sort by recency\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,7 +52,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("recent").FragmentURL("contributors", currentPage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 40, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 42, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -65,13 +65,13 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("recent").URL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 42, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 44, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i></button> <button class=\"link-button sort-control\" aria-label=\"Sort contributors by pull request count\" title=\"Sort by pull request count\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i></button> <button class=\"link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content\" aria-label=\"Sort contributors by pull request count\" title=\"Sort by pull request count\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -88,7 +88,7 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("top").FragmentURL("contributors", currentPage))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 54, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 56, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -101,13 +101,13 @@ func ContributorSummaries(contributorSummaries []model.ContributorInfo, activeSo
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithContributorSort("top").URL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 56, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/contributors.templ`, Line: 58, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-arrow-down-wide-short\" aria-hidden=\"true\"></i></button></span></div><div class=\"filter-section-content\" x-show=\"!$data.collapsed\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-indicator=\"#contributors-sort-indicator\"><i class=\"fa-solid fa-arrow-down-wide-short\" aria-hidden=\"true\"></i></button></span></div><div class=\"filter-section-content flex flex-col gap-1\" x-show=\"!$data.collapsed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

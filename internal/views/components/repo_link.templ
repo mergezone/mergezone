@@ -2,13 +2,13 @@ package components
 
 templ RepositoryLink(owner string, repository string, iconClass string) {
 	{{ repositoryPath := "/" + owner + "/" + repository }}
-	<a href={ templ.SafeURL(repositoryPath) } hx-get={ templ.SafeURL(repositoryPath) } hx-target="#page-shell" hx-push-url="true" class="item icon-card box">
-		<div class="icon-container">
+	<a href={ templ.SafeURL(repositoryPath) } hx-get={ templ.SafeURL(repositoryPath) } hx-target="#page-shell" hx-push-url="true" class="icon-card group grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 no-underline transition-colors hover:border-base-content/20 hover:bg-base-200">
+		<div class="flex size-10 items-center justify-center rounded-md bg-base-200 text-xl text-base-content/70 transition-colors group-hover:text-base-content">
 			<i class={ iconClass }></i>
 		</div>
-		<div class="title-row">
-			<p><span>{ owner } / </span><span>{ repository }</span></p>
-			<i class="fa-solid fa-circle-notch fa-spin htmx-indicator"></i>
+		<div class="col-start-2 flex items-center justify-between gap-2 text-base font-semibold text-base-content">
+			<p><span class="text-base-content/60">{ owner } / </span><span>{ repository }</span></p>
+			<span class="loading loading-spinner loading-xs htmx-indicator text-base-content/50"></span>
 		</div>
 	</a>
 }

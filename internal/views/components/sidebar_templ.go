@@ -31,7 +31,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"aside-column\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"aside-column relative flex shrink-0 flex-col bg-base-200 lg:w-[var(--filter-sidebar-width)] lg:border-r lg:border-base-300\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -39,7 +39,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"scroll\"><div id=\"scopes-section\" x-data=\"{ collapsed: false }\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"scroll hidden min-h-0 flex-1 overflow-y-auto py-2 scrollbar-slim lg:block\"><div id=\"scopes-section\" x-data=\"{ collapsed: false }\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.S
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div class=\"pane-resize-handle sidebar-resize-handle\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize filters sidebar\" :aria-valuemin=\"$store.app.filterSidebarMinWidth\" :aria-valuemax=\"$store.app.filterSidebarMaxWidth\" :aria-valuenow=\"$store.app.filterSidebarWidth\" tabindex=\"0\" @pointerdown=\"$store.app.startPaneResize('filter', $event)\" @keydown.left.prevent=\"$store.app.adjustPaneWidth('filter', -16)\" @keydown.right.prevent=\"$store.app.adjustPaneWidth('filter', 16)\"></div></aside>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div class=\"pane-resize-handle sidebar-resize-handle -right-1 hidden lg:block\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize filters sidebar\" :aria-valuemin=\"$store.app.filterSidebarMinWidth\" :aria-valuemax=\"$store.app.filterSidebarMaxWidth\" :aria-valuenow=\"$store.app.filterSidebarWidth\" tabindex=\"0\" @pointerdown=\"$store.app.startPaneResize('filter', $event)\" @keydown.left.prevent=\"$store.app.adjustPaneWidth('filter', -16)\" @keydown.right.prevent=\"$store.app.adjustPaneWidth('filter', 16)\"></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -5,27 +5,28 @@ import "fmt"
 templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel string, destinationURL string, isActive bool) {
 	if destinationURL != "" {
 		<div
-			class={ "item stat box", templ.KV("active", isActive) }
+			class="status-tile grid cursor-pointer grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center justify-items-center gap-x-3 gap-y-2 rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200 data-[active=true]:bg-base-200"
+			data-active={ fmt.Sprintf("%t", isActive) }
 			hx-get={ templ.SafeURL(destinationURL) }
 			hx-target="#page-shell"
 			hx-push-url="true"
 		>
-			<p class="bold">{ statusLabel }</p>
-			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
+			<p class="col-span-2 text-xs font-semibold text-base-content/70">{ statusLabel }</p>
+			<i class={ "status-icon col-start-1 row-start-1 text-2xl " + iconClass }></i>
+			<b class="col-start-2 row-start-1 text-2xl leading-none font-bold text-base-content">{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	} else {
-		<div class={ "item stat box", templ.KV("active", isActive) }>
-			<p class="bold">{ statusLabel }</p>
-			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
+		<div class="status-tile grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center justify-items-center gap-x-3 gap-y-2 rounded-lg border border-base-300 bg-base-100 p-3" data-active={ fmt.Sprintf("%t", isActive) }>
+			<p class="col-span-2 text-xs font-semibold text-base-content/70">{ statusLabel }</p>
+			<i class={ "status-icon col-start-1 row-start-1 text-2xl " + iconClass }></i>
+			<b class="col-start-2 row-start-1 text-2xl leading-none font-bold text-base-content">{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	}
 }
 
 templ InlinePullRequestCount(iconClass string, pullRequestCount int) {
-	<div class="stat">
-		<i class={ "status-icon fa-solid " + iconClass }></i>
-		<span class="bold small">{ fmt.Sprintf("%d", pullRequestCount) }</span>
+	<div class="inline-flex items-center gap-1">
+		<i class={ "status-icon " + iconClass }></i>
+		<span class="text-sm font-semibold">{ fmt.Sprintf("%d", pullRequestCount) }</span>
 	</div>
 }

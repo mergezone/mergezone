@@ -25,7 +25,7 @@ func TestSortScopesResponseOnlyRefreshesTheSidebar(t *testing.T) {
 	if !strings.Contains(output, "Filter pull requests by contributor alice") {
 		t.Errorf("scopes response does not render the contributor cards: %q", output)
 	}
-	for _, unexpected := range []string{`id="overview-stats"`, `id="load-more-card"`, `class="item pull-request box"`, `id="scroll-content"`} {
+	for _, unexpected := range []string{`id="overview-stats"`, `id="load-more-card"`, `data-pull-request-number`, `id="scroll-content"`} {
 		if strings.Contains(output, unexpected) {
 			t.Errorf("scopes response touched the main content area: found %q in %q", unexpected, output)
 		}
@@ -48,7 +48,7 @@ func TestSortContributorsResponseOnlyRefreshesTheSidebar(t *testing.T) {
 	if !strings.Contains(output, "Filter pull requests by scope backend") {
 		t.Errorf("contributors response does not render the scope cards: %q", output)
 	}
-	for _, unexpected := range []string{`id="overview-stats"`, `id="load-more-card"`, `class="item pull-request box"`, `id="scroll-content"`} {
+	for _, unexpected := range []string{`id="overview-stats"`, `id="load-more-card"`, `data-pull-request-number`, `id="scroll-content"`} {
 		if strings.Contains(output, unexpected) {
 			t.Errorf("contributors response touched the main content area: found %q in %q", unexpected, output)
 		}
