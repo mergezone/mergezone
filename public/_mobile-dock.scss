@@ -34,8 +34,8 @@
   }
 
   // Dim everything that is not an open pane or the bottom dock. The overlay
-  // is non-interactive so the panes' existing click-away and escape handlers
-  // keep working.
+  // absorbs clicks so tapping the shaded area closes the open pane instead of
+  // reaching the page underneath.
   body:has(.filter-panel.open)::after,
   body:has(.context-pane.open)::after {
     content: "";
@@ -43,7 +43,7 @@
     inset: 0;
     z-index: $pane-overlay-z;
     background-color: rgba(0, 0, 0, 0.4);
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   // Keep the open panes above the overlay.

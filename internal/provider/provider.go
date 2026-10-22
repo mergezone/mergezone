@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"merge/internal/model"
 	"net/url"
@@ -13,9 +14,10 @@ type RepositoryQuery struct {
 	Owner       string
 	Repository  string
 	AsOf        time.Time
-	Scope       *string
-	Contributor *string
-	Status      *string
+	Scope       []string
+	Contributor []string
+	// TODO Permit only values of Status enum
+	Status []string
 }
 
 type PullRequestListOptions struct {
@@ -38,6 +40,27 @@ func repositoryQueryIntOrDefault(key string, queryValues url.Values, fallback in
 	return fallback
 }
 
+// parseFilterValues splits a comma-separated filter value, trimming each entry
+// and dropping empty ones. An empty or all-empty value yields a nil selection,
+// so a stray comma cannot filter every pull request out of the list.
+func parseFilterValues(rawValue string) []string {
+	if rawValue == "" {
+		return nil
+	}
+
+	values := make([]string, 0)
+	for _, value := range strings.Split(rawValue, ",") {
+		value = strings.TrimSpace(value)
+		if value != "" {
+			values = append(values, value)
+		}
+	}
+	if len(values) == 0 {
+		return nil
+	}
+	return values
+}
+
 func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Values) (RepositoryQuery, PullRequestListOptions) {
 	repositoryQuery := RepositoryQuery{
 		Owner:      routeVariables["owner"],
@@ -45,15 +68,9 @@ func ParseRepositoryQuery(routeVariables map[string]string, queryValues url.Valu
 		// TODO(hayden): Move this to options for historical slicing?
 		AsOf: time.Now(),
 	}
-	if scope := queryValues.Get("scope"); scope != "" {
-		repositoryQuery.Scope = &scope
-	}
-	if contributor := queryValues.Get("contributor"); contributor != "" {
-		repositoryQuery.Contributor = &contributor
-	}
-	if status := queryValues.Get("status"); status != "" {
-		repositoryQuery.Status = &status
-	}
+	repositoryQuery.Scope = parseFilterValues(queryValues.Get("scope"))
+	repositoryQuery.Contributor = parseFilterValues(queryValues.Get("contributor"))
+	repositoryQuery.Status = parseFilterValues(queryValues.Get("status"))
 
 	options := PullRequestListOptions{
 		PerPage: 20,
@@ -72,6 +89,11 @@ type PullRequestTimings struct {
 }
 
 type Provider interface {
+	// GetPullRequests returns a page of the repository's pull requests without
+	// applying the query's scope, contributor, or status selections. The query
+	// still identifies the repository and is the natural place to carry the
+	// selections, so callers pick the pull requests they want with
+	// FilterPullRequests once the unfiltered set is available.
 	GetPullRequests(ctx context.Context, query RepositoryQuery, options PullRequestListOptions) ([]model.StampedPullRequest, PullRequestPagination, PullRequestTimings, error)
 	GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error)
 	GetPullRequestComments(ctx context.Context, owner, repository string, pullRequestNumber int) ([]model.PullRequestComment, error)

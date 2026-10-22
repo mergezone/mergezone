@@ -2,6 +2,7 @@ package components
 
 import (
 	"fmt"
+	"slices"
 
 	"merge/internal/model"
 )
@@ -9,20 +10,16 @@ import (
 templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 	{{
 		targetFilters := filters.WithScope(scope.Name)
-		if scope.Name == filters.Scope {
-			targetFilters = filters.WithScope("")
-		}
 		scopeURL := targetFilters.URL()
 		ariaLabel := fmt.Sprintf("Filter pull requests by scope %s", scope.Name)
-		if scope.Name == filters.Scope {
+		isCurrent := slices.Contains(filters.Scope, scope.Name)
+		if isCurrent {
 			ariaLabel = fmt.Sprintf("Clear scope filter %s", scope.Name)
 		}
 	}}
 	<a
-		class={ "panel-block sidebar-panel-item scope", templ.KV("is-current", scope.Name == filters.Scope) }
+		class={ "panel-block sidebar-panel-item scope", templ.KV("is-current", isCurrent) }
 		aria-label={ ariaLabel }
-		@mouseenter="$store.app.measureSidebarMeta($el)"
-		@focusin="$store.app.measureSidebarMeta($el)"
 		href={ templ.SafeURL(scopeURL) }
 		hx-get={ templ.SafeURL(scopeURL) }
 		hx-target="#page-shell"
@@ -33,16 +30,12 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 			<span class="sidebar-panel-title">{ scope.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing">
-			if scope.Name == filters.Scope {
-				<span class="sidebar-panel-clear-icon" title="Clear scope filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
-			} else {
-				<span class="sidebar-panel-meta">
-					<span class="age">
-						<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)
-					</span>
-					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", scope.TotalPullRequests()) }</span>
+			<span class="sidebar-panel-meta">
+				<span class="age">
+					<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)
 				</span>
-			}
+				<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", scope.TotalPullRequests()) }</span>
+			</span>
 		</span>
 	</a>
 }
@@ -50,20 +43,16 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 templ ContributorCard(contributor model.ContributorInfo, filters model.RepositoryFilters) {
 	{{
 		targetFilters := filters.WithContributor(contributor.Name)
-		if contributor.Name == filters.Contributor {
-			targetFilters = filters.WithContributor("")
-		}
 		contributorURL := targetFilters.URL()
 		ariaLabel := fmt.Sprintf("Filter pull requests by contributor %s", contributor.Name)
-		if contributor.Name == filters.Contributor {
+		isCurrent := slices.Contains(filters.Contributor, contributor.Name)
+		if isCurrent {
 			ariaLabel = fmt.Sprintf("Clear contributor filter %s", contributor.Name)
 		}
 	}}
 	<a
-		class={ "panel-block sidebar-panel-item contributor", templ.KV("is-current", contributor.Name == filters.Contributor) }
+		class={ "panel-block sidebar-panel-item contributor", templ.KV("is-current", isCurrent) }
 		aria-label={ ariaLabel }
-		@mouseenter="$store.app.measureSidebarMeta($el)"
-		@focusin="$store.app.measureSidebarMeta($el)"
 		href={ templ.SafeURL(contributorURL) }
 		hx-get={ templ.SafeURL(contributorURL) }
 		hx-target="#page-shell"
@@ -76,16 +65,12 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 			<span class="sidebar-panel-title">{ contributor.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing">
-			if contributor.Name == filters.Contributor {
-				<span class="sidebar-panel-clear-icon" title="Clear contributor filter" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
-			} else {
-				<span class="sidebar-panel-meta">
-					<span class="age">
-						<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)
-					</span>
-					<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", contributor.TotalPullRequests()) }</span>
+			<span class="sidebar-panel-meta">
+				<span class="age">
+					<i class="fa-solid fa-clock" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)
 				</span>
-			}
+				<span class="count"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> { fmt.Sprintf("%d", contributor.TotalPullRequests()) }</span>
+			</span>
 		</span>
 	</a>
 }

@@ -18,7 +18,9 @@ function applyStatusTimings(root) {
     };
     for (const [name, duration] of Object.entries(metrics)) {
       if (!Number.isFinite(duration)) continue;
-      const target = root.querySelector(`[data-status-${name}]`);
+      // The footer sits outside fragment targets (sidebar, load more, detail),
+      // so look it up document-wide instead of within the swapped subtree.
+      const target = document.querySelector(`[data-status-${name}]`);
       if (target) target.textContent = formatServerDuration(duration);
     }
     payload.remove();
@@ -39,6 +41,75 @@ if (document.readyState === "loading") {
 
 document.addEventListener("htmx:afterSwap", (event) => {
   applyStatusTimings(event.detail?.target || document);
+});
+
+// Repository navigation replaces the whole view. Close the context pane and
+// forget its pull request so the next card click opens fresh instead of
+// toggling stale state (which looked like a double click).
+function resetContextPaneForNavigation() {
+  const contextPane = window.Alpine?.store("contextPane");
+  if (!contextPane) return;
+  if (contextPane.open) contextPane.closePane();
+  contextPane.pullRequestNumber = null;
+}
+
+document.addEventListener("htmx:beforeSwap", (event) => {
+  if (event.detail?.target?.id === "page-shell") {
+    resetContextPaneForNavigation();
+  }
+});
+
+document.addEventListener("htmx:historyRestore", () => {
+  resetContextPaneForNavigation();
+});
+
+// A sidebar sort only re-renders the sidebar, so links rendered before the
+// sort keep the old query string. When one of those links navigates, copy the
+// current sort onto the same-page request. Sort requests are skipped because
+// they clear a sort by omitting it.
+const SORT_QUERY_PARAMETERS = ["scope_sort", "contributor_sort"];
+const SORT_FRAGMENTS = new Set(["scopes", "contributors"]);
+
+function withoutTrailingSlash(pathname) {
+  return pathname.replace(/\/+$/, "") || "/";
+}
+
+function withCurrentSort(rawURL) {
+  const url = new URL(rawURL, window.location.href);
+  if (url.origin !== window.location.origin) return null;
+  if (
+    withoutTrailingSlash(url.pathname) !==
+    withoutTrailingSlash(window.location.pathname)
+  ) {
+    return null;
+  }
+  if (SORT_FRAGMENTS.has(url.searchParams.get("fragment"))) return null;
+
+  const current = new URLSearchParams(window.location.search);
+  let search = url.search;
+  for (const name of SORT_QUERY_PARAMETERS) {
+    if (url.searchParams.has(name)) continue;
+    const value = current.get(name);
+    if (!value) continue;
+    search += `${search ? "&" : "?"}${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+  }
+  return search === url.search ? null : url.pathname + search + url.hash;
+}
+
+document.addEventListener("htmx:configRequest", (event) => {
+  if (!event.detail?.path) return;
+  const url = withCurrentSort(event.detail.path);
+  if (url) event.detail.path = url;
+});
+
+document.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0) return;
+  const anchor = event.target.closest?.("a[href]");
+  if (!anchor) return;
+  const href = anchor.getAttribute("href");
+  if (!href || href.startsWith("#")) return;
+  const url = withCurrentSort(anchor.href);
+  if (url) anchor.setAttribute("href", url);
 });
 
 async function ensureDiffsLib() {
@@ -393,12 +464,6 @@ document.addEventListener("alpine:init", () => {
         localStorage.setItem(key, String(width));
       }
       this._paneResize = null;
-    },
-
-    measureSidebarMeta(row) {
-      const meta = row?.querySelector(".sidebar-panel-meta");
-      if (!meta) return;
-      row.style.setProperty("--sidebar-meta-width", `${meta.scrollWidth}px`);
     },
 
     _loadAvatars() {

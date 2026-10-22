@@ -1,0 +1,38 @@
+package components
+
+import "merge/internal/model"
+
+// SortScopesResponse is the sidebar-only response for a scope sort change. It
+// swaps the scopes section in place, which preserves its collapse state, and
+// then out-of-band refreshes the contributors section so its links carry the
+// active sort orders too. Nothing outside the sidebar is touched: sorting only
+// changes the order of the sidebar, not the pull request list or its controls.
+templ SortScopesResponse(
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
+	filters model.RepositoryFilters,
+	currentPage int,
+) {
+	@ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage)
+	<div hx-swap-oob="innerHTML:#contributors-section">
+		@ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage)
+	</div>
+}
+
+// SortContributorsResponse is the contributors-list counterpart of
+// SortScopesResponse.
+templ SortContributorsResponse(
+	scopeSummaries []model.ScopeInfo,
+	scopeSortOrder string,
+	contributorSummaries []model.ContributorInfo,
+	contributorSortOrder string,
+	filters model.RepositoryFilters,
+	currentPage int,
+) {
+	@ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage)
+	<div hx-swap-oob="innerHTML:#scopes-section">
+		@ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage)
+	</div>
+}

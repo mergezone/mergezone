@@ -113,68 +113,15 @@ func (g GitHub) GetPullRequests(ctx context.Context, query provider.RepositoryQu
 		return nil, hasNext, pullRequestTimings(operationStarted, gatherWaits), err
 	}
 
-	_, logicSpan := telemetry.Tracer("merge/github").Start(ctx, "github.filter_and_categorize",
+	_, logicSpan := telemetry.Tracer("merge/github").Start(ctx, "github.stamp_pull_requests",
 		trace.WithAttributes(attribute.Int("github.pull_request_count", len(pullRequests))),
 	)
 	// TODO(hayden): Implement `Mappable` interface
 	stampedPullRequests := model.StampNow(pullRequests)
 
-	filteredPullRequests := stampedPullRequests
-	if query.Scope != nil {
-		inScope := make([]model.StampedPullRequest, 0, len(stampedPullRequests))
-		for _, pr := range stampedPullRequests {
-			for _, scope := range pr.Scopes {
-				if scope == *query.Scope {
-					inScope = append(inScope, pr)
-				}
-			}
-		}
-		filteredPullRequests = inScope
-	}
-
-	if query.Contributor != nil {
-		byContributor := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
-		for _, pr := range filteredPullRequests {
-			if pr.Author.Name == *query.Contributor {
-				byContributor = append(byContributor, pr)
-			}
-		}
-		filteredPullRequests = byContributor
-	}
-
-	if query.Status != nil {
-		byStatus := make([]model.StampedPullRequest, 0, len(filteredPullRequests))
-		for _, pr := range filteredPullRequests {
-			switch *query.Status {
-			case "merged":
-				if pr.State == model.Merged {
-					byStatus = append(byStatus, pr)
-				}
-			default:
-				if pr.State != model.Merged {
-					switch *query.Status {
-					case "fresh":
-						if pr.ExpiryStatus == model.Fresh {
-							byStatus = append(byStatus, pr)
-						}
-					case "stale":
-						if pr.ExpiryStatus == model.Stale {
-							byStatus = append(byStatus, pr)
-						}
-					case "expired":
-						if pr.ExpiryStatus == model.Expired {
-							byStatus = append(byStatus, pr)
-						}
-					}
-				}
-			}
-		}
-		filteredPullRequests = byStatus
-	}
-
-	logicSpan.SetAttributes(attribute.Int("github.filtered_pull_request_count", len(filteredPullRequests)))
+	logicSpan.SetAttributes(attribute.Int("github.stamped_pull_request_count", len(stampedPullRequests)))
 	logicSpan.End()
-	return filteredPullRequests, hasNext, pullRequestTimings(operationStarted, gatherWaits), nil
+	return stampedPullRequests, hasNext, pullRequestTimings(operationStarted, gatherWaits), nil
 }
 
 func (g GitHub) GetPullRequestDiff(ctx context.Context, owner, repository string, pullRequestNumber int) (string, error) {

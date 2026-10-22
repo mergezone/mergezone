@@ -38,6 +38,12 @@ func RepositoryDocument(viewData model.RepositoryViewData, currentPath, commit s
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		filters := model.RepositoryFilters{Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status}
+		title := fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository)
+		if filterLabel := filters.Label(); filterLabel != "" {
+			title = fmt.Sprintf("%s — %s", title, filterLabel)
+		}
+		counts := model.PullRequestExpiryCounts(viewData.PullRequests)
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -57,8 +63,8 @@ func RepositoryDocument(viewData model.RepositoryViewData, currentPath, commit s
 			return nil
 		})
 		templ_7745c5c3_Err = layout.BaseDocument(
-			fmt.Sprintf("%s/%s", viewData.Owner, viewData.Repository),
-			fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", viewData.OverallCounts.TotalPullRequests(), viewData.OverallCounts.FreshCount, viewData.OverallCounts.StaleCount, viewData.OverallCounts.ExpiredCount),
+			title,
+			fmt.Sprintf("%d open pull requests — %d fresh, %d stale, %d expired", counts.TotalPullRequests(), counts.FreshCount, counts.StaleCount, counts.ExpiredCount),
 			viewData.BaseURL,
 			viewData.Owner,
 			viewData.Repository,

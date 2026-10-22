@@ -2,15 +2,15 @@ package components
 
 import "merge/internal/model"
 
-templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.ScopeInfo, scopeSortOrder string, contributorSummaries []model.ContributorInfo, contributorSortOrder string) {
+templ RepositorySidebar(filters model.RepositoryFilters, scopeSummaries []model.ScopeInfo, scopeSortOrder string, contributorSummaries []model.ContributorInfo, contributorSortOrder string, currentPage int) {
 	<aside class="aside-column">
 		@RepositoryNavigation(filters.Owner, filters.Repository)
 		<div class="scroll">
 			<div id="scopes-section" x-data="{ collapsed: false }">
-				@ScopeSummaries(scopeSummaries, scopeSortOrder, filters)
+				@ScopeSummaries(scopeSummaries, scopeSortOrder, filters, currentPage)
 			</div>
 			<div id="contributors-section" x-data="{ collapsed: false }">
-				@ContributorSummaries(contributorSummaries, contributorSortOrder, filters)
+				@ContributorSummaries(contributorSummaries, contributorSortOrder, filters, currentPage)
 			</div>
 		</div>
 		<div class="pane-resize-handle sidebar-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize filters sidebar" :aria-valuemin="$store.app.filterSidebarMinWidth" :aria-valuemax="$store.app.filterSidebarMaxWidth" :aria-valuenow="$store.app.filterSidebarWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('filter', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('filter', -16)" @keydown.right.prevent="$store.app.adjustPaneWidth('filter', 16)"></div>

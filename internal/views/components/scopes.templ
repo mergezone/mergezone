@@ -4,7 +4,7 @@ package components
 
 import "merge/internal/model"
 
-templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters) {
+templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, filters model.RepositoryFilters, currentPage int) {
 	<section class="panel scopes filter-section">
 		<div
 			class="panel-heading section-heading filter-section-heading"
@@ -28,7 +28,7 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 				</span>
 				<span>Scopes</span>
 			</span>
-			if len(scopeSummaries) > 0 || filters.Scope != "" {
+			if len(scopeSummaries) > 0 || len(filters.Scope) > 0 {
 				<span class="section-actions">
 					<i id="scopes-sort-indicator" class="fa-solid fa-circle-notch fa-spin htmx-indicator" aria-hidden="true"></i>
 					<button
@@ -38,8 +38,9 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						if activeSortOrder == "recent" {
 							data-active-sort="true"
 						}
-						hx-get={ filters.FragmentURL("scopes", "recent") }
+						hx-get={ filters.WithScopeSort("recent").FragmentURL("scopes", currentPage) }
 						hx-target="#scopes-section"
+						hx-push-url={ filters.WithScopeSort("recent").URL() }
 						hx-indicator="#scopes-sort-indicator"
 					>
 						<i class="fa-solid fa-clock" aria-hidden="true"></i>
@@ -51,8 +52,9 @@ templ ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, f
 						if activeSortOrder == "top" {
 							data-active-sort="true"
 						}
-						hx-get={ filters.FragmentURL("scopes", "top") }
+						hx-get={ filters.WithScopeSort("top").FragmentURL("scopes", currentPage) }
 						hx-target="#scopes-section"
+						hx-push-url={ filters.WithScopeSort("top").URL() }
 						hx-indicator="#scopes-sort-indicator"
 					>
 						<i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i>

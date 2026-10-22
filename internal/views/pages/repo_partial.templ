@@ -6,8 +6,8 @@ import (
 )
 
 templ RepositoryMainView(viewData model.RepositoryViewData, commit string) {
-	{{ filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status} }}
-	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort)
+	{{ filters := model.RepositoryFilters{Owner: viewData.Owner, Repository: viewData.Repository, Scope: viewData.Scope, Contributor: viewData.Contributor, Status: viewData.Status, ScopeSort: viewData.ScopeSort, ContributorSort: viewData.ContributorSort} }}
+	@components.RepositorySidebar(filters, viewData.ScopeCounts, viewData.ScopeSort, viewData.ContributorCounts, viewData.ContributorSort, viewData.CurrentPage)
 	<main class="scroll">
 		<div class="overview" id="overview-stats">
 			@components.PullRequestCounts(viewData.OverallCounts, viewData.HasMore, filters, viewData.CurrentPage+1)
