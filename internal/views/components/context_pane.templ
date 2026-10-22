@@ -6,6 +6,7 @@ templ ContextPane() {
 		id="context-pane"
 		:class="{ 'open': $store.contextPane.open }"
 		@keydown.escape.window="$store.contextPane.closePane()"
+		@click.away="if($store.contextPane.open && window.matchMedia('(max-width: 1024px)').matches && !$event.target.closest('.filter-panel') && !$event.target.closest('.mobile-dock'))$store.contextPane.closePane()"
 	>
 		<div class="pane-resize-handle context-pane-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize pull request details" :aria-valuemin="$store.app.contextPaneMinWidth" :aria-valuemax="$store.app.contextPaneMaxWidth" :aria-valuenow="$store.app.contextPaneWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('context', $event)" @keydown.left.pullRequestevent="$store.app.adjustPaneWidth('context', 16)" @keydown.right.pullRequestevent="$store.app.adjustPaneWidth('context', -16)"></div>
 		<div id="context-pane-content">
