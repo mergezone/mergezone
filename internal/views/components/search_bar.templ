@@ -12,48 +12,48 @@ templ RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, repos
 		}
 	}}
 	if interactive {
-		<nav class="breadcrumb search-input-row" aria-label="Repository" hx-indicator="#search-loading-indicator">
-			<ul>
-				<li>
+		<nav class="search-input-row repository-search-row" aria-label="Repository" hx-indicator="#search-loading-indicator">
+			<ul class="repository-search-path">
+				<li class="repository-search-owner">
 					if showIcon {
-						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+						<i class="fa-solid fa-magnifying-glass repository-search-icon" aria-hidden="true"></i>
 					}
-					<div class="owner-search">
-						<button class="button is-ghost owner-avatar-trigger" type="button" x-show="!ownerEditing" @click="startOwnerEdit()" @focus="startOwnerEdit()" aria-label="Edit repository owner">
+					<div class="owner-search repository-owner-search">
+						<button class="owner-avatar-trigger repository-owner-avatar btn btn-ghost btn-circle" type="button" x-show="!ownerEditing" @click="startOwnerEdit()" @focus="startOwnerEdit()" aria-label="Edit repository owner">
 							if ownerValue != "" {
-								<img class="owner-avatar" src={ templ.SafeURL("https://github.com/" + ownerValue + ".png") } alt={ ownerValue + " profile picture" }/>
+								<img class="owner-avatar repository-owner-image" src={ templ.SafeURL("https://github.com/" + ownerValue + ".png") } alt={ ownerValue + " profile picture" }/>
 							} else {
-								<span class="owner-avatar owner-avatar-placeholder" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+								<span class="owner-avatar owner-avatar-placeholder repository-owner-placeholder" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
 							}
 						</button>
-						<span class="input-pill" x-show="ownerEditing" x-cloak>
-							<input id="repository-owner" x-ref="ownerInput" class="input title-input" type="text" data-part="owner" value={ ownerValue } placeholder={ ownerPlaceholder } autocomplete="off"/>
+						<span class="repository-search-editor" x-show="ownerEditing" x-cloak>
+							<input id="repository-owner" x-ref="ownerInput" class="title-input repository-search-input" type="text" data-part="owner" value={ ownerValue } placeholder={ ownerPlaceholder } autocomplete="off"/>
 						</span>
 					</div>
 				</li>
-				<li class="is-active">
+				<li class="repository-search-repository">
 					<div class="repository-search">
-						<button class="button is-ghost repository-label" type="button" x-show="!repositoryEditing" @click="startRepositoryEdit()" @focus="startRepositoryEdit()" aria-label="Edit repository">{ repositoryLabel }</button>
-						<span class="input-pill" x-show="repositoryEditing" x-cloak>
-							<input class="input title-input" type="text" data-part="repository" x-ref="repositoryInput" value={ repositoryValue } placeholder={ repositoryPlaceholder } autocomplete="off"/>
+						<button class="repository-label repository-search-label btn btn-ghost" type="button" x-show="!repositoryEditing" @click="startRepositoryEdit()" @focus="startRepositoryEdit()" aria-label="Edit repository">{ repositoryLabel }</button>
+						<span class="repository-search-editor" x-show="repositoryEditing" x-cloak>
+							<input class="title-input repository-search-input" type="text" data-part="repository" x-ref="repositoryInput" value={ repositoryValue } placeholder={ repositoryPlaceholder } autocomplete="off"/>
 						</span>
 					</div>
 				</li>
 			</ul>
-			<span id="search-loading-indicator" class="icon search-loading-indicator htmx-indicator" role="status" aria-label="Loading">
-				<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
+			<span id="search-loading-indicator" class="htmx-indicator repository-search-loading" role="status" aria-label="Loading">
+				<span class="loading loading-spinner loading-xs"></span>
 			</span>
 		</nav>
 	} else {
-		<nav class="breadcrumb search-input-row" aria-label="Repository">
-			<ul>
-				<li>
+		<nav class="search-input-row repository-search-row" aria-label="Repository">
+			<ul class="repository-search-path">
+				<li class="repository-search-owner">
 					if showIcon {
-						<i class="fa-solid fa-magnifying-glass search-navigation-icon" aria-hidden="true"></i>
+						<i class="fa-solid fa-magnifying-glass repository-search-icon" aria-hidden="true"></i>
 					}
-					<span class="static-owner">{ ownerLabel }</span>
+					<span class="repository-static-label">{ ownerLabel }</span>
 				</li>
-				<li class="is-active"><span class="static-repository">{ repositoryLabel }</span></li>
+				<li class="repository-search-repository"><span class="repository-static-label">{ repositoryLabel }</span></li>
 			</ul>
 		</nav>
 	}

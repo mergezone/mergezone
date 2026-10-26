@@ -1,6 +1,7 @@
 package components
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"merge/internal/model"
@@ -9,6 +10,23 @@ import (
 
 templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.RepositoryFilters) {
 	{{
+		updatedAgo := pullRequest.TimeOpen
+		updatedDays := pullRequest.DaysOpen
+		if pullRequest.UpdatedAt != nil {
+			updatedAgo = pullRequest.Time.Sub(*pullRequest.UpdatedAt)
+			if updatedAgo < 0 {
+				updatedAgo = 0
+			}
+			updatedDays = int(updatedAgo.Hours() / 24)
+		}
+		scopeItems := make([]map[string]string, 0, len(pullRequest.Scopes))
+		for _, scope := range pullRequest.Scopes {
+			scopeItems = append(scopeItems, map[string]string{
+				"name": scope,
+				"url":  filters.WithScope(scope).URL(),
+			})
+		}
+		scopeJSON, _ := json.Marshal(scopeItems)
 		paneSeed := map[string]any{
 			"number":          pullRequest.Number,
 			"owner":           filters.Owner,
@@ -29,30 +47,21 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 					"reason": helpers.SupersessionReason(pullRequest),
 				}
 			}(),
-			"expiryReason": helpers.ExpiryReason(pullRequest),
-			"url":          pullRequest.URL,
-			"comments":     pullRequest.CommentCount(),
-			"age":          model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
-			"authorName":   pullRequest.Author.Name,
-			"authorURL":    pullRequest.Author.URL,
-			"scope": func() string {
-				if len(pullRequest.Scopes) > 0 {
-					return pullRequest.Scopes[0]
-				}
-				return ""
-			}(),
-			"scopeURL": func() string {
-				if len(pullRequest.Scopes) > 0 {
-					return filters.WithScope(pullRequest.Scopes[0]).URL()
-				}
-				return ""
-			}(),
-			"bodyHtml": helpers.RenderMarkdown(pullRequest.Body),
-			"refs":     helpers.PullRequestReferences(pullRequest.Body),
+			"expiryReason":    helpers.ExpiryReason(pullRequest),
+			"url":             pullRequest.URL,
+			"comments":        pullRequest.CommentCount(),
+			"reviewerCount":   len(pullRequest.Reviewers),
+			"age":             model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen),
+			"authorName":      pullRequest.Author.Name,
+			"authorURL":       pullRequest.Author.URL,
+			"authorAvatarURL": pullRequest.Author.AvatarURL,
+			"scopes":          scopeItems,
+			"bodyHtml":        helpers.RenderMarkdown(pullRequest.Body),
+			"refs":            helpers.PullRequestReferences(pullRequest.Body),
 		}
 	}}
 	<div
-		class="item pull-request box"
+		class="pull-request-card"
 		data-draft={ fmt.Sprintf("%t", pullRequest.IsDraft) }
 		data-pull-request-number={ fmt.Sprintf("%d", pullRequest.Number) }
 		data-pull-request-title={ pullRequest.Title }
@@ -61,6 +70,7 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 		data-pull-request-expiry-status={ helpers.ExpiryLabel(pullRequest) }
 		data-pull-request-expiry-icon-class={ helpers.StatusIconClass(pullRequest) }
 		data-pull-request-expiry-reason={ helpers.ExpiryReason(pullRequest) }
+		data-selected="false"
 		if pullRequest.SupersededBy != nil {
 			data-pull-request-superseded-by-number={ fmt.Sprintf("%d", pullRequest.SupersededBy.Number) }
 			data-pull-request-superseded-by-url={ pullRequest.SupersededBy.URL }
@@ -68,12 +78,15 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 		}
 		data-pull-request-url={ pullRequest.URL }
 		data-pull-request-comments={ fmt.Sprintf("%d", pullRequest.CommentCount()) }
+		data-pull-request-reviewer-count={ fmt.Sprintf("%d", len(pullRequest.Reviewers)) }
 		data-pull-request-age={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }
 		data-pull-request-author-name={ pullRequest.Author.Name }
 		data-pull-request-author-url={ pullRequest.Author.URL }
-		if len(pullRequest.Scopes) > 0 {
-			data-pull-request-scope={ pullRequest.Scopes[0] }
-			data-pull-request-scope-url={ filters.WithScope(pullRequest.Scopes[0]).URL() }
+		data-pull-request-author-avatar-url={ pullRequest.Author.AvatarURL }
+		if len(scopeItems) > 0 {
+			data-pull-request-scope={ scopeItems[0]["name"] }
+			data-pull-request-scope-url={ scopeItems[0]["url"] }
+			data-pull-request-scopes={ string(scopeJSON) }
 		}
 		hx-on:click="Alpine.store('contextPane').openPane(Number(this.dataset.pullRequestNumber), this.dataset)"
 	>
@@ -81,40 +94,43 @@ templ PullRequestCard(pullRequest model.StampedPullRequest, filters model.Reposi
 			@templ.JSONScript("", paneSeed)
 		</div>
 		<div class="pull-request-header">
-			<div class="icon-container">
-				<i class={ fmt.Sprintf("status-icon fa-solid %s", helpers.GetStatusClass(pullRequest)) }></i>
+			<div class="pull-request-status">
+				<i class={ fmt.Sprintf("status-icon fa-solid pull-request-status-icon %s", helpers.GetStatusClass(pullRequest)) }></i>
 			</div>
-			<div class="title-row">
-				<b class="item-title">
+			<div class="pull-request-title-wrap">
+				<b class="item-title font-heading font-semibold pull-request-title" title={ pullRequest.Title }>
 					@Markdown(pullRequest.Title)
 				</b>
 			</div>
-			<div class="breadcrumb has-bullet-separator is-small">
-				<ul>
-					<li>
+			<div class="pull-request-meta">
+				<ul class="pull-request-meta-list">
+					<li class="pull-request-meta-fixed">
 						#{ pullRequest.Number }
 					</li>
-					<li>
+					<li class="pull-request-meta-fixed capitalize">
 						{ pullRequest.State }
 					</li>
-					<li title="Discussion">
-						<i class="fa-regular fa-comments" aria-hidden="true"></i> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
+					<li class="pull-request-meta-opened" title={ "Opened " + model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
+						<span class="sr-only">opened:</span> @Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
 					</li>
-					<li title={ model.TimeAgoLong(pullRequest.TimeOpen, pullRequest.DaysOpen) }>
-						@Age(pullRequest.TimeOpen, pullRequest.DaysOpen)
+					<li class="pull-request-meta-updated" title={ "Updated " + model.TimeAgoLong(updatedAgo, updatedDays) }>
+						<span class="sr-only">updated:</span> @Age(updatedAgo, updatedDays)
 					</li>
-					<li>
-						<a href={ pullRequest.Author.URL }>
+					<li class="pull-request-meta-author">
+						<a class="pull-request-author-link" href={ pullRequest.Author.URL } title={ pullRequest.Author.Name }>
 							if pullRequest.Author.AvatarURL != "" {
-								<img class="avatar" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
+								<img class="pull-request-author-avatar" src={ templ.SafeURL(pullRequest.Author.AvatarURL) } alt={ pullRequest.Author.Name + "'s profile picture" } loading="lazy"/>
 							}
-							{ pullRequest.Author.Name }
+							<span>{ pullRequest.Author.Name }</span>
 						</a>
 					</li>
-					for _, scope := range pullRequest.Scopes {
+					<li class="pull-request-meta-comments">
+						<i class="fa-regular fa-comments mr-1" aria-hidden="true"></i><span class="sr-only">comments:</span> { fmt.Sprintf("%d", pullRequest.CommentCount()) }
+					</li>
+					for i, scope := range pullRequest.Scopes {
 						{{ scopeURL := filters.WithScope(scope).URL() }}
-						<li>
-							<a href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
+						<li class="pull-request-meta-scope" data-scope-index={ fmt.Sprintf("%d", i) }>
+							<a class="pull-request-scope-link" href={ templ.SafeURL(scopeURL) } hx-get={ templ.SafeURL(scopeURL) } hx-target="#page-shell" hx-push-url="true">{ scope }</a>
 						</li>
 					}
 				</ul>

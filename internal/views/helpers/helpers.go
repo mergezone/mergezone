@@ -8,19 +8,19 @@ import (
 func GetStatusClass(pr model.StampedPullRequest) string {
 	switch pr.State {
 	case model.Merged:
-		return "fa-code-merge special"
+		return "fa-code-merge text-accent"
 	case model.Closed:
 		return "fa-ban"
 	}
 	switch pr.ExpiryStatus {
 	case model.Expired:
-		return "fa-skull error"
+		return "fa-skull text-error"
 	case model.Stale:
-		return "fa-leaf warn"
+		return "fa-leaf text-warning"
 	case model.Fresh:
-		return "fa-seedling ok"
+		return "fa-seedling text-success"
 	default:
-		return "fa-eye-slash"
+		return "fa-eye-slash text-base-content/50"
 	}
 }
 
@@ -42,7 +42,7 @@ func StatusIconClass(pr model.StampedPullRequest) string {
 	case model.Fresh:
 		return "fa-seedling"
 	default:
-		return "fa-eye-slash"
+		return "fa-eye-slash text-base-content/50"
 	}
 }
 
@@ -123,22 +123,32 @@ func PrLabel(count int) string {
 }
 
 func SplitAge(age string) (string, string) {
-	if len(age) < 2 {
+	i := len(age)
+	for i > 0 && !isASCIIDigit(age[i-1]) {
+		i--
+	}
+	if i == len(age) {
 		return age, ""
 	}
-	return age[:len(age)-1], age[len(age)-1:]
+	return age[:i], age[i:]
+}
+
+func isASCIIDigit(b byte) bool {
+	return b >= '0' && b <= '9'
 }
 
 func LongSuffix(num, suffix string) string {
 	if num == "1" {
 		switch suffix {
+		case "m":
+			return "minute"
 		case "h":
 			return "hour"
 		case "d":
 			return "day"
 		case "w":
 			return "week"
-		case "m":
+		case "mo":
 			return "month"
 		case "y":
 			return "year"
@@ -146,13 +156,15 @@ func LongSuffix(num, suffix string) string {
 		return suffix
 	}
 	switch suffix {
+	case "m":
+		return "minutes"
 	case "h":
 		return "hours"
 	case "d":
 		return "days"
 	case "w":
 		return "weeks"
-	case "m":
+	case "mo":
 		return "months"
 	case "y":
 		return "years"

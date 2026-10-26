@@ -20,7 +20,7 @@ templ AppendPullRequestsResponse(
 ) {
 	@components.PullRequestScrollItems(pullRequests, filters)
 	@components.PullRequestLoadMoreControl(filters, nextPullRequestPage, hasMorePullRequests, true)
-	<div class="overview" id="overview-stats" hx-swap-oob="true">
+	<div class="flex flex-col gap-4" id="overview-stats" hx-swap-oob="true">
 		@components.PullRequestCounts(overallCounts, hasMorePullRequests, filters, nextPullRequestPage)
 	</div>
 	<div id="scopes-section" x-data="{ collapsed: false }" hx-swap-oob="true">

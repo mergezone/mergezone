@@ -52,39 +52,27 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"stats\"><div class=\"section-heading\"><span>Overview</span></div><div class=\"level is-mobile stats-tiles\"><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"overview-stats\"><h2 class=\"my-2 px-1 text-sm font-bold text-base-content/70 compact:my-1\">Overview</h2><div class=\"overview-stats-grid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-seedling text-success", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"level-item\">")
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-leaf text-warning", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-skull text-error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"level-item\">")
+		templ_7745c5c3_Err = PullRequestStatusCount("fa-code-merge text-accent", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired")).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div class=\"level-item\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged")).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

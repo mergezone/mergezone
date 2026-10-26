@@ -36,30 +36,30 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"discussion-comments\" data-loaded=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"discussion-comments flex flex-col\" data-loaded=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(comments) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"discussion-empty\">No comments yet.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-xs text-base-content/60\">No comments yet.</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
 			for _, comment := range comments {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<article class=\"discussion-comment\"><div class=\"discussion-comment-header\"><div class=\"discussion-comment-author\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<article class=\"discussion-comment\"><div class=\"discussion-comment-header\"><div class=\"discussion-comment-author inline-flex min-w-0 items-center gap-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if comment.User.AvatarURL != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<img class=\"discussion-avatar\" src=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<img class=\"discussion-avatar size-6 shrink-0 rounded-lg object-cover\" src=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var2 string
 					templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL(comment.User.AvatarURL))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 20, Col: 82}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 20, Col: 122}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 					if templ_7745c5c3_Err != nil {
@@ -72,7 +72,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 					var templ_7745c5c3_Var3 string
 					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(comment.User.Login + "'s profile picture")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 20, Col: 132}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 20, Col: 172}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 					if templ_7745c5c3_Err != nil {
@@ -83,14 +83,14 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<a class=\"meta-link\" href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<a class=\"meta-link link link-hover font-medium\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 templ.SafeURL
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(comment.User.HTMLURL))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 22, Col: 70}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 22, Col: 98}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -103,7 +103,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(comment.User.Login)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 22, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 22, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -114,14 +114,14 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 					return templ_7745c5c3_Err
 				}
 				if createdAt, err := time.Parse(time.RFC3339, comment.CreatedAt); err == nil {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<time datetime=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<time class=\"text-right text-base-content/60\" datetime=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(comment.CreatedAt)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 25, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 25, Col: 81}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 					if templ_7745c5c3_Err != nil {
@@ -134,7 +134,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 					var templ_7745c5c3_Var7 string
 					templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(createdAt.Format("Jan 2, 2006 3:04 PM"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 25, Col: 85}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/discussion.templ`, Line: 25, Col: 125}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 					if templ_7745c5c3_Err != nil {
@@ -145,7 +145,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div class=\"content discussion-comment-content\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div class=\"content markdown-content discussion-comment-content prose prose-sm dark:prose-invert\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

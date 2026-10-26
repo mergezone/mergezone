@@ -15,7 +15,8 @@ import "merge/internal/model"
 // syncSearchPlacement in alpine.js). On repository pages it also renders the
 // button that toggles the filter bottom sheet. Because the dock is fixed to the
 // viewport bottom and the page shell reserves its height, the filter sheet and the
-// context pane open above the dock rather than covering it.
+// context pane open above the dock rather than covering it. The home page has no dock
+// so its search remains in the main content.
 func MobileDock(showFilters bool, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -37,12 +38,12 @@ func MobileDock(showFilters bool, filters model.RepositoryFilters) templ.Compone
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mobile-dock\" id=\"mobile-dock\"><div class=\"mobile-dock-search\" id=\"mobile-dock-search\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mobile-dock fixed inset-x-0 bottom-0 z-40 flex h-[calc(4rem+env(safe-area-inset-bottom))] items-center gap-2 border-t border-base-300 bg-base-200 px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] lg:hidden\" id=\"mobile-dock\"><div class=\"mobile-dock-search flex min-w-0 flex-1 items-center overflow-x-auto whitespace-nowrap\" id=\"mobile-dock-search\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if showFilters {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"button mobile-dock-filter\" type=\"button\" aria-label=\"Filters\" title=\"Filters\" @click.stop=\"$store.filterPanel.toggle()\"><i class=\"fa-solid\" :class=\"$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'\" aria-hidden=\"true\"></i> <span>Filters</span></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"btn btn-ghost btn-sm mobile-dock-filter h-auto min-h-0 flex-none gap-2 border border-base-300 px-3 font-semibold text-base-content hover:bg-base-300\" type=\"button\" aria-label=\"Filters\" title=\"Filters\" @click.stop=\"$store.filterPanel.toggle()\"><i class=\"fa-solid\" :class=\"$store.filterPanel.open ? 'fa-xmark' : 'fa-sliders'\" aria-hidden=\"true\"></i> <span>Filters</span></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

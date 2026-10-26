@@ -5,27 +5,28 @@ import "fmt"
 templ PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel string, destinationURL string, isActive bool) {
 	if destinationURL != "" {
 		<div
-			class={ "item stat box", templ.KV("active", isActive) }
+			class="status-tile"
+			data-active={ fmt.Sprintf("%t", isActive) }
 			hx-get={ templ.SafeURL(destinationURL) }
 			hx-target="#page-shell"
 			hx-push-url="true"
 		>
-			<p class="bold">{ statusLabel }</p>
-			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
+			<p class="status-tile-label">{ statusLabel }</p>
+			<i class={ "status-tile-icon status-icon fa-solid " + iconClass }></i>
+			<b class="status-tile-count">{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	} else {
-		<div class={ "item stat box", templ.KV("active", isActive) }>
-			<p class="bold">{ statusLabel }</p>
-			<i class={ "status-icon fa-solid " + iconClass }></i>
-			<b>{ fmt.Sprintf("%d", pullRequestCount) }</b>
+		<div class="status-tile" data-active={ fmt.Sprintf("%t", isActive) }>
+			<p class="status-tile-label">{ statusLabel }</p>
+			<i class={ "status-tile-icon status-icon fa-solid " + iconClass }></i>
+			<b class="status-tile-count">{ fmt.Sprintf("%d", pullRequestCount) }</b>
 		</div>
 	}
 }
 
 templ InlinePullRequestCount(iconClass string, pullRequestCount int) {
-	<div class="stat">
+	<div class="inline-flex items-center gap-1">
 		<i class={ "status-icon fa-solid " + iconClass }></i>
-		<span class="bold small">{ fmt.Sprintf("%d", pullRequestCount) }</span>
+		<span class="text-sm font-semibold">{ fmt.Sprintf("%d", pullRequestCount) }</span>
 	</div>
 }

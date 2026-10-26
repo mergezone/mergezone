@@ -13,9 +13,8 @@ all: build
 build: templ css
 	go build -ldflags "-X main.commit=$(COMMIT)" -o merge ./cmd/merge
 
-# Generates public/main.css file from .scss files
-# NOTE See package.json for invocation details
-# TODO Remove npm dependency (added as Bulma dependency)
+# Generates public/main.css from the Tailwind/DaisyUI entrypoint.
+# NOTE See package.json for invocation details.
 css:
 	$(NPM) run build:css
 

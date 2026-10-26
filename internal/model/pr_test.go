@@ -229,6 +229,25 @@ func TestScopeSupersessionOverridesAgeBasedExpiry(t *testing.T) {
 	}
 }
 
+func TestTimeAgoPartsDistinguishesMinutesFromMonths(t *testing.T) {
+	minuteNum, minuteSuffix := TimeAgoParts(21*time.Minute, 0)
+	if minuteNum != "21" || minuteSuffix != "m" {
+		t.Errorf("TimeAgoParts(21m) = (%q, %q), want (\"21\", \"m\")", minuteNum, minuteSuffix)
+	}
+
+	monthNum, monthSuffix := TimeAgoParts(90*24*time.Hour, 90)
+	if monthNum != "3" || monthSuffix != "mo" {
+		t.Errorf("TimeAgoParts(90d) = (%q, %q), want (\"3\", \"mo\")", monthNum, monthSuffix)
+	}
+
+	if got, want := TimeAgoLong(21*time.Minute, 0), "21 minutes"; got != want {
+		t.Errorf("TimeAgoLong(21m) = %q, want %q", got, want)
+	}
+	if got, want := TimeAgoLong(90*24*time.Hour, 90), "3 months"; got != want {
+		t.Errorf("TimeAgoLong(90d) = %q, want %q", got, want)
+	}
+}
+
 func TestScopeSupersessionHandlesMissingCreationTimes(t *testing.T) {
 	prs := []PullRequest{
 		{Number: 1, Title: "feat(backend): missing date"},

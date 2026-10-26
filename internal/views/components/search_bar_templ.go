@@ -38,29 +38,29 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			ownerLabel = ownerPlaceholder
 		}
 		if interactive {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav class=\"breadcrumb search-input-row\" aria-label=\"Repository\" hx-indicator=\"#search-loading-indicator\"><ul><li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav class=\"search-input-row repository-search-row\" aria-label=\"Repository\" hx-indicator=\"#search-loading-indicator\"><ul class=\"repository-search-path\"><li class=\"repository-search-owner\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if showIcon {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<i class=\"fa-solid fa-magnifying-glass search-navigation-icon\" aria-hidden=\"true\"></i>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<i class=\"fa-solid fa-magnifying-glass repository-search-icon\" aria-hidden=\"true\"></i>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"owner-search\"><button class=\"button is-ghost owner-avatar-trigger\" type=\"button\" x-show=\"!ownerEditing\" @click=\"startOwnerEdit()\" @focus=\"startOwnerEdit()\" aria-label=\"Edit repository owner\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"owner-search repository-owner-search\"><button class=\"owner-avatar-trigger repository-owner-avatar btn btn-ghost btn-circle\" type=\"button\" x-show=\"!ownerEditing\" @click=\"startOwnerEdit()\" @focus=\"startOwnerEdit()\" aria-label=\"Edit repository owner\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if ownerValue != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<img class=\"owner-avatar\" src=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<img class=\"owner-avatar repository-owner-image\" src=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.SafeURL("https://github.com/" + ownerValue + ".png"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 24, Col: 98}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 24, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 				if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(ownerValue + " profile picture")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 24, Col: 138}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 24, Col: 161}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 				if templ_7745c5c3_Err != nil {
@@ -84,19 +84,19 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span class=\"owner-avatar owner-avatar-placeholder\" aria-hidden=\"true\"><i class=\"fa-solid fa-user\"></i></span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span class=\"owner-avatar owner-avatar-placeholder repository-owner-placeholder\" aria-hidden=\"true\"><i class=\"fa-solid fa-user\"></i></span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button> <span class=\"input-pill\" x-show=\"ownerEditing\" x-cloak><input id=\"repository-owner\" x-ref=\"ownerInput\" class=\"input title-input\" type=\"text\" data-part=\"owner\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button> <span class=\"repository-search-editor\" x-show=\"ownerEditing\" x-cloak><input id=\"repository-owner\" x-ref=\"ownerInput\" class=\"title-input repository-search-input\" type=\"text\" data-part=\"owner\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(ownerValue)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 30, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 30, Col: 147}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
@@ -109,33 +109,33 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(ownerPlaceholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 30, Col: 162}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 30, Col: 180}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" autocomplete=\"off\"></span></div></li><li class=\"is-active\"><div class=\"repository-search\"><button class=\"button is-ghost repository-label\" type=\"button\" x-show=\"!repositoryEditing\" @click=\"startRepositoryEdit()\" @focus=\"startRepositoryEdit()\" aria-label=\"Edit repository\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" autocomplete=\"off\"></span></div></li><li class=\"repository-search-repository\"><div class=\"repository-search\"><button class=\"repository-label repository-search-label btn btn-ghost\" type=\"button\" x-show=\"!repositoryEditing\" @click=\"startRepositoryEdit()\" @focus=\"startRepositoryEdit()\" aria-label=\"Edit repository\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(repositoryLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 36, Col: 205}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 36, Col: 227}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</button> <span class=\"input-pill\" x-show=\"repositoryEditing\" x-cloak><input class=\"input title-input\" type=\"text\" data-part=\"repository\" x-ref=\"repositoryInput\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</button> <span class=\"repository-search-editor\" x-show=\"repositoryEditing\" x-cloak><input class=\"title-input repository-search-input\" type=\"text\" data-part=\"repository\" x-ref=\"repositoryInput\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(repositoryValue)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 38, Col: 122}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 38, Col: 140}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -148,48 +148,48 @@ func RepositorySearchInput(ownerValue, repositoryValue, ownerPlaceholder, reposi
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(repositoryPlaceholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 38, Col: 160}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 38, Col: 178}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" autocomplete=\"off\"></span></div></li></ul><span id=\"search-loading-indicator\" class=\"icon search-loading-indicator htmx-indicator\" role=\"status\" aria-label=\"Loading\"><i class=\"fa-solid fa-circle-notch fa-spin\" aria-hidden=\"true\"></i></span></nav>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" autocomplete=\"off\"></span></div></li></ul><span id=\"search-loading-indicator\" class=\"htmx-indicator repository-search-loading\" role=\"status\" aria-label=\"Loading\"><span class=\"loading loading-spinner loading-xs\"></span></span></nav>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<nav class=\"breadcrumb search-input-row\" aria-label=\"Repository\"><ul><li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<nav class=\"search-input-row repository-search-row\" aria-label=\"Repository\"><ul class=\"repository-search-path\"><li class=\"repository-search-owner\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if showIcon {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<i class=\"fa-solid fa-magnifying-glass search-navigation-icon\" aria-hidden=\"true\"></i> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<i class=\"fa-solid fa-magnifying-glass repository-search-icon\" aria-hidden=\"true\"></i> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<span class=\"static-owner\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<span class=\"repository-static-label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ownerLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 54, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 54, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span></li><li class=\"is-active\"><span class=\"static-repository\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span></li><li class=\"repository-search-repository\"><span class=\"repository-static-label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(repositoryLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 56, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/search_bar.templ`, Line: 56, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {

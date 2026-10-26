@@ -35,12 +35,12 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes filter-section\"><div class=\"panel-heading section-heading filter-section-heading\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label\"><span class=\"section-heading-control\"><i class=\"fa-solid fa-folder-tree section-heading-icon\" aria-hidden=\"true\"></i> <button class=\"link-button collapse-section-button\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"panel scopes flex min-h-0 flex-1 flex-col overflow-hidden\"><div class=\"filter-section-heading group/section flex cursor-pointer items-center justify-between gap-2 bg-base-200 px-4 py-3 text-base-content transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary compact:px-2 compact:py-1.5\" role=\"button\" tabindex=\"0\" @click=\"if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed\" @keydown.enter.prevent=\"$data.collapsed = !$data.collapsed\" @keydown.space.prevent=\"$data.collapsed = !$data.collapsed\"><span class=\"section-heading-label font-heading flex min-w-0 items-center gap-2 text-sm font-extrabold\"><span class=\"section-heading-control relative inline-flex h-8 w-6 flex-none items-center justify-center compact:h-6\"><i class=\"fa-solid fa-folder-tree section-heading-icon text-base-content/60 transition-opacity group-hover/section:opacity-0 group-focus-within/section:opacity-0 pointer-coarse:opacity-0\" aria-hidden=\"true\"></i> <button class=\"collapse-section-button absolute inset-y-0 left-0 inline-flex w-6 items-center justify-center rounded-md border-0 bg-transparent text-xs leading-none text-base-content/60 opacity-0 pointer-events-none transition-opacity hover:bg-base-content/10 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100\" type=\"button\" :aria-expanded=\"!$data.collapsed\" :aria-label=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" :title=\"$data.collapsed ? 'Expand scopes' : 'Collapse scopes'\" @click.stop=\"$data.collapsed = !$data.collapsed\"><i class=\"fa-solid\" :class=\"$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'\" aria-hidden=\"true\"></i></button></span> <span>Scopes</span></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(scopeSummaries) > 0 || len(filters.Scope) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"section-actions\"><i id=\"scopes-sort-indicator\" class=\"fa-solid fa-circle-notch fa-spin htmx-indicator\" aria-hidden=\"true\"></i> <button class=\"link-button sort-control\" aria-label=\"Sort scopes by recency\" title=\"Sort by recency\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span class=\"section-actions flex items-center gap-1 opacity-0 pointer-events-none transition-opacity group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100\"><span id=\"scopes-sort-indicator\" class=\"loading loading-spinner loading-xs htmx-indicator text-base-content/50\" aria-hidden=\"true\"></span> <button class=\"link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content compact:size-6\" aria-label=\"Sort scopes by recency\" title=\"Sort by recency\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -57,7 +57,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("recent").FragmentURL("scopes", currentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 41, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 43, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 			if templ_7745c5c3_Err != nil {
@@ -70,13 +70,13 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("recent").URL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 43, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 45, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-indicator=\"#scopes-sort-indicator\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i></button> <button class=\"link-button sort-control\" aria-label=\"Sort scopes by pull request count\" title=\"Sort by pull request count\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-indicator=\"#scopes-sort-indicator\"><i class=\"fa-solid fa-clock\" aria-hidden=\"true\"></i></button> <button class=\"link-button sort-control inline-flex size-8 items-center justify-center rounded-md border-0 bg-transparent text-xs text-base-content/60 transition-all hover:bg-base-content/10 hover:text-base-content active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary data-[active-sort=true]:bg-base-300 data-[active-sort=true]:text-base-content compact:size-6\" aria-label=\"Sort scopes by pull request count\" title=\"Sort by pull request count\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -93,7 +93,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("top").FragmentURL("scopes", currentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 55, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 57, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
@@ -106,7 +106,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(filters.WithScopeSort("top").URL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 57, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/scopes.templ`, Line: 59, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func ScopeSummaries(scopeSummaries []model.ScopeInfo, activeSortOrder string, fi
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><div class=\"filter-section-content\" x-show=\"!$data.collapsed\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><div class=\"filter-section-content flex flex-col gap-1 compact:gap-0.5\" x-show=\"!$data.collapsed\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

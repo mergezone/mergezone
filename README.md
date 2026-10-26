@@ -31,6 +31,19 @@ architecture-beta
     cache:L -- R:github
 ```
 
+## Frontend styles
+
+Styles are built with Tailwind CSS v4 and DaisyUI. The source of truth is
+`internal/views/styles/app.css` for theme tokens and runtime-only CSS; component
+styling lives directly in the Templ files.
+
+```sh
+pnpm run build:css   # compile public/main.css
+pnpm run watch:css   # rebuild while developing
+```
+
+`make build` regenerates Templ files and the CSS before compiling the binary.
+
 ## OpenTelemetry traces with Jaeger
 
 `make dev` and `make watch` start a local Jaeger all-in-one container and configure Merge to export traces to it. Docker is required. Open <http://localhost:16686> to search traces. Use `make jaeger-down` to remove the container when finished.

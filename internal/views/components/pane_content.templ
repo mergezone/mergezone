@@ -4,7 +4,7 @@ import "merge/internal/model"
 
 // PullRequestDetail renders the description content for a single pull request.
 templ PullRequestDetail(pullRequest model.StampedPullRequest) {
-	<div class="content context-pane-description-content">
+	<div class="content markdown-content context-pane-description-content prose prose-sm dark:prose-invert">
 		@Markdown(pullRequest.Body)
 	</div>
 }

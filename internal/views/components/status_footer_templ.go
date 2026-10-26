@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// StatusFooter renders compact, Forgejo-style metadata with Bulma's level component.
+// StatusFooter renders compact build and request timing metadata.
 func StatusFooter(commit string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -30,7 +30,7 @@ func StatusFooter(commit string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"status-footer level is-mobile\" aria-label=\"Application status\"><div class=\"level-item\"><p>Commit <strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"status-footer mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-base-300 px-4 pt-3 pb-1 text-xs text-base-content/60 compact:gap-x-2 compact:px-2 compact:pt-2 compact:pb-0.5\" aria-label=\"Application status\"><div class=\"min-w-0\"><p>Commit <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func StatusFooter(commit string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</strong></p></div><div class=\"level-item\"><p>Gather <strong data-status-gather>—</strong></p></div><div class=\"level-item\"><p>Logic <strong data-status-logic>—</strong></p></div><div class=\"level-item\"><p>Template <strong data-status-template>—</strong></p></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</strong></p></div><div class=\"min-w-0\"><p>Gather <strong data-status-gather>—</strong></p></div><div class=\"min-w-0\"><p>Logic <strong data-status-logic>—</strong></p></div><div class=\"min-w-0\"><p>Template <strong data-status-template>—</strong></p></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

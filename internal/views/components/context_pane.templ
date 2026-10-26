@@ -2,136 +2,91 @@ package components
 
 templ ContextPane() {
 	<aside
-		class="context-pane bottom-sheet"
+		class="context-pane"
 		id="context-pane"
-		:class="{ 'open': $store.contextPane.open }"
+		:data-open="$store.contextPane.open ? 'true' : 'false'"
 		@keydown.escape.window="$store.contextPane.closePane()"
-		@click.away="if($store.contextPane.open && window.matchMedia('(max-width: 1024px)').matches && !$event.target.closest('.filter-panel') && !$event.target.closest('.mobile-dock'))$store.contextPane.closePane()"
+		@click.away="if($store.contextPane.open && window.innerWidth < 1024 && !$event.target.closest('.pull-request') && !$event.target.closest('.filter-panel') && !$event.target.closest('.mobile-dock'))$store.contextPane.closePane()"
 	>
-		<div class="pane-resize-handle context-pane-resize-handle" role="separator" aria-orientation="vertical" aria-label="Resize pull request details" :aria-valuemin="$store.app.contextPaneMinWidth" :aria-valuemax="$store.app.contextPaneMaxWidth" :aria-valuenow="$store.app.contextPaneWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('context', $event)" @keydown.left.pullRequestevent="$store.app.adjustPaneWidth('context', 16)" @keydown.right.pullRequestevent="$store.app.adjustPaneWidth('context', -16)"></div>
-		<div id="context-pane-content">
-			<div class="context-pane-header">
-				<a class="context-pane-title" :href="$store.contextPane.pullRequestUrl" x-show="$store.contextPane.open">
-					<i class="status-icon fa-solid" :class="$store.contextPane.pullRequestStatusClass"></i>
-					<span x-html="$store.contextPane.pullRequestTitleHtml"></span>
-					<button class="icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
-						<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+		<div class="pane-resize-handle context-pane-resize-handle context-pane-resize" role="separator" aria-orientation="vertical" aria-label="Resize pull request details" :aria-valuemin="$store.app.contextPaneMinWidth" :aria-valuemax="$store.app.contextPaneMaxWidth" :aria-valuenow="$store.app.contextPaneWidth" tabindex="0" @pointerdown="$store.app.startPaneResize('context', $event)" @keydown.left.prevent="$store.app.adjustPaneWidth('context', 16)" @keydown.right.prevent="$store.app.adjustPaneWidth('context', -16)"></div>
+		<div class="context-pane-content" id="context-pane-content">
+			<div class="context-pane-header" x-show="$store.contextPane.open">
+				<div class="context-pane-title font-heading flex min-w-0 flex-1 items-start gap-2 text-xl leading-tight font-extrabold text-base-content compact:gap-1.5 compact:text-lg">
+					<i class="status-icon fa-solid context-pane-status-icon" :class="$store.contextPane.pullRequestStatusClass" aria-hidden="true"></i>
+					<span class="min-w-0 [&_p]:m-0" x-html="$store.contextPane.pullRequestTitleHtml"></span>
+				</div>
+				<div class="context-pane-actions">
+					<span class="context-pane-number" x-show="$store.contextPane.pullRequestNumber" x-text="'#' + $store.contextPane.pullRequestNumber"></span>
+					<a class="context-pane-action" :href="$store.contextPane.pullRequestURL" target="_blank" rel="noopener noreferrer" aria-label="Open pull request on GitHub" title="Open on GitHub">
+						<i class="fa-brands fa-github text-sm" aria-hidden="true"></i>
+					</a>
+					<button class="context-pane-action icon-close-button" aria-label="Close" onclick="Alpine.store('contextPane').closePane()">
+						<i class="fa-solid fa-circle-xmark text-sm" aria-hidden="true"></i>
 					</button>
-				</a>
+				</div>
 			</div>
-			<div class="context-pane-body scroll" @click="$store.contextPane.openPrRef($event)">
-				<section class="panel context-pane-section context-pane-details" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
-					<div
-						class="panel-heading section-heading context-pane-section-heading"
-						role="button"
-						tabindex="0"
-						:aria-expanded="!$data.collapsed"
-						:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
-						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
-						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed"
-					>
-						<span class="section-heading-label">
-							<span class="section-heading-control">
-								<i class="fa-solid fa-circle-info section-heading-icon" aria-hidden="true"></i>
-								<button
-									class="link-button collapse-section-button"
-									type="button"
-									:aria-expanded="!$data.collapsed"
-									:aria-label="$data.collapsed ? 'Expand details' : 'Collapse details'"
-									:title="$data.collapsed ? 'Expand details' : 'Collapse details'"
-									@click.stop="$data.collapsed = !$data.collapsed"
-								>
-									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
-								</button>
-							</span>
-							<span>Details</span>
+			<div class="context-pane-body" @click="$store.contextPane.openPrRef($event)">
+				<div class="context-pane-description-card context-pane-card" x-show="$store.contextPane.open && $store.contextPane.bodyHtml.trim()">
+					<div class="content markdown-content context-pane-description-content prose prose-sm dark:prose-invert" x-html="$store.contextPane.bodyHtml"></div>
+				</div>
+				<div class="context-pane-meta-card context-pane-card" x-show="$store.contextPane.open">
+					<div class="context-pane-chips">
+						<span class="context-pane-review-chip badge badge-sm badge-warning gap-1" x-show="$store.contextPane.pullRequestReviewerCount > 0" :title="$store.contextPane.pullRequestReviewerCount === 1 ? '1 review requested' : $store.contextPane.pullRequestReviewerCount + ' reviews requested'">
+							<i class="fa-solid fa-user-clock text-[0.65rem]" aria-hidden="true"></i>
+							<span x-text="$store.contextPane.pullRequestReviewerCount === 1 ? '1 review requested' : $store.contextPane.pullRequestReviewerCount + ' reviews requested'"></span>
+						</span>
+						<span class="context-pane-state-chip badge badge-sm gap-1" :class="$store.contextPane.pullRequestStateBadgeClass" x-show="$store.contextPane.pullRequestState">
+							<i class="fa-solid text-[0.65rem]" :class="$store.contextPane.pullRequestStateIconClass" aria-hidden="true"></i>
+							<span x-text="$store.contextPane.pullRequestState"></span>
+						</span>
+						<span class="context-pane-freshness-chip badge badge-sm gap-1" :class="$store.contextPane.pullRequestFreshnessBadgeClass" x-show="$store.contextPane.pullRequestExpiryStatus && $store.contextPane.pullRequestExpiryStatus !== $store.contextPane.pullRequestState">
+							<i class="fa-solid text-[0.65rem]" :class="$store.contextPane.pullRequestExpiryIconClass" aria-hidden="true"></i>
+							<span x-text="$store.contextPane.pullRequestExpiryStatus"></span>
 						</span>
 					</div>
-					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
-						<table class="table is-fullwidth context-pane-meta">
-							<tbody>
-								<tr class="meta-row">
-									<th class="meta-label" scope="row"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Number</th>
-									<td class="meta-value" x-text="'#' + $store.contextPane.pullRequestNumber"></td>
-								</tr>
-								<tr class="meta-row">
-									<th class="meta-label" scope="row"><i class="fa-solid fa-code-pull-request" aria-hidden="true"></i> Status</th>
-									<td class="meta-value" x-text="$store.contextPane.pullRequestState"></td>
-								</tr>
-								<template x-if="$store.contextPane.pullRequestExpiryStatus">
-									<tr class="meta-row">
-										<th class="meta-label" scope="row"><i class="fa-solid" :class="$store.contextPane.pullRequestExpiryIconClass" aria-hidden="true"></i> State</th>
-										<td class="meta-value">
-											<span x-text="$store.contextPane.pullRequestExpiryStatus"></span>
-											<template x-if="$store.contextPane.pullRequestSupersededBy">
-												<span>; <a class="meta-link" :href="$store.contextPane.pullRequestSupersededBy.url" x-text="'#' + $store.contextPane.pullRequestSupersededBy.number"></a> <span x-text="$store.contextPane.pullRequestSupersededBy.reason"></span></span>
-											</template>
-											<template x-if="$store.contextPane.pullRequestExpiryReason">
-												<span>; <span x-text="$store.contextPane.pullRequestExpiryReason"></span></span>
-											</template>
-										</td>
-									</tr>
-								</template>
-								<tr class="meta-row">
-									<th class="meta-label" scope="row"><i class="fa-solid fa-clock" aria-hidden="true"></i> Age</th>
-									<td class="meta-value" x-text="$store.contextPane.pullRequestAge"></td>
-								</tr>
-								<tr class="meta-row">
-									<th class="meta-label" scope="row"><i class="fa-regular fa-comments" aria-hidden="true"></i> Discussion</th>
-									<td class="meta-value" x-text="$store.contextPane.pullRequestComments"></td>
-								</tr>
-								<tr class="meta-row">
-									<th class="meta-label" scope="row"><i class="fa-solid fa-user" aria-hidden="true"></i> Author</th>
-									<td class="meta-value">
-										<a class="meta-link" :href="$store.contextPane.pullRequestAuthorUrl" x-text="$store.contextPane.pullRequestAuthorName"></a>
-									</td>
-								</tr>
-								<template x-if="$store.contextPane.pullRequestScope">
-									<tr class="meta-row">
-										<th class="meta-label" scope="row"><i class="fa-solid fa-tag" aria-hidden="true"></i> Scope</th>
-										<td class="meta-value"><a class="meta-link" :href="$store.contextPane.pullRequestScopeURL" x-text="$store.contextPane.pullRequestScope"></a></td>
-									</tr>
-								</template>
-							</tbody>
-						</table>
+					<div class="context-pane-supersession" x-show="$store.contextPane.pullRequestSupersededBy">
+						Superseded by
+						<a class="link link-hover" :href="$store.contextPane.pullRequestSupersededBy?.url" x-text="$store.contextPane.pullRequestSupersededBy ? '#' + $store.contextPane.pullRequestSupersededBy.number : ''"></a>
+						<span x-text="$store.contextPane.pullRequestSupersededBy?.reason || ''"></span>
 					</div>
-				</section>
-				<section class="panel context-pane-section context-pane-description" x-data="{ collapsed: false }" x-show="$store.contextPane.open">
+					<table class="context-pane-metadata-table">
+						<tbody>
+							<tr x-show="$store.contextPane.pullRequestAuthorName">
+								<th scope="row" class="context-pane-metadata-label">Author</th>
+								<td>
+									<a class="context-pane-author" :href="$store.contextPane.pullRequestAuthorURL" :title="$store.contextPane.pullRequestAuthorName">
+										<span class="context-pane-avatar">
+											<img class="context-pane-avatar-image" x-show="$store.contextPane.pullRequestAuthorAvatarURL" :src="$store.contextPane.pullRequestAuthorAvatarURL" :alt="$store.contextPane.pullRequestAuthorName + ' profile picture'" loading="lazy"/>
+											<span class="context-pane-avatar-fallback" x-show="!$store.contextPane.pullRequestAuthorAvatarURL" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+										</span>
+										<span class="context-pane-author-name" x-text="$store.contextPane.pullRequestAuthorName"></span>
+									</a>
+								</td>
+							</tr>
+							<tr x-show="$store.contextPane.pullRequestAge">
+								<th scope="row" class="context-pane-metadata-label">Age</th>
+								<td class="context-pane-metadata-value" x-text="$store.contextPane.pullRequestAge"></td>
+							</tr>
+							<tr class="context-pane-scope-field" x-show="$store.contextPane.pullRequestScopes.length">
+								<th scope="row" class="context-pane-metadata-label">Scope</th>
+								<td>
+									<div class="context-pane-scope-chips">
+										<template x-for="scope in $store.contextPane.pullRequestScopes" :key="scope.name">
+											<a class="context-pane-scope-chip badge badge-ghost badge-sm" :href="scope.url" x-text="scope.name"></a>
+										</template>
+									</div>
+								</td>
+							</tr>
+							<tr class="context-pane-discussion-field">
+								<th scope="row" class="context-pane-metadata-label">Discussion</th>
+								<td class="context-pane-metadata-value" x-text="$store.contextPane.pullRequestComments === '1' ? '1 comment' : $store.contextPane.pullRequestComments + ' comments'"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<section class="context-pane-section context-pane-card" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
 					<div
-						class="panel-heading section-heading context-pane-section-heading"
-						role="button"
-						tabindex="0"
-						:aria-expanded="!$data.collapsed"
-						:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
-						@click="if (!$event.target.closest('button,a')) $data.collapsed = !$data.collapsed"
-						@keydown.enter.prevent="$data.collapsed = !$data.collapsed"
-						@keydown.space.prevent="$data.collapsed = !$data.collapsed"
-					>
-						<span class="section-heading-label">
-							<span class="section-heading-control">
-								<i class="fa-solid fa-align-left section-heading-icon" aria-hidden="true"></i>
-								<button
-									class="link-button collapse-section-button"
-									type="button"
-									:aria-expanded="!$data.collapsed"
-									:aria-label="$data.collapsed ? 'Expand description' : 'Collapse description'"
-									:title="$data.collapsed ? 'Expand description' : 'Collapse description'"
-									@click.stop="$data.collapsed = !$data.collapsed"
-								>
-									<i class="fa-solid" :class="$data.collapsed ? 'fa-chevron-down' : 'fa-chevron-up'" aria-hidden="true"></i>
-								</button>
-							</span>
-							<span>Description</span>
-						</span>
-					</div>
-					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
-						<div class="content context-pane-description-content" x-html="$store.contextPane.bodyHtml"></div>
-					</div>
-				</section>
-				<section class="panel context-pane-section context-pane-discussion" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
-					<div
-						class="panel-heading section-heading context-pane-section-heading"
+						class="context-pane-section-heading group/section flex cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary compact:px-2 compact:py-1"
 						role="button"
 						tabindex="0"
 						:aria-expanded="!$data.collapsed"
@@ -139,12 +94,13 @@ templ ContextPane() {
 						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion() }"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
 						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadDiscussion()"
+						:class="!$data.collapsed && 'border-b border-base-300'"
 					>
-						<span class="section-heading-label">
-							<span class="section-heading-control">
-								<i class="fa-solid fa-comments section-heading-icon" aria-hidden="true"></i>
+						<span class="section-heading-label font-heading flex min-w-0 items-center gap-2 text-sm font-bold">
+							<span class="section-heading-control relative inline-flex h-8 w-6 flex-none items-center justify-center compact:h-6">
+								<i class="fa-solid fa-comments section-heading-icon text-base-content/60 transition-opacity group-hover/section:opacity-0 group-focus-within/section:opacity-0 pointer-coarse:opacity-0" aria-hidden="true"></i>
 								<button
-									class="link-button collapse-section-button"
+									class="link-button collapse-section-button absolute inset-y-0 left-0 inline-flex w-6 items-center justify-center rounded-md border-0 bg-transparent text-xs leading-none text-base-content/60 opacity-0 pointer-events-none transition-opacity hover:bg-base-content/10 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100"
 									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand discussion' : 'Collapse discussion'"
@@ -155,15 +111,16 @@ templ ContextPane() {
 								</button>
 							</span>
 							<span>Discussion</span>
+							<span class="context-pane-discussion-count badge badge-sm badge-ghost px-1.5 text-sm leading-none font-bold" x-text="$store.contextPane.pullRequestComments"></span>
 						</span>
 					</div>
-					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
-						<div class="discussion-comments" data-loaded="false" data-loading="false"></div>
+					<div class="context-pane-section-content" x-show="!$data.collapsed">
+						<div class="discussion-comments flex flex-col" data-loaded="false" data-loading="false"></div>
 					</div>
 				</section>
-				<section class="panel context-pane-section context-pane-changes" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
+				<section class="context-pane-section context-pane-card" x-data="{ collapsed: true }" x-show="$store.contextPane.open">
 					<div
-						class="panel-heading section-heading context-pane-section-heading"
+						class="context-pane-section-heading group/section flex cursor-pointer items-center justify-between gap-2 px-3 py-2 transition-colors hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary compact:px-2 compact:py-1"
 						role="button"
 						tabindex="0"
 						:aria-expanded="!$data.collapsed"
@@ -171,12 +128,13 @@ templ ContextPane() {
 						@click="if (!$event.target.closest('button,a')) { $data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges() }"
 						@keydown.enter.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
 						@keydown.space.prevent="$data.collapsed = !$data.collapsed; if (!$data.collapsed) $store.contextPane.loadChanges()"
+						:class="!$data.collapsed && 'border-b border-base-300'"
 					>
-						<span class="section-heading-label">
-							<span class="section-heading-control">
-								<i class="fa-solid fa-code-compare section-heading-icon" aria-hidden="true"></i>
+						<span class="section-heading-label font-heading flex min-w-0 items-center gap-2 text-sm font-bold">
+							<span class="section-heading-control relative inline-flex h-8 w-6 flex-none items-center justify-center compact:h-6">
+								<i class="fa-solid fa-code-compare section-heading-icon text-base-content/60 transition-opacity group-hover/section:opacity-0 group-focus-within/section:opacity-0 pointer-coarse:opacity-0" aria-hidden="true"></i>
 								<button
-									class="link-button collapse-section-button"
+									class="link-button collapse-section-button absolute inset-y-0 left-0 inline-flex w-6 items-center justify-center rounded-md border-0 bg-transparent text-xs leading-none text-base-content/60 opacity-0 pointer-events-none transition-opacity hover:bg-base-content/10 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary group-hover/section:pointer-events-auto group-hover/section:opacity-100 group-focus-within/section:pointer-events-auto group-focus-within/section:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100"
 									type="button"
 									:aria-expanded="!$data.collapsed"
 									:aria-label="$data.collapsed ? 'Expand changes' : 'Collapse changes'"
@@ -189,7 +147,7 @@ templ ContextPane() {
 							<span>Changes</span>
 						</span>
 					</div>
-					<div class="panel-block context-pane-section-content" x-show="!$data.collapsed">
+					<div class="context-pane-section-content" x-show="!$data.collapsed">
 						<div class="context-pane-diffs" x-ref="changes"></div>
 					</div>
 				</section>

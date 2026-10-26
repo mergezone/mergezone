@@ -1,24 +1,35 @@
 package components
 
 templ RepositoryNavigation(owner, repository string) {
-	<nav id="nav" x-data="nav">
-		<div>
-			<h4 class="bold site-brand">
-				<a href="/">Merge Zone</a>
-			</h4>
-			<button id="theme-toggle" class="button is-ghost" @click="$store.app.cycleTheme()" aria-label="Toggle light and dark theme">
-				<i
-					class="fa-solid"
-					:class="{
-                    'fa-sun': $store.app.theme === 'light',
-                    'fa-moon': $store.app.theme === 'dark'
-                }"
-					aria-hidden="true"
-				></i>
-			</button>
+	<nav id="nav" x-data="nav" class="flex flex-col gap-4 border-b border-base-300 p-4 compact:gap-2 compact:p-2">
+		<div class="flex items-center justify-between gap-4 compact:gap-2 lg:hidden">
+			<div class="text-xl font-bold tracking-tight compact:text-lg">
+				<a class="text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4" href="/">Merge Zone</a>
+			</div>
+			<div>
+				@DisplayToggles("mobile")
+			</div>
 		</div>
 		<div id="nav-search-slot">
 			@RepositorySearchInput(owner, repository, "…", "…", true, true)
 		</div>
 	</nav>
+}
+
+templ DisplayToggles(idSuffix string) {
+	<div class="display-toggles flex items-center gap-2">
+		<button class="btn btn-ghost btn-square size-10 min-h-0 border border-base-300 bg-base-100 p-0 text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary compact:size-9" id={ "density-toggle-" + idSuffix } type="button" :aria-pressed="$store.app.density === 'compact'" :aria-label="$store.app.density === 'compact' ? 'Compact density, switch to comfortable' : 'Comfortable density, switch to compact'" :title="$store.app.density === 'compact' ? 'Compact density — switch to comfortable' : 'Comfortable density — switch to compact'" @click="$store.app.setDensity($store.app.density === 'compact' ? 'comfortable' : 'compact')">
+			<i class="fa-solid" :class="$store.app.density === 'compact' ? 'fa-list' : 'fa-bars-staggered'" aria-hidden="true"></i>
+		</button>
+		<button class="btn btn-ghost btn-square size-10 min-h-0 border border-base-300 bg-base-100 p-0 text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary compact:size-9" id={ "theme-toggle-" + idSuffix } type="button" :aria-pressed="$store.app.theme === 'dark'" :aria-label="$store.app.theme === 'dark' ? 'Dark theme, switch to light' : 'Light theme, switch to dark'" :title="$store.app.theme === 'dark' ? 'Dark theme — switch to light' : 'Light theme — switch to dark'" @click="$store.app.setTheme($store.app.theme === 'dark' ? 'light' : 'dark')">
+			<i class="fa-solid" :class="$store.app.theme === 'dark' ? 'fa-moon' : 'fa-sun'" aria-hidden="true"></i>
+		</button>
+	</div>
+}
+
+templ AsideFooter() {
+	<div class="mt-auto hidden shrink-0 items-center justify-between gap-2 border-t border-base-300 p-4 compact:p-2 lg:flex">
+		<a class="text-lg font-bold tracking-tight text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4" href="/">Merge Zone</a>
+		@DisplayToggles("desktop")
+	</div>
 }

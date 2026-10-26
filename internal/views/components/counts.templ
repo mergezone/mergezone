@@ -24,23 +24,13 @@ func titleCaseFirst(value string) string {
 
 // PullRequestCounts renders the repository's status summaries and filter controls.
 templ PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool, filters model.RepositoryFilters, nextPullRequestPage int) {
-	<div class="stats">
-		<div class="section-heading">
-			<span>Overview</span>
-		</div>
-		<div class="level is-mobile stats-tiles">
-			<div class="level-item">
-				@PullRequestStatusCount("fa-seedling ok", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh"))
-			</div>
-			<div class="level-item">
-				@PullRequestStatusCount("fa-leaf warn", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale"))
-			</div>
-			<div class="level-item">
-				@PullRequestStatusCount("fa-skull error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired"))
-			</div>
-			<div class="level-item">
-				@PullRequestStatusCount("fa-code-merge special", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged"))
-			</div>
+	<div class="overview-stats">
+		<h2 class="my-2 px-1 text-sm font-bold text-base-content/70 compact:my-1">Overview</h2>
+		<div class="overview-stats-grid">
+			@PullRequestStatusCount("fa-seedling text-success", expiryCounts.FreshCount, "Fresh", repositoryStatusURL(filters, "fresh"), slices.Contains(filters.Status, "fresh"))
+			@PullRequestStatusCount("fa-leaf text-warning", expiryCounts.StaleCount, "Stale", repositoryStatusURL(filters, "stale"), slices.Contains(filters.Status, "stale"))
+			@PullRequestStatusCount("fa-skull text-error", expiryCounts.ExpiredCount, "Expired", repositoryStatusURL(filters, "expired"), slices.Contains(filters.Status, "expired"))
+			@PullRequestStatusCount("fa-code-merge text-accent", expiryCounts.MergedCount, "Merged", repositoryStatusURL(filters, "merged"), slices.Contains(filters.Status, "merged"))
 		</div>
 	</div>
 }

@@ -29,11 +29,11 @@ func IconRow(iconClass string, colorModifier string, heading string, description
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"item icon-card box\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"icon-card grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200 compact:gap-x-2 compact:p-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 = []any{"icon-container", templ.KV(colorModifier, colorModifier != "")}
+		var templ_7745c5c3_Var2 = []any{"row-span-2 flex size-10 items-center justify-center rounded-md bg-base-200 text-xl compact:size-8 compact:text-lg", colorModifier}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -73,27 +73,27 @@ func IconRow(iconClass string, colorModifier string, heading string, description
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></i></div><div class=\"title-row\"><p class=\"bold\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></i></div><div class=\"col-start-2 flex gap-2 text-base font-semibold text-base-content compact:text-sm\"><h3 class=\"font-heading\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(heading)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/icon_row.templ`, Line: 9, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/icon_row.templ`, Line: 9, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p></div><div class=\"description-row\"><p class=\"small\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3></div><div class=\"col-start-2 flex text-xs text-base-content/70\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/icon_row.templ`, Line: 12, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/icon_row.templ`, Line: 12, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
