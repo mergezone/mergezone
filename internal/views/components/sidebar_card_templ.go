@@ -43,7 +43,7 @@ func ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) templ.Com
 		if isCurrent {
 			ariaLabel = fmt.Sprintf("Clear scope filter %s", scope.Name)
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<a class=\"sidebar-panel-item scope flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner\" aria-label=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<a class=\"sidebar-panel-item scope flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner compact:gap-1 compact:py-1.5 compact:pr-2 compact:pl-6\" aria-label=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,20 +95,20 @@ func ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"sidebar-panel-icon flex size-6 shrink-0 items-center justify-center text-base-content/60\" aria-hidden=\"true\"><i class=\"fa-solid fa-diagram-project text-sm\"></i></span> <span class=\"sidebar-panel-content flex min-w-0 flex-1 items-center gap-2\"><span class=\"sidebar-panel-title flex-1 truncate text-sm font-semibold text-base-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"sidebar-panel-icon flex size-6 shrink-0 items-center justify-center text-base-content/60 compact:size-5\" aria-hidden=\"true\"><i class=\"fa-solid fa-diagram-project text-sm\"></i></span> <span class=\"sidebar-panel-content flex min-w-0 flex-1 items-center gap-2\"><span class=\"sidebar-panel-title flex-1 truncate text-sm font-normal text-base-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(scope.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 31, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span></span> <span class=\"sidebar-panel-trailing flex min-w-0 shrink-0 items-center\"><span class=\"sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70\"><span class=\"age\"><i class=\"fa-solid fa-clock mr-1 text-xs text-base-content/50\" aria-hidden=\"true\"></i>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span></span> <span class=\"sidebar-panel-trailing flex min-w-0 shrink-0 items-center\"><span class=\"sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70 compact:ml-1 compact:gap-1\"><span class=\"age\"><i class=\"fa-solid fa-clock mr-1 text-xs text-base-content/50\" aria-hidden=\"true\"></i>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -165,7 +165,7 @@ func ContributorCard(contributor model.ContributorInfo, filters model.Repository
 		if isCurrent {
 			ariaLabel = fmt.Sprintf("Clear contributor filter %s", contributor.Name)
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a class=\"sidebar-panel-item contributor flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner\" aria-label=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a class=\"sidebar-panel-item contributor flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner compact:gap-1 compact:py-1.5 compact:pr-2 compact:pl-6\" aria-label=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -217,7 +217,7 @@ func ContributorCard(contributor model.ContributorInfo, filters model.Repository
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"sidebar-panel-icon img-skeleton-wrapper avatar-wrapper size-6 shrink-0 overflow-hidden rounded-lg\"><img class=\"avatar block h-full w-full rounded-lg object-cover\" data-src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><span class=\"sidebar-panel-icon img-skeleton-wrapper avatar-wrapper size-6 shrink-0 overflow-hidden rounded-lg compact:size-5\"><img class=\"avatar block h-full w-full rounded-lg object-cover\" data-src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -243,20 +243,20 @@ func ContributorCard(contributor model.ContributorInfo, filters model.Repository
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" loading=\"lazy\"></span> <span class=\"sidebar-panel-content flex min-w-0 flex-1 items-center gap-2\"><span class=\"sidebar-panel-title flex-1 truncate text-sm font-semibold text-base-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" loading=\"lazy\"></span> <span class=\"sidebar-panel-content flex min-w-0 flex-1 items-center gap-2\"><span class=\"sidebar-panel-title flex-1 truncate text-sm font-normal text-base-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(contributor.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 67, Col: 111}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/sidebar_card.templ`, Line: 67, Col: 109}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></span> <span class=\"sidebar-panel-trailing flex min-w-0 shrink-0 items-center\"><span class=\"sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70\"><span class=\"age\"><i class=\"fa-solid fa-clock mr-1 text-xs text-base-content/50\" aria-hidden=\"true\"></i>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></span> <span class=\"sidebar-panel-trailing flex min-w-0 shrink-0 items-center\"><span class=\"sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70 compact:ml-1 compact:gap-1\"><span class=\"age\"><i class=\"fa-solid fa-clock mr-1 text-xs text-base-content/50\" aria-hidden=\"true\"></i>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

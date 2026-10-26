@@ -29,7 +29,15 @@ func RepositoryNavigation(owner, repository string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\" class=\"flex flex-col gap-4 border-b border-base-300 p-4\"><div class=\"flex items-center justify-between gap-4\"><div class=\"text-xl font-bold tracking-tight\"><a class=\"text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4\" href=\"/\">Merge Zone</a></div><button id=\"theme-toggle\" class=\"btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-base-content\" @click=\"$store.app.cycleTheme()\" aria-label=\"Toggle light and dark theme\"><i class=\"fa-solid\" :class=\"{\n                    'fa-sun': $store.app.theme === 'light',\n                    'fa-moon': $store.app.theme === 'dark'\n                }\" aria-hidden=\"true\"></i></button></div><div id=\"nav-search-slot\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav id=\"nav\" x-data=\"nav\" class=\"flex flex-col gap-4 border-b border-base-300 p-4 compact:gap-2 compact:p-2\"><div class=\"flex items-center justify-between gap-4 compact:gap-2 lg:hidden\"><div class=\"text-xl font-bold tracking-tight compact:text-lg\"><a class=\"text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4\" href=\"/\">Merge Zone</a></div><div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = DisplayToggles("mobile").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div id=\"nav-search-slot\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -37,7 +45,99 @@ func RepositoryNavigation(owner, repository string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></nav>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func DisplayToggles(idSuffix string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"display-toggles flex items-center gap-2\"><button class=\"btn btn-ghost btn-square size-10 min-h-0 border border-base-300 bg-base-100 p-0 text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary compact:size-9\" id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue("density-toggle-" + idSuffix)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/nav.templ`, Line: 21, Col: 267}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" type=\"button\" :aria-pressed=\"$store.app.density === 'compact'\" :aria-label=\"$store.app.density === 'compact' ? 'Compact density, switch to comfortable' : 'Comfortable density, switch to compact'\" :title=\"$store.app.density === 'compact' ? 'Compact density — switch to comfortable' : 'Comfortable density — switch to compact'\" @click=\"$store.app.setDensity($store.app.density === 'compact' ? 'comfortable' : 'compact')\"><i class=\"fa-solid\" :class=\"$store.app.density === 'compact' ? 'fa-list' : 'fa-bars-staggered'\" aria-hidden=\"true\"></i></button> <button class=\"btn btn-ghost btn-square size-10 min-h-0 border border-base-300 bg-base-100 p-0 text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary compact:size-9\" id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue("theme-toggle-" + idSuffix)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/nav.templ`, Line: 24, Col: 265}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" type=\"button\" :aria-pressed=\"$store.app.theme === 'dark'\" :aria-label=\"$store.app.theme === 'dark' ? 'Dark theme, switch to light' : 'Light theme, switch to dark'\" :title=\"$store.app.theme === 'dark' ? 'Dark theme — switch to light' : 'Light theme — switch to dark'\" @click=\"$store.app.setTheme($store.app.theme === 'dark' ? 'light' : 'dark')\"><i class=\"fa-solid\" :class=\"$store.app.theme === 'dark' ? 'fa-moon' : 'fa-sun'\" aria-hidden=\"true\"></i></button></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func AsideFooter() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mt-auto hidden shrink-0 items-center justify-between gap-2 border-t border-base-300 p-4 compact:p-2 lg:flex\"><a class=\"text-lg font-bold tracking-tight text-base-content no-underline hover:underline hover:decoration-base-content/40 hover:decoration-2 hover:underline-offset-4\" href=\"/\">Merge Zone</a>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = DisplayToggles("desktop").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

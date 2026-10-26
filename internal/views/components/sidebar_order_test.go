@@ -27,6 +27,63 @@ func TestScopeSummariesKeepSelectionInSortedOrder(t *testing.T) {
 	}
 }
 
+func TestSidebarUsesSemanticComponentClasses(t *testing.T) {
+	summaries := []model.ScopeInfo{{Name: "backend"}}
+	output := renderSortFragmentURLs(t, ScopeSummaries(summaries, "recent", model.RepositoryFilters{}, 1))
+
+	for _, expected := range []string{
+		"compact:px-2",
+		"compact:py-1.5",
+		"compact:pl-6",
+		"compact:gap-0.5",
+		"compact:size-5",
+	} {
+		if !strings.Contains(output, expected) {
+			t.Errorf("sidebar output does not contain %q", expected)
+		}
+	}
+}
+
+func TestScopeAndContributorSectionHeadingsOutweighTheirCards(t *testing.T) {
+	filters := model.RepositoryFilters{}
+	scopeOutput := renderSortFragmentURLs(t, ScopeSummaries(nil, "recent", filters, 1))
+	contributorOutput := renderSortFragmentURLs(t, ContributorSummaries(nil, "recent", filters, 1))
+	for name, output := range map[string]string{
+		"scope":       scopeOutput,
+		"contributor": contributorOutput,
+	} {
+		if !strings.Contains(output, `class="section-heading-label font-heading flex min-w-0 items-center gap-2 text-sm font-extrabold`) {
+			t.Errorf("%s section heading should be heavier than its cards", name)
+		}
+	}
+}
+
+func TestSidebarEntryTitlesUseSidebarTypographyRole(t *testing.T) {
+	for name, output := range map[string]string{
+		"scope":       renderSortFragmentURLs(t, ScopeCard(model.ScopeInfo{Name: "backend"}, model.RepositoryFilters{})),
+		"contributor": renderSortFragmentURLs(t, ContributorCard(model.ContributorInfo{Name: "octocat"}, model.RepositoryFilters{})),
+	} {
+		if !strings.Contains(output, `class="sidebar-panel-title flex-1 truncate text-sm font-normal text-base-content"`) {
+			t.Errorf("%s sidebar entry should use regular weight", name)
+		}
+	}
+}
+
+func TestSidebarPinsToggleFooterAfterScrollableFilters(t *testing.T) {
+	output := renderSortFragmentURLs(t, RepositorySidebar(model.RepositoryFilters{}, nil, "", nil, "", 1))
+	filtersIndex := strings.Index(output, "overflow-y-auto")
+	footerIndex := strings.Index(output, "mt-auto hidden shrink-0 items-center justify-between")
+	if filtersIndex < 0 || footerIndex < 0 || filtersIndex > footerIndex {
+		t.Fatal("toggle footer should follow the scrollable filters in the sidebar")
+	}
+	if !strings.Contains(output[footerIndex:], `id="density-toggle-desktop"`) || !strings.Contains(output[footerIndex:], `id="theme-toggle-desktop"`) {
+		t.Error("sidebar bottom footer should contain both display toggles")
+	}
+	if !strings.Contains(output[footerIndex:], ">Merge Zone</a>") {
+		t.Error("sidebar bottom footer should contain the Merge Zone brand")
+	}
+}
+
 func TestContributorSummariesKeepSelectionInSortedOrder(t *testing.T) {
 	filters := model.RepositoryFilters{Owner: "octocat", Repository: "hello-world", Contributor: []string{"alice"}}
 	summaries := []model.ContributorInfo{{Name: "carol"}, {Name: "bob"}, {Name: "alice"}}

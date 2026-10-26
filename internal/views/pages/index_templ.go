@@ -9,7 +9,6 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"merge/internal/model"
 	"merge/internal/views/components"
 	"merge/internal/views/layout"
 )
@@ -47,23 +46,23 @@ func HomePage(baseURL, owner, repository, commit string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<aside class=\"aside-column relative flex shrink-0 flex-col bg-base-200 lg:w-[var(--filter-sidebar-width)] lg:border-r lg:border-base-300\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"scroll home-scroll flex min-h-0 flex-1 flex-col gap-10 overflow-y-auto bg-base-100 p-4 scrollbar-slim compact:gap-6 compact:p-2\"><header class=\"mx-auto flex w-full max-w-5xl justify-end\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepositoryNavigation(owner, repository).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.DisplayToggles("home").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</aside><main class=\"scroll home-scroll flex min-h-0 flex-1 flex-col gap-10 overflow-y-auto p-4 scrollbar-slim\"><div class=\"flex flex-col gap-4 py-8\"><h1 class=\"text-4xl leading-[1.1] font-bold tracking-tight lg:text-5xl\">What's the state of your<br>pull requests?</h1><p class=\"max-w-2xl text-base-content/70 lg:text-lg\">Enter a repository to see pull request freshness, merge activity,<br class=\"hidden lg:block\">and contributor patterns at a glance.</p></div><div><div class=\"my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70\"><span>Finding a repository</span></div><div class=\"pointer-events-none [&_.title-input]:cursor-default [&_.title-input]:no-underline\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</header><section class=\"mx-auto flex w-full max-w-5xl flex-col gap-4 py-8 compact:gap-2 compact:py-4\" aria-labelledby=\"home-title\"><div class=\"flex flex-col gap-4 compact:gap-2\"><h1 id=\"home-title\" class=\"font-heading text-4xl leading-[1.1] font-extrabold tracking-tight compact:text-3xl compact:lg:text-4xl lg:text-5xl\">What's the state of your<br>pull requests?</h1><p class=\"max-w-2xl text-base-content/70 compact:text-sm compact:lg:text-base lg:text-lg\">Enter a repository to see pull request freshness, merge activity,<br class=\"hidden lg:block\">and contributor patterns at a glance.</p></div><div class=\"home-search rounded-xl border border-base-300 bg-base-100 px-5 py-4 compact:px-3 compact:py-3\" x-data=\"nav\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.RepositorySearchInput("", "", "owner", "repository", false, false).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.RepositorySearchInput(owner, repository, "owner", "repository", true, true).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><p class=\"mt-3 text-sm leading-relaxed text-base-content/70\"><strong class=\"font-semibold text-base-content\">owner</strong> / <strong class=\"font-semibold text-base-content\">repository</strong> points to any public GitHub repository. The <strong class=\"font-semibold text-base-content\">scope</strong> narrows results to a specific area of the codebase.</p></div><div><div class=\"my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70\"><span>Features</span></div><div class=\"flex flex-col gap-2 xl:grid xl:grid-cols-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><p class=\"text-sm leading-relaxed text-base-content/70\"><strong class=\"font-semibold text-base-content\">owner</strong> / <strong class=\"font-semibold text-base-content\">repository</strong> points to any public GitHub repository. The <strong class=\"font-semibold text-base-content\">scope</strong> narrows results to a specific area of the codebase.</p></section><section class=\"mx-auto w-full max-w-5xl\" aria-labelledby=\"features-title\"><h2 id=\"features-title\" class=\"my-2 px-1 text-sm font-bold text-base-content/70 compact:my-1\">Features</h2><div class=\"flex flex-col gap-2 compact:gap-1 xl:grid xl:grid-cols-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -83,7 +82,7 @@ func HomePage(baseURL, owner, repository, commit string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><div><div class=\"my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70\"><span>Example repositories</span></div><div class=\"grid grid-cols-1 gap-2 sm:grid-cols-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></section><section class=\"mx-auto w-full max-w-5xl\" aria-labelledby=\"examples-title\"><h2 id=\"examples-title\" class=\"my-2 px-1 text-sm font-bold text-base-content/70 compact:my-1\">Example repositories</h2><div class=\"grid grid-cols-1 gap-2 compact:gap-1 sm:grid-cols-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -127,7 +126,7 @@ func HomePage(baseURL, owner, repository, commit string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></section><div class=\"mx-auto w-full max-w-5xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -135,11 +134,7 @@ func HomePage(baseURL, owner, repository, commit string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.MobileDock(false, model.RepositoryFilters{}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

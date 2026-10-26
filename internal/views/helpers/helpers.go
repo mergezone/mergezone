@@ -123,22 +123,32 @@ func PrLabel(count int) string {
 }
 
 func SplitAge(age string) (string, string) {
-	if len(age) < 2 {
+	i := len(age)
+	for i > 0 && !isASCIIDigit(age[i-1]) {
+		i--
+	}
+	if i == len(age) {
 		return age, ""
 	}
-	return age[:len(age)-1], age[len(age)-1:]
+	return age[:i], age[i:]
+}
+
+func isASCIIDigit(b byte) bool {
+	return b >= '0' && b <= '9'
 }
 
 func LongSuffix(num, suffix string) string {
 	if num == "1" {
 		switch suffix {
+		case "m":
+			return "minute"
 		case "h":
 			return "hour"
 		case "d":
 			return "day"
 		case "w":
 			return "week"
-		case "m":
+		case "mo":
 			return "month"
 		case "y":
 			return "year"
@@ -146,13 +156,15 @@ func LongSuffix(num, suffix string) string {
 		return suffix
 	}
 	switch suffix {
+	case "m":
+		return "minutes"
 	case "h":
 		return "hours"
 	case "d":
 		return "days"
 	case "w":
 		return "weeks"
-	case "m":
+	case "mo":
 		return "months"
 	case "y":
 		return "years"

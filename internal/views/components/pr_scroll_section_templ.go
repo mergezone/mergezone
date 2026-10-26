@@ -62,7 +62,7 @@ func PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequest
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"load-more-card\" class=\"mt-2\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"load-more-card\" class=\"mt-2 compact:mt-1\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -72,7 +72,7 @@ func PullRequestLoadMoreControl(filters model.RepositoryFilters, nextPullRequest
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "><div class=\"item load-more flex min-h-16 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-base-300 bg-base-100 text-base-content/60 transition-colors hover:bg-base-200\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "><div class=\"item load-more flex min-h-16 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-base-300 bg-base-100 text-base-content/60 transition-colors hover:bg-base-200 compact:min-h-12\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,7 +114,7 @@ func PullRequestScrollSection(pullRequests []model.StampedPullRequest, filters m
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"mt-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70\"><span>Pull Requests</span></div><div class=\"mt-2 flex flex-col gap-2\" id=\"scroll-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<h2 class=\"mt-2 px-1 text-sm font-bold text-base-content/70\"><span class=\"whitespace-nowrap\">Pull Requests</span></h2><div class=\"pull-request-list\" id=\"scroll-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

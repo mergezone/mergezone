@@ -35,6 +35,28 @@ brightened slightly for contrast.
 The app toggles `data-theme` on `<html>` instead of swapping a class. Tailwind's
 `dark:` variant is wired to `[data-theme="dark"]`, and the inline bootstrap in
 `layout/base.templ` still resolves the saved/system theme before first paint.
+Theme and density are icon buttons; each icon reflects the currently selected
+state and activates the other state when pressed.
+
+### Typography
+
+- Manrope is the heading family; system UI remains the body family.
+- Heading font family and role weights are centralized in `app.css` under
+  `--type-heading-font` and the `type-*` classes. Use `type-primary-heading`,
+  `type-section-heading`, or `type-card-heading` in templates instead of adding
+  local font-family/weight utilities. Sidebar entries use `type-sidebar-entry`.
+
+### Component styling
+
+- Reusable layouts are expressed as short component classes in Templ; their
+  structure, responsive breakpoints, and compact-density variants live in
+  `internal/views/styles/app.css`.
+- Add or adjust styles on the existing hooks (`repository-main`, `home-main`,
+  `pull-request-card`, `context-pane-*`, `sidebar-panel-*`) before adding long
+  utility bundles to templates. Key density-specific rules to
+  `[data-density="compact"]`; use media queries only for viewport behavior.
+- Markdown wrappers keep the `prose` roles in markup; shared media sizing and
+  spacing belong to `.markdown-content` in the component stylesheet.
 
 ### Markup conventions
 
@@ -58,6 +80,51 @@ Runtime hooks used by Alpine/HTMX and tests were kept (`pull-request`,
   fixed bottom sheets above the dock, with a dimmed tap-to-dismiss backdrop.
 - Markdown images, htmx indicators, diff theming, pane resizing, and zoom
   layering remain in the small custom CSS layer in `app.css`.
+
+### List density
+
+- The density button is grouped with the theme button. On mobile they stay
+  with the Merge Zone brand in the navigation; on desktop the brand and toggles
+  move to a bordered footer anchored to the bottom of the aside, below the
+  independently scrolling filters. Repository search stays at the top. Both
+  buttons use DaisyUI's square button variant with centered icons, base-100 fill,
+  and base-300 border. Their list and sun/moon icons indicate the current state;
+  accessible labels and tooltips describe the action to switch state. The
+  pull-request header no longer duplicates the controls.
+- The choice is stored in `localStorage` (`list-density`) and applied as
+  `data-density` on `<html>` before first paint.
+- Density-specific component rules are scoped to `<html data-density="compact">` in `app.css`.
+  Htmx swaps and whole-page navigation inherit the same density without
+  re-rendering.
+- Compact rows are about 52px tall with a 4px gap, a single-line truncated
+  title with a full-title tooltip, and a one-line metadata summary. Narrow
+  layouts drop discussion count and scope first, keeping number, status,
+  updated age, and author. Comfortable rows keep the opened age.
+
+### Context pane metadata
+
+- The former seven-row metadata table is now a compact table for Author, Age,
+  Scope, and Discussion. The author row includes the existing profile image;
+  every scope renders as a filter chip. The description renders first as a card
+  and is hidden when empty; the old collapsible Details and Description sections
+  are gone.
+- The pane body is a flex column, so its cards use `shrink-0`; without it a long
+  description is clipped by the card's `overflow-hidden` and the pane cannot
+  scroll.
+- Header chips follow a fixed priority: requested reviews, then PR status, then
+  freshness. CI/checks and merge-readiness chips are omitted because the GitHub
+  provider does not expose those states, and missing data never renders a
+  placeholder.
+- Freshness is suppressed when it duplicates a merged or closed state. Scope and
+  discussion count stay in the metadata table as secondary values, and
+  supersession is explained in a short note under the chips.
+- Compact age suffixes use `m` for minutes and `mo` for months to avoid the
+  ambiguous `21m` display. Long age labels spell both units out.
+- The requested-reviewer count is seeded from the existing `requested_reviewers`
+  field in `pr_card.templ`; no new API or backend data is required.
+- The JSON card seed is the pane's primary data source. Dataset fields remain a
+  fallback for seedless cards; scopes use an ordered plural JSON payload plus
+  the original first-scope fields for compatibility.
 
 ## Verification
 

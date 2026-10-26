@@ -359,13 +359,15 @@ func TimeAgoLong(open time.Duration, days int) string {
 	num, suffix := TimeAgoParts(open, days)
 	if num == "1" {
 		switch suffix {
+		case "m":
+			return num + " minute"
 		case "h":
 			return num + " hour"
 		case "d":
 			return num + " day"
 		case "w":
 			return num + " week"
-		case "m":
+		case "mo":
 			return num + " month"
 		case "y":
 			return num + " year"
@@ -373,13 +375,15 @@ func TimeAgoLong(open time.Duration, days int) string {
 		return num + suffix
 	}
 	switch suffix {
+	case "m":
+		return num + " minutes"
 	case "h":
 		return num + " hours"
 	case "d":
 		return num + " days"
 	case "w":
 		return num + " weeks"
-	case "m":
+	case "mo":
 		return num + " months"
 	case "y":
 		return num + " years"
@@ -408,7 +412,7 @@ func TimeAgoParts(open time.Duration, days int) (string, string) {
 
 	months := weeks / 4
 	if months < 12 {
-		return fmt.Sprintf("%d", months), "m"
+		return fmt.Sprintf("%d", months), "mo"
 	}
 
 	years := months / 12

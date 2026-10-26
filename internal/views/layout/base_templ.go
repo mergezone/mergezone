@@ -29,7 +29,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"light\"><head><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"light\" data-density=\"comfortable\"><head><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,14 +42,14 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';var theme=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);})()</script><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link rel=\"stylesheet\" href=\"/public/main.css\"><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><script defer src=\"/public/alpine.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><meta name=\"description\" content=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';var theme=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);var d=localStorage.getItem('list-density');document.documentElement.setAttribute('data-density',d==='compact'?'compact':'comfortable');})()</script><link rel=\"icon\" type=\"image/png\" href=\"/public/favicon.png\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap\"><link rel=\"stylesheet\" href=\"/public/main.css\"><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.12\"></script><script defer src=\"/public/alpine.js\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\"></script><meta name=\"description\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 15, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 18, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -62,7 +62,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 17, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 20, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(baseURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 19, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 22, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -88,13 +88,13 @@ func BaseDocument(title, description, baseURL, owner, repository, scope string) 
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 20, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/base.templ`, Line: 23, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"repository-page h-dvh overflow-hidden bg-base-200 text-base-content\" x-data x-init=\"$store.app.init()\"><div class=\"page-shell box-border flex h-full min-h-0 w-full flex-col gap-6 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:flex-row lg:gap-0 lg:pb-0\" id=\"page-shell\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"repository-page h-dvh overflow-hidden bg-base-200 text-base-content\" x-data x-init=\"$store.app.init()\"><div class=\"page-shell box-border flex h-full min-h-0 w-full flex-col gap-6 pb-[calc(4rem+env(safe-area-inset-bottom))] compact:max-lg:gap-3 lg:flex-row lg:gap-0 lg:pb-0\" id=\"page-shell\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

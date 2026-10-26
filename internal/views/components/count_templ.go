@@ -32,7 +32,7 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 		}
 		ctx = templ.ClearChildren(ctx)
 		if destinationURL != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"status-tile grid cursor-pointer grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center justify-items-center gap-x-3 gap-y-2 rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200 data-[active=true]:bg-base-200\" data-active=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"status-tile\" data-active=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -58,14 +58,14 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><p class=\"col-span-2 text-xs font-semibold text-base-content/70\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#page-shell\" hx-push-url=\"true\"><p class=\"status-tile-label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(statusLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 14, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 14, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 = []any{"status-icon col-start-1 row-start-1 text-2xl " + iconClass}
+			var templ_7745c5c3_Var5 = []any{"status-tile-icon status-icon fa-solid " + iconClass}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -93,14 +93,14 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></i> <b class=\"col-start-2 row-start-1 text-2xl leading-none font-bold text-base-content\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></i> <b class=\"status-tile-count\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", pullRequestCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 16, Col: 125}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 16, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -111,27 +111,27 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"status-tile grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center justify-items-center gap-x-3 gap-y-2 rounded-lg border border-base-300 bg-base-100 p-3\" data-active=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"status-tile\" data-active=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprintf("%t", isActive))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 19, Col: 216}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 19, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"><p class=\"col-span-2 text-xs font-semibold text-base-content/70\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"><p class=\"status-tile-label\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(statusLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 20, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 20, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -141,7 +141,7 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 = []any{"status-icon col-start-1 row-start-1 text-2xl " + iconClass}
+			var templ_7745c5c3_Var10 = []any{"status-tile-icon status-icon fa-solid " + iconClass}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -159,14 +159,14 @@ func PullRequestStatusCount(iconClass string, pullRequestCount int, statusLabel 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></i> <b class=\"col-start-2 row-start-1 text-2xl leading-none font-bold text-base-content\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"></i> <b class=\"status-tile-count\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", pullRequestCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 22, Col: 125}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/count.templ`, Line: 22, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -206,7 +206,7 @@ func InlinePullRequestCount(iconClass string, pullRequestCount int) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 = []any{"status-icon " + iconClass}
+		var templ_7745c5c3_Var14 = []any{"status-icon fa-solid " + iconClass}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

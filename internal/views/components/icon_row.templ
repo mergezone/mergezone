@@ -1,12 +1,12 @@
 package components
 
 templ IconRow(iconClass string, colorModifier string, heading string, description string) {
-	<div class="icon-card grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200">
-		<div class={ "row-span-2 flex size-10 items-center justify-center rounded-md bg-base-200 text-xl", colorModifier }>
+	<div class="icon-card grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 transition-colors hover:bg-base-200 compact:gap-x-2 compact:p-2">
+		<div class={ "row-span-2 flex size-10 items-center justify-center rounded-md bg-base-200 text-xl compact:size-8 compact:text-lg", colorModifier }>
 			<i class={ iconClass }></i>
 		</div>
-		<div class="col-start-2 flex gap-2 text-base font-semibold text-base-content">
-			<p>{ heading }</p>
+		<div class="col-start-2 flex gap-2 text-base font-semibold text-base-content compact:text-sm">
+			<h3 class="font-heading">{ heading }</h3>
 		</div>
 		<div class="col-start-2 flex text-xs text-base-content/70">
 			<p>{ description }</p>

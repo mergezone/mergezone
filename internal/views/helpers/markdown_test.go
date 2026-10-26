@@ -72,6 +72,21 @@ func TestExpiryReasonExplainsClosedPullRequests(t *testing.T) {
 	}
 }
 
+func TestSplitAgeHandlesMultiCharacterSuffix(t *testing.T) {
+	num, suffix := SplitAge("3mo")
+	if num != "3" || suffix != "mo" {
+		t.Errorf("SplitAge(\"3mo\") = (%q, %q), want (\"3\", \"mo\")", num, suffix)
+	}
+	num, suffix = SplitAge("21m")
+	if num != "21" || suffix != "m" {
+		t.Errorf("SplitAge(\"21m\") = (%q, %q), want (\"21\", \"m\")", num, suffix)
+	}
+	num, suffix = SplitAge("5h")
+	if num != "5" || suffix != "h" {
+		t.Errorf("SplitAge(\"5h\") = (%q, %q), want (\"5\", \"h\")", num, suffix)
+	}
+}
+
 func TestRenderMarkdownConvertsImageAndVideoEmbeds(t *testing.T) {
 	got := RenderMarkdown(strings.Join([]string{
 		"https://example.com/image.png",

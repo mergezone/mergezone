@@ -47,7 +47,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 			}
 		} else {
 			for _, comment := range comments {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<article class=\"discussion-comment border-t border-base-300 py-3 first:border-t-0\"><div class=\"discussion-comment-header mb-2 flex items-center justify-between gap-3 text-xs\"><div class=\"discussion-comment-author inline-flex min-w-0 items-center gap-2\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<article class=\"discussion-comment\"><div class=\"discussion-comment-header\"><div class=\"discussion-comment-author inline-flex min-w-0 items-center gap-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -145,7 +145,7 @@ func PullRequestDiscussion(comments []model.PullRequestComment) templ.Component 
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div class=\"content discussion-comment-content prose prose-sm max-w-none dark:prose-invert [&_iframe]:my-4 [&_iframe]:aspect-video [&_iframe]:w-full [&_iframe]:rounded-md [&_iframe]:border-0 [&_img]:rounded-md [&_video]:my-4 [&_video]:w-full [&_video]:rounded-md\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><div class=\"content markdown-content discussion-comment-content prose prose-sm dark:prose-invert\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

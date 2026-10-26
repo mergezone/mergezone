@@ -18,7 +18,7 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 		}
 	}}
 	<a
-		class="sidebar-panel-item scope flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner"
+		class="sidebar-panel-item scope flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner compact:gap-1 compact:py-1.5 compact:pr-2 compact:pl-6"
 		aria-label={ ariaLabel }
 		data-current={ fmt.Sprintf("%t", isCurrent) }
 		href={ templ.SafeURL(scopeURL) }
@@ -26,12 +26,12 @@ templ ScopeCard(scope model.ScopeInfo, filters model.RepositoryFilters) {
 		hx-target="#page-shell"
 		hx-push-url="true"
 	>
-		<span class="sidebar-panel-icon flex size-6 shrink-0 items-center justify-center text-base-content/60" aria-hidden="true"><i class="fa-solid fa-diagram-project text-sm"></i></span>
+		<span class="sidebar-panel-icon flex size-6 shrink-0 items-center justify-center text-base-content/60 compact:size-5" aria-hidden="true"><i class="fa-solid fa-diagram-project text-sm"></i></span>
 		<span class="sidebar-panel-content flex min-w-0 flex-1 items-center gap-2">
-			<span class="sidebar-panel-title flex-1 truncate text-sm font-semibold text-base-content">{ scope.Name }</span>
+			<span class="sidebar-panel-title flex-1 truncate text-sm font-normal text-base-content">{ scope.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing flex min-w-0 shrink-0 items-center">
-			<span class="sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70">
+			<span class="sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70 compact:ml-1 compact:gap-1">
 				<span class="age">
 					<i class="fa-solid fa-clock mr-1 text-xs text-base-content/50" aria-hidden="true"></i> @AgeStr(scope.NewestPRAge)
 				</span>
@@ -52,7 +52,7 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 		}
 	}}
 	<a
-		class="sidebar-panel-item contributor flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner"
+		class="sidebar-panel-item contributor flex items-center gap-2 py-3 pr-4 pl-8 text-base-content no-underline transition-colors hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary data-[current=true]:bg-base-300 data-[current=true]:shadow-inner compact:gap-1 compact:py-1.5 compact:pr-2 compact:pl-6"
 		aria-label={ ariaLabel }
 		data-current={ fmt.Sprintf("%t", isCurrent) }
 		href={ templ.SafeURL(contributorURL) }
@@ -60,14 +60,14 @@ templ ContributorCard(contributor model.ContributorInfo, filters model.Repositor
 		hx-target="#page-shell"
 		hx-push-url="true"
 	>
-		<span class="sidebar-panel-icon img-skeleton-wrapper avatar-wrapper size-6 shrink-0 overflow-hidden rounded-lg">
+		<span class="sidebar-panel-icon img-skeleton-wrapper avatar-wrapper size-6 shrink-0 overflow-hidden rounded-lg compact:size-5">
 			<img class="avatar block h-full w-full rounded-lg object-cover" data-src={ contributor.AvatarURL } alt={ contributor.Name + "'s avatar" } loading="lazy"/>
 		</span>
 		<span class="sidebar-panel-content flex min-w-0 flex-1 items-center gap-2">
-			<span class="sidebar-panel-title flex-1 truncate text-sm font-semibold text-base-content">{ contributor.Name }</span>
+			<span class="sidebar-panel-title flex-1 truncate text-sm font-normal text-base-content">{ contributor.Name }</span>
 		</span>
 		<span class="sidebar-panel-trailing flex min-w-0 shrink-0 items-center">
-			<span class="sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70">
+			<span class="sidebar-panel-meta ml-2 flex items-center gap-2 text-xs whitespace-nowrap text-base-content/70 compact:ml-1 compact:gap-1">
 				<span class="age">
 					<i class="fa-solid fa-clock mr-1 text-xs text-base-content/50" aria-hidden="true"></i> @AgeStr(contributor.NewestPRAge)
 				</span>

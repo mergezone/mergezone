@@ -15,7 +15,8 @@ import "merge/internal/model"
 // syncSearchPlacement in alpine.js). On repository pages it also renders the
 // button that toggles the filter bottom sheet. Because the dock is fixed to the
 // viewport bottom and the page shell reserves its height, the filter sheet and the
-// context pane open above the dock rather than covering it.
+// context pane open above the dock rather than covering it. The home page has no dock
+// so its search remains in the main content.
 func MobileDock(showFilters bool, filters model.RepositoryFilters) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

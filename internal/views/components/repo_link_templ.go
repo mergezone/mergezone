@@ -56,7 +56,7 @@ func RepositoryLink(owner string, repository string, iconClass string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#page-shell\" hx-push-url=\"true\" class=\"icon-card group grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 no-underline transition-colors hover:border-base-content/20 hover:bg-base-200\"><div class=\"flex size-10 items-center justify-center rounded-md bg-base-200 text-xl text-base-content/70 transition-colors group-hover:text-base-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#page-shell\" hx-push-url=\"true\" class=\"icon-card group grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1 rounded-lg border border-base-300 bg-base-100 p-3 no-underline transition-colors hover:border-base-content/20 hover:bg-base-200 compact:gap-x-2 compact:p-2\"><div class=\"flex size-10 items-center justify-center rounded-md bg-base-200 text-xl text-base-content/70 transition-colors group-hover:text-base-content compact:size-8 compact:text-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -78,14 +78,14 @@ func RepositoryLink(owner string, repository string, iconClass string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></i></div><div class=\"col-start-2 flex items-center justify-between gap-2 text-base font-semibold text-base-content\"><p><span class=\"text-base-content/60\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"></i></div><div class=\"col-start-2 flex items-center justify-between gap-2 text-base font-semibold text-base-content compact:text-sm\"><h3 class=\"font-heading\"><span class=\"text-base-content/60\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(owner)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_link.templ`, Line: 10, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_link.templ`, Line: 10, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -98,13 +98,13 @@ func RepositoryLink(owner string, repository string, iconClass string) templ.Com
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(repository)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_link.templ`, Line: 10, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/repo_link.templ`, Line: 10, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></p><span class=\"loading loading-spinner loading-xs htmx-indicator text-base-content/50\"></span></div></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></h3><span class=\"loading loading-spinner loading-xs htmx-indicator text-base-content/50\"></span></div></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

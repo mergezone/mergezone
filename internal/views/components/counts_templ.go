@@ -52,7 +52,7 @@ func PullRequestCounts(expiryCounts model.ExpiryCounts, hasMorePullRequests bool
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"stats flex flex-col gap-2\"><div class=\"my-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-base-content/70\"><span>Overview</span></div><div class=\"grid grid-cols-2 gap-2 lg:grid-cols-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"overview-stats\"><h2 class=\"my-2 px-1 text-sm font-bold text-base-content/70 compact:my-1\">Overview</h2><div class=\"overview-stats-grid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2,11 +2,14 @@ package layout
 
 templ BaseDocument(title, description, baseURL, owner, repository, scope string) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme="light">
+	<html lang="en" data-theme="light" data-density="comfortable">
 		<head>
 			<title>{ title }</title>
-			<script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';var theme=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);})()</script>
+			<script>(function(){var t=localStorage.getItem('theme');if(t==='white'||t==='parchment')t='light';else if(t==='purple'||t==='midnight')t='dark';var theme=t==='light'||t==='dark'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',theme);var d=localStorage.getItem('list-density');document.documentElement.setAttribute('data-density',d==='compact'?'compact':'comfortable');})()</script>
 			<link rel="icon" type="image/png" href="/public/favicon.png"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap"/>
 			<link rel="stylesheet" href="/public/main.css"/>
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -20,7 +23,7 @@ templ BaseDocument(title, description, baseURL, owner, repository, scope string)
 			<meta property="og:description" content={ description }/>
 		</head>
 		<body class="repository-page h-dvh overflow-hidden bg-base-200 text-base-content" x-data x-init="$store.app.init()">
-			<div class="page-shell box-border flex h-full min-h-0 w-full flex-col gap-6 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:flex-row lg:gap-0 lg:pb-0" id="page-shell">
+			<div class="page-shell box-border flex h-full min-h-0 w-full flex-col gap-6 pb-[calc(4rem+env(safe-area-inset-bottom))] compact:max-lg:gap-3 lg:flex-row lg:gap-0 lg:pb-0" id="page-shell">
 				{ children... }
 			</div>
 		</body>
